@@ -1,0 +1,15 @@
+# Prediq — https://prediq.top
+#
+# Everything here is meant to be found. There is no admin area, no user content
+# and no paywall, so there is nothing to keep out of an index.
+#
+# data/ is deliberately left crawlable. It is the archive of frozen predictions,
+# and the whole argument for it is that anyone can check what was claimed before
+# a match without being asked to trust the site's own summary of it. Hiding it
+# from crawlers would not make it private -- it is a public git repository -- it
+# would only make it look as though someone wanted it harder to find.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://prediq.top/sitemap.xml

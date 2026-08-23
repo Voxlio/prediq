@@ -6,6 +6,31 @@
 <title>Prediq — football predictions from a goals model</title>
 <meta name="description" content="Football match predictions built from a Poisson goals model on live team form. Probabilities, not tips.">
 
+<!-- Canonical and social card. The absolute URLs here are the only ones in the
+     project, and they have to be: a canonical link and an og:url are claims about
+     where a page lives, and a relative one tells a scraper nothing it did not
+     already know. They must stay in step with the CNAME file at the root -- change
+     the domain and these four heads change with it.
+
+     The front page is canonicalised to the bare directory rather than to
+     /index.html. Pages serves the same bytes at both, and left alone that is two
+     URLs for one page competing with each other in search results.
+
+     og:title is not a copy of <title>. A <title> is read in a tab beside a dozen
+     others and earns its "Prediq --" prefix; a share card already shows the site
+     name underneath, so repeating it there spends characters twice. -->
+<link rel="canonical" href="https://prediq.top/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Prediq">
+<meta property="og:url" content="https://prediq.top/">
+<meta property="og:title" content="Football predictions from a goals model">
+<meta property="og:description" content="A Poisson goals model, refitted from live team form, with every prediction frozen before kickoff and scored afterwards. Probabilities, not tips.">
+<meta property="og:image" content="https://prediq.top/assets/apple-touch-icon.png">
+<!-- `summary` and not `summary_large_image`, because the only artwork this site
+     has is a 180px square icon. Claiming the wide card would stretch it across
+     1200px of someone's timeline, and a blurry card is worse than a small one. -->
+<meta name="twitter:card" content="summary">
+
 <!-- Favicon, kept as local copies rather than hotlinked to the image host.
      A remote icon makes every visitor's browser fetch a file from a third party on
      every page load, handing that third party an IP address and a user agent --

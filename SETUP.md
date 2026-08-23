@@ -251,19 +251,72 @@ window has genuinely nothing to add.
 
 ---
 
-## Step 7 — Publishing the site (later)
+## Step 7 — Publishing the site
 
-Not yet. We're holding the launch until the remaining pages are built, and the
-archive needs a few weeks of matches behind it before an accuracy page is worth
-looking at. When you're ready it's: **Settings** → **Pages** → Source:
-**Deploy from a branch** → `main` / `/ (root)` → **Save**.
+The site goes live at **https://prediq.top**. Four things have to be true, and
+three of them are already done.
 
-Nothing in the project needs changing for that — the empty `.nojekyll` file at the
-root already tells Pages to publish the files as they are rather than running them
-through Jekyll first.
+**1. The repository must be Public.** GitHub Pages needs it on a free plan. If you
+chose Private back in step 2: **Settings** → scroll to the bottom → **Change
+visibility** → **Public**.
 
-Note that Pages requires a Public repository on a free plan, so if you chose
-Private in Step 2 you'd switch it then.
+Nothing in this repository is secret. The Firebase web config in
+`assets/js/firebase-config.js` is a project identifier rather than a password —
+Firestore's own rules are what stop a stranger writing to your database, which is
+why step 1 mattered. The one real credential, the service account key, lives in
+Actions secrets and has never been in a file here.
+
+**2. Turn Pages on.** **Settings** → **Pages** → Source: **Deploy from a branch**
+→ branch `main`, folder `/ (root)` → **Save**.
+
+Not "GitHub Actions" as the source. That mode expects a workflow to build and
+upload the site; this site has no build step, and the archive workflow only
+commits to `data/`. Deploy-from-a-branch serves the files exactly as they are.
+
+**3. The custom domain.** Already set — there is a `CNAME` file at the root
+containing `prediq.top`, which is what GitHub writes when you type a domain into
+**Settings** → **Pages** → **Custom domain**.
+
+Leave that file alone. Deleting it un-sets the domain on the next deploy. It also
+means `voxlio.github.io/prediq` **redirects** to `prediq.top`, so if the DNS is
+wrong both addresses look broken and it reads like a Pages fault when it is a DNS
+record. The records prediq.top needs are four `A` records pointing at
+`185.199.108.153`, `185.199.109.153`, `185.199.110.153` and `185.199.111.153`.
+
+Once the domain verifies, tick **Enforce HTTPS** on the same page. GitHub issues
+the certificate itself and it is free; the tick box stays greyed out for a few
+minutes to an hour while that happens, which is normal and not a failure.
+
+**4. Nothing in the project needs changing.** The empty `.nojekyll` at the root
+already tells Pages to serve the files as they are rather than running them
+through Jekyll first — without it, Pages would ignore the whole of `assets/`
+because of the underscore convention it inherits. Every `src` and `href` in the
+four HTML files is relative, so the site works at a domain root or a subpath.
+
+### What to check once it is up
+
+The first deploy takes a couple of minutes. Then, in order:
+
+1. **The fixtures load.** If the page shows predictions, ESPN is reachable from a
+   browser on your domain and the model is fitting. This is the whole site.
+2. **`record.html` shows the archive.** This is the page that reads `data/` rather
+   than ESPN, so it is the one that proves Pages is serving JSON correctly. It is
+   also the page that cannot work from a `file://` URL, so this is the first time
+   you will have seen it behave properly.
+3. **The footer counter.** Almost certainly still blank, because it needs
+   `firestore.rules` published — step 1. Open the browser console and run
+   `prediq.vitals()`; it will name the cause rather than making you guess.
+4. **A shared link previews properly.** Paste https://prediq.top into WhatsApp or
+   a Slack message. A title, a description and the icon should appear. If the URL
+   sits there bare, the Open Graph tags in the four heads are being served but the
+   scraper has cached an earlier fetch — it clears itself.
+
+### One thing that will not work, and is not broken
+
+Opening `index.html` by double-clicking it still shows fixtures but an empty
+record page. `file://` URLs cannot fetch `data/*.json`, and no amount of
+publishing changes that. Use the live site, or serve the folder locally with
+`python3 -m http.server` and visit `localhost:8000`.
 
 ---
 

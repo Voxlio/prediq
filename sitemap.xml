@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Prediq's four pages. Hand-written rather than generated, because four URLs do
+  not justify a build step in a project whose whole premise is not having one.
+
+  NO lastmod. Three of these pages change every time the archive does, several
+  times a day, and this file does not. A lastmod written once and then left is
+  worse than none at all: it invites a crawler to skip a page that has in fact
+  changed, and it is a date this project cannot honestly maintain by hand.
+  Omitting the field says "I do not know", which is true.
+
+  NO priority or changefreq either. Both are hints search engines stopped acting
+  on years ago, and inventing a ranking among four pages would be a statement
+  about importance that nothing here supports.
+
+  Add a page, add it here. An incomplete sitemap is a quiet way to keep something
+  out of an index.
+
+  One thing to know before editing this comment: a double hyphen is illegal inside
+  an XML comment, and unlike HTML nothing tolerates it. The whole file becomes
+  unparseable, which a crawler reports to nobody. Use an em dash.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://prediq.top/</loc></url>
+  <url><loc>https://prediq.top/record.html</loc></url>
+  <url><loc>https://prediq.top/ratings.html</loc></url>
+  <url><loc>https://prediq.top/method.html</loc></url>
+</urlset>
