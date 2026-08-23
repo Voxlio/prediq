@@ -847,7 +847,206 @@ b, strong { font-weight: 500; }
   cursor: default;
 }
 
-/* --- 17. Footer --------------------------------------------------------- */
+/* Seven day tabs have to fit a 42rem page, so they are narrower than the
+   two-item scale switch: less horizontal padding, and the weekday drops out
+   under 34rem (see section 19). */
+.lg-tab {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35em;
+  padding: 0.45rem 0.7rem;
+}
+.lg-tab-d { font-variant-numeric: tabular-nums; }
+
+/* --- 17. The record ------------------------------------------------------
+   One row per match: what was claimed on the left, what happened on the right.
+   Built as a grid rather than a table because the cells stack two deep and a
+   table cell holding its own two-line block fights the row's baseline.
+
+   Deliberately quiet. The only colour is the verdict mark, and the row itself
+   is not tinted green or red: a page of eighty rows washed in green would read
+   as promotion rather than as a record, and the same page in red would be no
+   more honest for being unflattering. Amber stays reserved for data, as
+   everywhere else.
+------------------------------------------------------------------------------*/
+
+/* The day's counts, above the rows. Its own line so the numbers are the first
+   thing read, before the eye starts down the list. */
+.lg-tally {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 1.75rem;
+  font: 400 11.5px/1.5 var(--mono);
+  letter-spacing: 0.04em;
+  color: var(--dim);
+  font-variant-numeric: tabular-nums;
+}
+.lg-tally b { color: var(--text); font-weight: 500; }
+.lg-tally-sep { color: var(--line); }
+.lg-tally-mute { color: var(--mute); }
+
+/* Column geometry, declared once and shared by the header and every row. The
+   fixture takes whatever is left, which at 42rem is about 21rem — enough for
+   two full club names on one line. */
+.lg-h,
+.lg-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 5.2rem 3.6rem 6.4rem;
+  gap: 0.85rem;
+  align-items: baseline;
+}
+
+.lg-h {
+  margin-top: 1.25rem;
+  padding: 0 0 0.5rem;
+  border-bottom: 1px solid var(--line);
+  font: 400 10px/1 var(--mono);
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+/* Each header label is named so that one of them can be dropped on a narrow
+   screen, and none of them may wrap: a two-word label wrapping inside a 3.6rem
+   column would double the header's height and pull it out of line with the rows
+   beneath. This is why the labels are short — "result" rather than "full time". */
+.lg-h-fixture,
+.lg-h-said,
+.lg-h-happened,
+.lg-h-verdict { white-space: nowrap; }
+
+.lg-row {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.lg-row:hover { background: var(--panel); }
+
+/* The list ends well clear of the paragraph that follows it, which otherwise
+   reads as a caption on the last row rather than as prose about the page. */
+.lg-rows { margin-bottom: 1.75rem; }
+
+/* --- the fixture ---
+   min-width:0 on the cell as well as on the names inside it. A grid track sized
+   `minmax(0, 1fr)` still gives its item an automatic minimum content size, so
+   without this the long-name truncation below never fires — the cell grows and
+   pushes the other three columns off instead. */
+.lg-fixture { min-width: 0; }
+
+.lg-teams {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4em;
+  min-width: 0;
+  font-size: 13.5px;
+  color: var(--text);
+}
+/* Either name may be the long one, so both shrink and both truncate rather than
+   one pushing the other out of the row. */
+.lg-team {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lg-v { flex: none; color: var(--mute); font-size: 11px; }
+
+.lg-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-top: 0.15rem;
+  font: 400 10px/1.4 var(--mono);
+  letter-spacing: 0.05em;
+  color: var(--mute);
+}
+.lg-comp {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lg-kick { flex: none; font-variant-numeric: tabular-nums; }
+
+/* --- what we said ---
+   Two rows inside the cell: the call and its probability side by side, then the
+   likeliest scoreline beneath. The scoreline spans both columns so it starts at
+   the cell's left edge rather than under the percentage. */
+.lg-said {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: start;
+  column-gap: 0.4rem;
+  row-gap: 0.15rem;
+  font: 400 11.5px/1.4 var(--mono);
+  letter-spacing: 0.03em;
+  color: var(--dim);
+}
+.lg-pick { color: var(--text); }
+.lg-prob { color: var(--dim); font-variant-numeric: tabular-nums; }
+.lg-score-said {
+  grid-column: 1 / -1;
+  color: var(--mute);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- what happened --- */
+.lg-happened {
+  font: 400 11px/1.4 var(--mono);
+  letter-spacing: 0.03em;
+  color: var(--mute);
+}
+.lg-ft {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.lg-outcome { display: block; margin-top: 0.15rem; }
+.lg-pending { color: var(--mute); }
+
+/* --- the verdict ---
+   The mark sits in its own column so that "gave it 24%" and the flag beneath it
+   line up down the page, which is what makes the column scannable. */
+.lg-verdict {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 0.4rem;
+  row-gap: 0.15rem;
+  font: 400 10.5px/1.4 var(--mono);
+  letter-spacing: 0.04em;
+  color: var(--mute);
+}
+.lg-mark {
+  grid-row: 1 / span 2;
+  align-self: start;
+  font-size: 13px;
+  line-height: 1.15;
+}
+.lg-assigned {
+  align-self: baseline;
+  color: var(--dim);
+  font-variant-numeric: tabular-nums;
+}
+.lg-flag { grid-column: 2; color: var(--mute); }
+
+/* The one place colour appears. Green and red are the same tokens the form strip
+   uses for a win and a loss, so a reader who has seen one page already knows
+   what they mean here. */
+.lg-row.is-hit  .lg-mark { color: var(--win-fg); }
+.lg-row.is-miss .lg-mark { color: var(--loss-fg); }
+.lg-row.is-open .lg-mark { color: var(--line); }
+
+/* A recorded prediction with no result yet. Dimmed, not hidden: these are the
+   rows that cannot flatter the model, and dropping them would leave a record
+   made only of matches whose outcome is already known. */
+.lg-row.is-open .lg-teams { color: var(--dim); }
+
+.lg-row.is-skeleton { pointer-events: none; }
+.lg-row.is-skeleton:hover { background: none; }
+
+/* --- 18. Footer --------------------------------------------------------- */
 .foot {
   margin-top: 3.5rem;
   padding-top: 1.5rem;
@@ -882,7 +1081,7 @@ b, strong { font-weight: 500; }
   border-bottom-color: var(--warm);
 }
 
-/* --- 18. Responsive ----------------------------------------------------- */
+/* --- 19. Responsive ----------------------------------------------------- */
 @media (max-width: 34rem) {
   .shell { padding: 3.5rem 1.15rem 3rem; }
   .match { padding: 1.15rem; }
@@ -929,9 +1128,38 @@ b, strong { font-weight: 500; }
   .rt-name { font-size: 13.5px; }
   .rt + .rt { margin-top: 2rem; }
   .toggle-b { padding: 0.45rem 0.7rem; }
+
+  /* Seven tabs with a weekday each need about 34rem of tab, which is the whole
+     screen. The weekday goes and the day number stays, so all seven days remain
+     on screen and reachable — the alternative was a scrolling strip with two
+     days hidden off the right edge and nothing to say they were there. The full
+     date is still on each button's title. */
+  .lg-tab-wd { display: none; }
+  .lg-tab { padding: 0.45rem 0.55rem; }
+
+  /* The verdict column is the first to go. "gave it 24%" is the one figure on
+     this page that has nowhere else to live, so the row keeps three columns and
+     the verdict moves under the fixture, indented to the fixture's edge and
+     spanning to the row's. The mark stays inline with it rather than becoming a
+     fourth stacked line. */
+  .lg-h,
+  .lg-row {
+    grid-template-columns: minmax(0, 1fr) 4.6rem 3.2rem;
+    gap: 0.6rem;
+  }
+  .lg-h-verdict { display: none; }
+  .lg-verdict {
+    grid-column: 1 / -1;
+    grid-template-columns: auto auto minmax(0, 1fr);
+    margin-top: 0.35rem;
+  }
+  .lg-mark { grid-row: 1; }
+  .lg-flag { grid-column: 3; }
+  .lg-teams { font-size: 13px; }
+  .lg-said { font-size: 11px; }
 }
 
-/* --- 19. Reduced motion ------------------------------------------------- */
+/* --- 20. Reduced motion ------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   /* This list is explicit rather than a blanket `* { animation: none }`, so
      every new animation has to be added here by hand. Adding one and forgetting

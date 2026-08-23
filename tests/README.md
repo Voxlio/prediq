@@ -27,6 +27,7 @@ visitors — no page links to this folder.
 | `l1` | `api.js` loader | phase 1 reads fixtures only, phase 2 never asks a cup for a table, the two compose to `loadAll`, the history cap bounds a cold visit for every month of a season, the progress bar is sized once and ends full |
 | `r1` | `render.js` | the match card on a hand-rolled DOM shim: no `innerHTML` anywhere, the form strip, the confidence meter, that the list does not reorganise between the two phases, and that every class emitted is styled |
 | `rt1` | `table.js` | the ratings table on the same shim, including header/body column-class agreement |
+| `v1` | `ledger.js`, `record.html` | **the record page.** That every verdict is derived, not read — the suite recomputes each one from the raw probabilities and goals, then rewrites a stored score and demands the mark move. That a prediction with no result yet is still on the page. That no rate appears before `MIN_FOR_RATE` and the denominator is settled matches. That a day key renders as the same calendar date at UTC−7 and UTC+14, checked in a child process per timezone |
 | `e1` | `main.js` | the whole page end to end with `fetch` and `localStorage` mocked: request count, cache behaviour, a second visit, one league failing |
 | `h1` | `method.html`, `style.css` | every `data-cfg` number on the page against `config.js`, in both directions; local links exist; animations have keyframes and are switched off under `prefers-reduced-motion` |
 | `w1` | `store.js`, `tools/freeze.mjs`, `tools/settle.mjs` | **the archive.** That a prediction is written once and never rewritten, that a result is the only thing that can be added later, that a second run leaves every byte identical, and that a day nothing settled reports `null` rather than a flattering zero. Runs both writers as child processes against a fake ESPN |
@@ -44,6 +45,17 @@ its first assertion would otherwise read as a pass.
 Paths resolve from `import.meta.url`, never from an absolute path. `import()`
 takes `new URL('../assets/js/', import.meta.url).href`; `fs` takes a URL
 *object*, since `readFileSync` rejects a `file://` string.
+
+A test that a sort happened needs a second assertion that the input was unsorted.
+`v1`'s first run passed its kickoff-order check against a list that `predictAll`
+had already sorted, so the assertion was true without the sort existing. The
+guard is cheap and it caught this on the first run; keep writing it.
+
+A grep for a forbidden API has to strip comments first. `v1` asserted that
+`ledger.js` contains no `innerHTML` and failed on the file's own header comment
+saying it never uses `innerHTML` — an assertion whose easiest fix is deleting the
+documentation is worse than no assertion. Where the property can be observed on
+the rendered tree instead, as in `r1`, prefer that.
 
 Mocks freeze their clock at module load. A mock that stamps dates with
 `Date.now()` at call time makes two identical runs differ by a millisecond, which

@@ -17,8 +17,14 @@ There is no server, no login, and no database the site writes to.
 ## Pages
 
     index.html     fixtures for the next week, each with a full prediction
+    record.html    what was predicted, and what happened, day by day
     ratings.html   the model's own power rankings, and how they were derived
     method.html    the entire method, including what it cannot do
+
+`record.html` is the only page that reads from `data/` rather than from ESPN, so
+it needs to be served over http rather than opened off disk. Every verdict on it
+is recomputed from the stored probabilities and the final score at the moment the
+page renders — no judgement is stored anywhere, so a reader can check one.
 
 ## How the prediction works, briefly
 

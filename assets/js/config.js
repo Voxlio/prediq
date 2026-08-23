@@ -121,6 +121,27 @@ export const FIXTURE_DAYS = 7;
 -------------------------------------------------------------------------------*/
 export const FREEZE_WITHIN_HOURS = 24;
 
+/* --- How much record is enough to quote a rate ------------------------------
+   The record page shows counts from the first settled match — 8 right out of 12
+   is a fact, and hiding it would be worse than showing it. What it will not do
+   is turn a handful of matches into a percentage, because a percentage invites
+   being read as the model's accuracy and a small one is mostly noise.
+
+   Twelve coin tosses land 8-or-better about one time in five. At fifty matches
+   the same fluke needs a run that happens under one time in a hundred, which is
+   roughly where a number starts carrying information rather than mood. It is a
+   judgement, not a theorem, which is exactly why it is a named constant on this
+   page rather than an inline `> 50` somewhere in a render function.
+
+   Calibration — whether calls made at 70% actually land near 70% — needs far
+   more than this, and lives on the accuracy page rather than here.
+-------------------------------------------------------------------------------*/
+export const MIN_FOR_RATE = 50;
+
+/* How many days back the record page offers. Matches FIXTURE_DAYS forward, so
+   the site covers a fortnight centred on today. */
+export const RECORD_DAYS = 7;
+
 /* --- Model tunables --------------------------------------------------------*/
 export const MODEL = {
   /* Scoreline matrix runs 0..MAX_GOALS for each side, then gets normalized.

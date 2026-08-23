@@ -198,7 +198,7 @@ Run the test suite first — it needs no credentials and no network:
 node tests/run.mjs
 ```
 
-781 assertions across 15 suites. If those pass, the code is fine and the problem
+927 assertions across 16 suites. If those pass, the code is fine and the problem
 is configuration: permissions, a secret, or ESPN.
 
 One caveat learned the hard way: a green suite proved the mirror worked when it

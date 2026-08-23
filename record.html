@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Record — what Prediq predicted, and what happened</title>
+<meta name="description" content="Every prediction Prediq wrote down before kickoff, next to the actual result. Nothing is added or amended after the match.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<a class="skip" href="#record">Skip to the record</a>
+
+<div class="shell">
+
+  <header class="masthead">
+    <div class="masthead-row">
+      <a class="wordmark" href="index.html">prediq<span class="dot">.</span></a>
+      <nav class="nav">
+        <a href="index.html">fixtures</a>
+        <a href="record.html" class="is-here" aria-current="page">record</a>
+        <a href="ratings.html">ratings</a>
+        <a href="method.html">method</a>
+      </nav>
+    </div>
+    <p class="thesis">
+      What Prediq said before each match, and what actually happened. Written
+      down beforehand, kept whether it looks good or not.
+    </p>
+  </header>
+
+  <!-- Replaced by verdicts.js once the day is loaded. -->
+  <div class="status" id="status">
+    <span class="status-mute">reading the archive</span>
+  </div>
+
+  <noscript>
+    <div class="notice is-warn" style="margin-top:1.25rem">
+      <p class="notice-title">JavaScript is required</p>
+      <p class="notice-body">
+        This page reads the stored record from files in the project and lays it
+        out in your browser. Nothing is precomputed on a server, and nothing is
+        tracked. The underlying files are plain JSON in the
+        <code>data/</code> folder of the repository, readable without
+        JavaScript or without this site.
+      </p>
+    </div>
+  </noscript>
+
+  <main id="record">
+
+    <h1 class="page-title">The record</h1>
+
+    <p class="copy">
+      Every prediction on this page was written down and committed to a public
+      repository <b data-cfg="FREEZE_WITHIN_HOURS">24</b> hours or less before
+      kickoff, before the result existed. It is then never edited. The only
+      thing ever added to a stored prediction is the final score, and the only
+      way to change one would be a commit that anybody can see.
+    </p>
+    <p class="copy">
+      The <b>&#10003;</b> and <b>&#10007;</b> marks are worked out on this page
+      as you load it, from the stored probabilities and the stored score &mdash;
+      they are not saved anywhere. That is deliberate: a saved verdict would ask
+      you to trust that whoever saved it applied the rule honestly, whereas this
+      one you can check. Open any file in <code>data/</code>, read the three
+      probabilities, read the score, and see whether the mark agrees.
+    </p>
+    <p class="copy">
+      <b>gave it</b> is the probability the model put on the thing that actually
+      happened, which is the number that says most about a result. A miss where
+      the model had the outcome at 30% is a normal day for a probability; a miss
+      where it had it at 4% is the model being wrong about the match. A hit at
+      31% is closer to luck than to skill, and it is marked the same as any
+      other, because the mark alone was never the interesting part.
+    </p>
+    <p class="copy">
+      Counts appear from the first finished match. A percentage does not, until
+      <b data-cfg="MIN_FOR_RATE">50</b> matches have been settled under the
+      current model &mdash; a hit rate off a dozen games mostly measures which
+      dozen games they were. Aggregate accuracy, whether calls made at 70% land
+      near 70%, and how the model compares to the bookmakers will go on a
+      separate page once there is enough record to support them.
+    </p>
+
+    <!-- Day strip, built by verdicts.js so a day is never offered without a
+         file behind it. -->
+    <div id="days"></div>
+
+    <!-- Rows are built by verdicts.js. -->
+    <div id="ledger"></div>
+
+    <p class="copy">
+      Predictions for matches still to come are on
+      <a href="index.html">the fixtures page</a>, the ratings behind them are on
+      <a href="ratings.html">the ratings page</a>, and how the model arrives at
+      a number is on <a href="method.html">the method page</a>.
+    </p>
+
+  </main>
+
+  <footer class="foot">
+    <p class="foot-note">
+      Prediq publishes statistical model output for information. These are
+      probabilities, not tips &mdash; a 70% call still loses three times in ten.
+      Not betting advice. 18+.
+    </p>
+    <p class="foot-meta">
+      <span>Built with a Poisson goals model.</span>
+      <a href="method.html">How it works</a>
+    </p>
+  </footer>
+
+</div>
+
+<script type="module" src="assets/js/verdicts.js"></script>
+
+</body>
+</html>
