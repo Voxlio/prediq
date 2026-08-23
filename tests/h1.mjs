@@ -49,6 +49,14 @@ ok('the page actually tags its claims', claims.length >= 20, claims.length);
 let bad = [];
 for (const c of claims) {
   const raw = resolve(c.path);
+  /* Not every documented setting is a number. MODEL_REV is a string on purpose —
+     it is hand-set, and '1.10' after '1.9' would be a smaller number and a later
+     revision. So strings are compared as text, and only numbers get the scale and
+     divisor treatment. */
+  if (typeof raw === 'string') {
+    if (c.text !== raw) bad.push([c.path, 'page says ' + c.text, 'config says ' + raw]);
+    continue;
+  }
   if (typeof raw !== 'number') { bad.push([c.path, 'not a number in config', raw]); continue; }
   const expected = c.scale ? raw * c.scale : c.div ? raw / c.div : raw;
   if (!Number.isFinite(c.num) || Math.abs(c.num - expected) > 1e-9) {
@@ -105,6 +113,46 @@ ok('"around eighteen per cent" for a mismatch holds',
   Math.abs((1 - keptTo(4, 3.0) * keptTo(4, 0.95)) - 0.18) < 0.02,
   1 - keptTo(4, 3.0) * keptTo(4, 0.95));
 
+/* ---------- the archive's prose arithmetic ----------
+   Three claims in the record section are sums, not opinions. Each is measured
+   here for the same reason the truncation loss above is measured: a number
+   arrived at by hand once is a number nobody will recheck when the constant it
+   came from moves. */
+
+/* "every fixture is offered to the writer eight times before it starts" is
+   FREEZE_WITHIN_HOURS divided by the cron interval — two numbers in two files
+   that nothing else ties together. Retune either and this fails. */
+const wf = file('.github/workflows/predictions.yml');
+const cronM = /cron:\s*'(\S+)\s+\*\/(\d+)\s/.exec(wf);
+ok('the workflow really is on an every-N-hours cron', !!cronM, cronM && cronM[0]);
+if (cronM) {
+  const everyH = +cronM[2];
+  const chances = cfg.FREEZE_WITHIN_HOURS / everyH;
+  console.log('    lead time ' + cfg.FREEZE_WITHIN_HOURS + 'h on an every-' + everyH +
+              'h cron = ' + chances + ' chances per fixture');
+  ok('"runs every three hours" matches the cron', /every three hours/.test(html) === (everyH === 3), everyH);
+  ok('"offered to the writer eight times" is that division',
+    !/eight times/.test(html) || chances === 8, chances);
+  ok('the lead time leaves several chances, not one',
+    chances >= 4 && Number.isInteger(chances), chances);
+}
+
+/* "eight right out of twelve ... about one time in five", and the threshold
+   MIN_FOR_RATE is set to. Both are binomial tails under a fair coin. */
+const lchoose = n => { let s = 0; for (let i = 2; i <= n; i++) s += Math.log(i); return s; };
+const binom = (k, n) => Math.exp(lchoose(n) - lchoose(k) - lchoose(n - k) - n * Math.LN2);
+const atLeast = (k, n) => { let s = 0; for (let k2 = k; k2 <= n; k2++) s += binom(k2, n); return s; };
+const fluke12 = atLeast(8, 12);
+const flukeN = atLeast(Math.ceil(cfg.MIN_FOR_RATE * 8 / 12), cfg.MIN_FOR_RATE);
+console.log('    8-of-12 on a fair coin: 1 in ' + (1 / fluke12).toFixed(1) +
+            ';  the same rate over ' + cfg.MIN_FOR_RATE + ': 1 in ' + (1 / flukeN).toFixed(0));
+ok('"about one time in five" is the 8-of-12 tail',
+  !/one time in five/.test(html) || Math.abs(1 / fluke12 - 5) < 0.75, 1 / fluke12);
+ok('MIN_FOR_RATE is high enough that the same fluke is rare, as config.js claims',
+  flukeN < 0.01, flukeN);
+ok('and MIN_FOR_RATE is the smaller-sample threshold, not the calibration one',
+  cfg.MIN_FOR_RATE >= 30 && cfg.MIN_FOR_RATE <= 200, cfg.MIN_FOR_RATE);
+
 /* ---------- coverage: does the page document every knob? ----------
    The forward check catches a page that lies. This catches a page that goes
    quiet — a parameter added to config.js and never explained. Anything left
@@ -132,6 +180,22 @@ ok('every league quality coefficient is published',
 const ttlUndoc = Object.keys(cfg.CACHE.ttl).filter(k => !tagged.has('CACHE.ttl.' + k));
 console.log('    cache TTLs not listed: ' + (ttlUndoc.join(', ') || 'none'));
 ok('the cache policy is at least broadly published', ttlUndoc.length <= 2, ttlUndoc);
+
+/* The same check one level up. MODEL is not the only place a setting lives: the
+   archive's lead time, the threshold before a hit rate is quoted, and the model
+   revision are all top-level exports, and each is a promise to the reader rather
+   than an implementation detail. Auditing only MODEL.* meant a new constant of
+   that kind could be added and never explained. Objects and functions are skipped
+   — they are audited by their own paths above, or are not settings at all. */
+const TOP_EXEMPT = {
+  currentSeason: 'a function, not a setting',
+};
+const topUndoc = Object.entries(cfg)
+  .filter(([, v]) => typeof v === 'number' || typeof v === 'string')
+  .map(([k]) => k)
+  .filter(k => !tagged.has(k) && !TOP_EXEMPT[k]);
+console.log('    top-level settings not documented: ' + (topUndoc.join(', ') || 'none'));
+ok('no top-level setting is silently undocumented', topUndoc.length === 0, topUndoc);
 
 /* ---------- links, assets, and classes ---------- */
 console.log('');
@@ -234,9 +298,14 @@ for (const tag of ['html', 'head', 'body', 'main', 'section', 'ol', 'ul', 'dl', 
 }
 ok('all block tags balanced', true);
 ok('one h1 only', (html.match(/<h1/g) || []).length === 1);
-ok('sections are numbered 1..7 in order',
-  [1,2,3,4,5,6,7].every(n => html.includes('>' + n + ' &middot; ')),
-  html.match(/>\d &middot; [^<]+/g));
+/* The sequence itself, not just "every number appears somewhere". Renumbering by
+   hand after inserting a section leaves two sections with the same number, and
+   the old form of this check passed straight through that: 1..7 all appeared, and
+   the second 7 was invisible to it. */
+const secNums = [...html.matchAll(/class="sec-h">(\d+) &middot; /g)].map(m2 => +m2[1]);
+console.log('    section numbers: ' + secNums.join(', '));
+ok('sections are numbered 1..n once each, in order',
+  secNums.length > 0 && secNums.every((n, i) => n === i + 1), secNums);
 ok('lang and viewport set', /<html lang="en">/.test(html) && /name="viewport"/.test(html));
 ok('has a skip link to the content', /class="skip" href="#method"/.test(html) && /id="method"/.test(html));
 ok('page has its own title and description',
@@ -246,7 +315,12 @@ ok('page has its own title and description',
 console.log('');
 console.log('=== the claims that must never quietly disappear ===');
 const must = [
-  ['states there is no measured accuracy record', /no accuracy record,\s*because none has been measured/],
+  /* This one used to read "no accuracy record, because none has been measured".
+     That was true until the archive started writing; leaving it in place would
+     have had the drift guard enforcing a claim the site had outgrown. The
+     commitment behind it has not moved — no figure before it is measured — so it
+     is restated rather than dropped. */
+  ['states there is no measured accuracy figure yet', /no measured\s*accuracy figure yet, because not enough matches have been scored/],
   ['admits the parameters are not backtested',   /not\s*values fitted against a backtest/],
   ['distinguishes correctness from accuracy',    /correctness is not accuracy/],
   ['calls the quality numbers a judgement',      /an informed judgement, not a measurement/],
@@ -256,6 +330,18 @@ const must = [
   ['keeps the age restriction',                  /restricted to adults|18\+/],
   ['offers help resources',                      /BeGambleAware/],
   ['says the current table is roster-only',      /never for strength/],
+
+  /* The archive's four promises. Each is a property a reader cannot verify for
+     themselves without being told it holds, which is exactly why removing one
+     quietly would be the cheapest way to make this site dishonest. */
+  ['promises predictions are written before kickoff', /written down before the match|frozen before kickoff|before the match, kept unchanged/i],
+  ['promises records are never edited afterwards',    /[Nn]ever edited afterwards|written once/],
+  ['says the verdict is derived rather than stored',  /derived, not stored/],
+  ['refuses to store a verdict',                      /does not hold\s*<code>correct: true<\/code>/],
+  ['points at the commit history as the audit trail', /history itself is\s*the audit trail/],
+  ['says each record is stamped with a model revision', /model revision/],
+  ['explains why no rate is published yet',           /percentage<\/em> does not appear until/],
+  ['links to the record page',                        /href="record\.html"/],
 ];
 must.forEach(([label, re2]) => ok(label, re2.test(html)));
 ok('the footer disclaimer is on both pages',

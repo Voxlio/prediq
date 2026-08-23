@@ -198,8 +198,11 @@ Run the test suite first — it needs no credentials and no network:
 node tests/run.mjs
 ```
 
-927 assertions across 16 suites. If those pass, the code is fine and the problem
-is configuration: permissions, a secret, or ESPN.
+The run ends with a line counting the assertions and the suites — a thousand-odd
+across sixteen files, and it prints the exact totals so this page does not have to
+carry a number that goes stale every time a test is added. What matters is that it
+says **all passed** and that no suite is missing. If it does, the code is fine and
+the problem is configuration: permissions, a secret, or ESPN.
 
 One caveat learned the hard way: a green suite proved the mirror worked when it
 could not write a single document, because the assertion checking the Firestore

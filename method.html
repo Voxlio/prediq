@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Method — how Prediq builds a prediction</title>
-<meta name="description" content="The full method behind Prediq's football predictions: the data, the Poisson goals model, every parameter, and the things the model cannot know.">
+<meta name="description" content="The full method behind Prediq's football predictions: the data, the Poisson goals model, every parameter, how each prediction is frozen before kickoff and scored afterwards, and the things the model cannot know.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -345,23 +345,116 @@
       </ul>
 
       <p class="copy">
-        And the honest limit that matters most: <b>Prediq has no accuracy record,
-        because none has been measured.</b> The parameters on this page are
-        reasoned defaults drawn from published work on football modelling, not
-        values fitted against a backtest of past seasons. The model has been
-        tested extensively for correctness &mdash; that the probabilities sum to
-        one, that the ratings average to one, that the maths converges, that a
-        stronger side is always favoured over a weaker one &mdash; but
-        correctness is not accuracy. Until a season has been recorded and
-        scored, treat the output as a well-built estimate rather than a proven
-        one. No accuracy claim will appear on this site before it has been
-        measured.
+        And the honest limit that matters most: <b>Prediq has no measured
+        accuracy figure yet, because not enough matches have been scored.</b> The
+        parameters on this page are reasoned defaults drawn from published work
+        on football modelling, not values fitted against a backtest of past
+        seasons. The model has been tested extensively for correctness &mdash;
+        that the probabilities sum to one, that the ratings average to one, that
+        the maths converges, that a stronger side is always favoured over a
+        weaker one &mdash; but correctness is not accuracy. Treat the output as a
+        well-built estimate rather than a proven one. What has changed since this
+        page was first written is that the evidence is now being collected in
+        public, one match at a time; the next section is how. No accuracy claim
+        will appear on this site before it has been measured.
       </p>
     </section>
 
-    <!-- ================= 6. THE MARKET COLUMN ================= -->
+    <!-- ================= 6. THE RECORD ================= -->
     <section class="sec">
-      <h2 class="sec-h">6 &middot; The bookmaker column</h2>
+      <h2 class="sec-h">6 &middot; The record, and how it is kept</h2>
+
+      <p class="copy">
+        A prediction site that keeps no record is unfalsifiable, and an
+        unfalsifiable prediction is entertainment. So every prediction Prediq
+        makes is written down before the match, kept unchanged, and published
+        where anyone can check it &mdash; on the <a href="record.html">record
+        page</a>, and as plain files in the public repository this site is built
+        from.
+      </p>
+
+      <ol class="steps">
+        <li>
+          <p class="step-h">Written before kickoff</p>
+          <p class="copy">
+            A scheduled job runs every three hours and freezes the prediction for
+            any match starting within
+            <b data-cfg="FREEZE_WITHIN_HOURS">24</b> hours. Not a week out: the
+            archived numbers should be the ones match-day visitors actually read.
+            At this lead time every fixture is offered to the writer eight times
+            before it starts, so several runs would have to fail in a row to lose
+            one.
+          </p>
+        </li>
+        <li>
+          <p class="step-h">Never edited afterwards</p>
+          <p class="copy">
+            A record is written once. When the match finishes the final score is
+            attached and nothing else is touched &mdash; the probabilities stay
+            exactly as they were. Because each write is a commit in a public
+            repository, the history itself is the audit trail: anyone can confirm
+            a prediction was published before the match it describes, without
+            taking our word for it.
+          </p>
+        </li>
+        <li>
+          <p class="step-h">The verdict is derived, not stored</p>
+          <p class="copy">
+            A record holds what we claimed and what happened. It does not hold
+            <code>correct: true</code>. Whether a call was right is recomputed
+            every time the record page is read, from the stored numbers, by one
+            function. A stored verdict would be unfalsifiable in exactly the way
+            this section exists to avoid, and it would let the per-match verdict
+            drift away from the site-wide figure.
+          </p>
+        </li>
+        <li>
+          <p class="step-h">Stamped with the model that made it</p>
+          <p class="copy">
+            Each record carries the model revision
+            (<b data-cfg="MODEL_REV">1.0</b>) and an automatic fingerprint of
+            every parameter on this page. Retuning the model therefore cannot
+            quietly rewrite its own history: old predictions stay attributed to
+            the version that actually made them, and one revision showing two
+            different fingerprints is the archive reporting that something
+            changed and was not declared.
+          </p>
+        </li>
+      </ol>
+
+      <p class="copy">
+        Counts appear from the first settled match, because eight right out of
+        twelve is a fact and hiding it would be worse than showing it. A
+        <em>percentage</em> does not appear until
+        <b data-cfg="MIN_FOR_RATE">50</b> matches have settled. Twelve coin
+        tosses land eight-or-better about one time in five, so a hit rate over a
+        handful of games is mostly noise wearing the clothes of a measurement.
+        Calibration &mdash; whether calls made at 70% actually land near 70%
+        &mdash; needs far more than fifty, and will get its own page rather than
+        being squeezed into this one.
+      </p>
+
+      <dl class="spec">
+        <div><dt>Prediction frozen before kickoff, within</dt><dd data-cfg="FREEZE_WITHIN_HOURS">24 <span class="unit">h</span></dd></div>
+        <div><dt>Settled matches before a rate is published</dt><dd data-cfg="MIN_FOR_RATE">50</dd></div>
+        <div><dt>Days of record the page offers</dt><dd data-cfg="RECORD_DAYS">7</dd></div>
+        <div><dt>Current model revision</dt><dd data-cfg="MODEL_REV">1.0</dd></div>
+      </dl>
+
+      <p class="copy">
+        Two things are deliberately kept out of a record: anything the model
+        derived that could be recomputed later, and anything about the teams
+        beyond their names. The one exception is the bookmaker's price, which is
+        stored because it is otherwise lost &mdash; the data source deletes odds
+        the moment a match finishes, so a model-versus-market comparison can only
+        ever be built forward from prices captured before kickoff. That is also
+        why that comparison does not exist yet: it has to accumulate.
+      </p>
+    </section>
+
+    <!-- ================= 7. THE MARKET COLUMN ================= -->
+    <section class="sec">
+      <h2 class="sec-h">7 &middot; The bookmaker column</h2>
 
       <p class="copy">
         Where a match has been priced, the card shows a <code>mkt</code> field
@@ -400,9 +493,9 @@
       </p>
     </section>
 
-    <!-- ================= 7. RESPONSIBLE USE ================= -->
+    <!-- ================= 8. RESPONSIBLE USE ================= -->
     <section class="sec">
-      <h2 class="sec-h">7 &middot; Responsible use</h2>
+      <h2 class="sec-h">8 &middot; Responsible use</h2>
 
       <p class="copy">
         These are probabilities, not tips. A prediction given at 70% is meant to
