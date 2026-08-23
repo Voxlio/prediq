@@ -1,18 +1,58 @@
+# =============================================================================
+# Prediq — the archive writer.
+#
+# Two scripts, one job, several times a day:
+#
+#   tools/freeze.mjs   record every fixture kicking off in the next 24 hours,
+#                      before it starts. Write-once: a fixture already recorded
+#                      is left exactly as it was.
+#   tools/settle.mjs   attach final scores to predictions whose matches have
+#                      finished, then rebuild data/index.json and summary.json.
+#
+# Everything it commits lives in data/. Nothing else in the repository is touched.
+#
+# WHY A CRON JOB AND NOT A DATABASE WRITE FROM THE BROWSER
+#
+# The whole point of the archive is that a prediction cannot be edited after the
+# match. A browser that could write to a database could also write a prediction
+# an hour after kickoff, and nobody reading the data later could tell. Here the
+# only writer is this workflow, and every write is a git commit with a timestamp
+# and a diff — so "we said this beforehand" is checkable by anyone, including
+# against us.
+#
+# WHY IT NEEDS NO SECRETS
+#
+# ESPN's endpoints take no key. The commit is made by the token GitHub hands the
+# job automatically. There is nothing here to leak and nothing to rotate.
+# =============================================================================
+
 name: predictions
 
 on:
   schedule:
+    # Every three hours, on the hour, UTC. GitHub runs scheduled jobs late under
+    # load — sometimes by 15 minutes or more — which is exactly why the lead-time
+    # window in config.js is 24 hours and not 3: every fixture is offered to the
+    # writer eight times before kickoff, so a late or skipped run costs nothing.
     - cron: '0 */3 * * *'
   workflow_dispatch:
+    # Manual runs, for the first one and for after a fix.
     inputs:
       dry_run:
         description: 'Report what would happen, write nothing'
         type: boolean
         default: false
 
+# The job commits to the repository, so it needs more than the default read
+# token — and nothing more than that. It does not deploy, comment, or read
+# secrets.
 permissions:
   contents: write
 
+# Two runs must never write the archive at once: both would read the same day
+# file, both would merge into their own copy, and whichever pushed second would
+# either fail or clobber. Queued rather than cancelled, because a run that got
+# as far as freezing a fixture should be allowed to commit it.
 concurrency:
   group: prediq-archive
   cancel-in-progress: false
@@ -20,16 +60,28 @@ concurrency:
 jobs:
   archive:
     runs-on: ubuntu-latest
+    # A hung fetch should not hold a runner for six hours. The job normally
+    # finishes in well under a minute.
     timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v4
         with:
+          # The full history, not the single commit checkout gives by default.
+          # Two reasons. The retry below rebases onto whatever was pushed while
+          # this run was working, and a rebase wants real history to replay onto.
+          # And the history *is* the archive's evidence — a job that writes an
+          # audit trail should be working with the whole thing, not a truncated
+          # view of it. The repository is a few hundred kilobytes of JSON, so
+          # there is nothing to save by shallow-cloning it.
           fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+          # No cache key, because there is nothing to cache: Prediq has no
+          # dependencies and no build step. If this line ever needs a
+          # package-lock.json, something has gone wrong upstairs.
 
       - name: Record predictions for matches starting soon
         id: freeze
@@ -37,6 +89,11 @@ jobs:
 
       - name: Attach results to matches that have finished
         id: settle
+        # Runs even if freeze failed. They are independent halves: ESPN's
+        # scoreboard being down for the next 24 hours has nothing to do with
+        # whether last night's results can be read, and a prediction left
+        # unsettled because of an unrelated failure would look, on the accuracy
+        # page, exactly like a match we got wrong.
         if: always()
         run: node tools/settle.mjs ${{ inputs.dry_run && '--dry-run' || '' }}
 
@@ -44,28 +101,50 @@ jobs:
         id: commit
         if: ${{ always() && !inputs.dry_run }}
         env:
+          # Reported by the scripts themselves via $GITHUB_OUTPUT. Greping the
+          # diff for these numbers instead would work today and start counting
+          # the wrong lines the first time the record schema gained a field.
           RECORDED: ${{ steps.freeze.outputs.recorded || 0 }}
           SETTLED: ${{ steps.settle.outputs.settled || 0 }}
           STALE: ${{ steps.settle.outputs.stale || 0 }}
         run: |
           set -euo pipefail
-          git config user.name 'prediq-archive'
+          git config user.name  'prediq-archive'
           git config user.email 'prediq-archive@users.noreply.github.com'
 
+          # mkdir before add. If both scripts failed before writing anything and
+          # data/ did not already exist, `git add data` would abort on an unknown
+          # pathspec and turn a fetch outage into a red run for the wrong reason.
           mkdir -p data
           git add data
 
+          # Both scripts refuse to rewrite a file whose content has not changed,
+          # so most runs have genuinely nothing to commit. That is the normal
+          # case, not a failure — between fixture rounds there is no football.
           if git diff --cached --quiet; then
             echo "archive unchanged (${STALE} predictions still unresolved)"
             exit 0
           fi
 
+          # The subject line says what moved, so the history is readable without
+          # opening the diff.
           git commit -m "archive: ${RECORDED} recorded, ${SETTLED} settled"
 
+          # Another run may have pushed while this one was working. Rebase and
+          # retry rather than force: the archive's whole value is that its
+          # history was not rewritten. If all three attempts fail the run goes
+          # red and the next one, three hours later, starts from a fresh
+          # checkout and succeeds — so this failure is self-healing and only
+          # needs looking at if it repeats.
           for attempt in 1 2 3; do
             if git push; then exit 0; fi
             echo "push rejected, rebasing (attempt ${attempt})"
 
+            # A conflict is handled here rather than left to `set -e`, which
+            # would abort mid-rebase and print nothing but git's hints. It is
+            # also the single most important failure this job can have: two
+            # different values for the same stored record is precisely what
+            # write-once exists to prevent, so it gets named rather than retried.
             if ! git pull --rebase --autostash origin "${GITHUB_REF_NAME}"; then
               echo ''
               echo '=== REBASE CONFLICT — nothing pushed ==='
@@ -87,8 +166,30 @@ jobs:
 
       - name: Mirror the archive into Firestore
         id: mirror
+        # Last, and deliberately so. By the time this runs the archive is already
+        # committed and pushed, so a Firestore outage cannot cost a prediction —
+        # the next run re-offers whatever this one missed. mirror.mjs reads only
+        # what is on disk: it cannot fetch, cannot fit the model, and cannot
+        # invent a record that is not already in git.
+        #
+        # Only if the commit actually succeeded — not `always()`. If the push
+        # failed, the local data/ contains records that are not in git, and
+        # mirroring those would put Firestore AHEAD of the auditable copy. Given a
+        # choice between the two being out of step in one direction or the other,
+        # the repository must never be the one that is behind.
         if: ${{ !inputs.dry_run && steps.commit.outcome == 'success' }}
+        # A mirror failing is not the archive failing. The step goes red and stays
+        # visible in the run list, but the job passes — which is the honest signal:
+        # the record is safe, and a copy of it is not.
         continue-on-error: true
         env:
+          # The one real credential in this project. It grants admin access to the
+          # Firestore project and bypasses firestore.rules entirely, which is why
+          # data/ in this repository — not Firestore — is the primary copy.
+          #
+          # Absent is a supported state: mirror.mjs says so and exits 0. A fork of
+          # Prediq gets a working site and a working archive with no Firebase
+          # project at all.
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: node tools/mirror.mjs
+
