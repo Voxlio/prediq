@@ -1,6 +1,6 @@
 {
   "day": "2026-08-24",
-  "updatedAt": "2026-08-23T18:26:46.807Z",
+  "updatedAt": "2026-08-23T21:20:05.301Z",
   "records": [
     {
       "v": 1,
@@ -88,6 +88,246 @@
         },
         "seen": [
           0,
+          1
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401888389",
+      "kickoff": "2026-08-24T18:30:00.000Z",
+      "league": "tur.1",
+      "home": {
+        "id": "995",
+        "name": "Kocaelispor"
+      },
+      "away": {
+        "id": "132335",
+        "name": "Amed SFK"
+      },
+      "predicted": {
+        "at": "2026-08-23T21:20:05.301Z",
+        "lambda": [
+          0.77,
+          1.056
+        ],
+        "probs": [
+          0.2542,
+          0.3368,
+          0.409
+        ],
+        "pick": "away",
+        "score": [
+          0,
+          0,
+          0.1688
+        ],
+        "over25": 0.2766,
+        "btts": 0.3583,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          1,
+          1
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401874928",
+      "kickoff": "2026-08-24T18:45:00.000Z",
+      "league": "ita.1",
+      "home": {
+        "id": "104",
+        "name": "AS Roma"
+      },
+      "away": {
+        "id": "109",
+        "name": "Fiorentina"
+      },
+      "predicted": {
+        "at": "2026-08-23T21:20:05.301Z",
+        "lambda": [
+          1.823,
+          0.665
+        ],
+        "probs": [
+          0.6455,
+          0.2309,
+          0.1237
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          0,
+          0.1454
+        ],
+        "over25": 0.4531,
+        "btts": 0.4133,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          0,
+          0
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401879318",
+      "kickoff": "2026-08-24T19:00:00.000Z",
+      "league": "eng.1",
+      "home": {
+        "id": "370",
+        "name": "Fulham"
+      },
+      "away": {
+        "id": "363",
+        "name": "Chelsea"
+      },
+      "predicted": {
+        "at": "2026-08-23T21:20:05.301Z",
+        "lambda": [
+          1.333,
+          1.366
+        ],
+        "probs": [
+          0.356,
+          0.2728,
+          0.3712
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1298
+        ],
+        "over25": 0.5063,
+        "btts": 0.556,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          0,
+          0
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401885472",
+      "kickoff": "2026-08-24T19:15:00.000Z",
+      "league": "por.1",
+      "home": {
+        "id": "3699",
+        "name": "Gil Vicente"
+      },
+      "away": {
+        "id": "21581",
+        "name": "Casa Pia"
+      },
+      "predicted": {
+        "at": "2026-08-23T21:20:05.301Z",
+        "lambda": [
+          1.979,
+          0.411
+        ],
+        "probs": [
+          0.746,
+          0.1917,
+          0.0623
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          0,
+          0.1794
+        ],
+        "over25": 0.4278,
+        "btts": 0.2951,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          2,
+          2
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401882910",
+      "kickoff": "2026-08-24T19:30:00.000Z",
+      "league": "esp.1",
+      "home": {
+        "id": "99",
+        "name": "Málaga"
+      },
+      "away": {
+        "id": "90",
+        "name": "Deportivo"
+      },
+      "predicted": {
+        "at": "2026-08-23T21:20:05.301Z",
+        "lambda": [
+          1.225,
+          1.149
+        ],
+        "probs": [
+          0.3714,
+          0.2939,
+          0.3347
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1389
+        ],
+        "over25": 0.4235,
+        "btts": 0.4903,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          1,
           1
         ]
       },
