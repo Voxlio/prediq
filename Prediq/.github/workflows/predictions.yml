@@ -192,3 +192,4 @@ jobs:
           # project at all.
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: node tools/mirror.mjs
+
