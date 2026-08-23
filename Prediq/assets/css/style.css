@@ -1,0 +1,947 @@
+/* ==========================================================================
+   Prediq — stylesheet
+   Order: tokens → reset → layout → masthead → status → match card → form strip
+          → outcomes → readout → insights → day dividers → blank card
+          → notices → skeleton → method page → ratings table → footer
+          → responsive → reduced motion
+   ========================================================================== */
+
+/* --- 1. Design tokens ---------------------------------------------------- */
+:root {
+  /* Palette. Near-black page, one amber accent, everything else grey.
+     The amber only ever encodes data — never decoration. */
+  --ink:    #0C0D10;   /* page background */
+  --panel:  #14161B;   /* raised card */
+  --line:   #23262E;   /* hairline dividers */
+  --mute:   #6E7480;   /* labels, secondary text */
+  --dim:    #9AA0AB;   /* body text on cards */
+  --text:   #E8E9ED;   /* primary text */
+  --warm:   #F0A22E;   /* the single accent */
+
+  /* Result colours for the form strip, and the only hues on the site besides
+     amber. Deliberately desaturated: amber means "the model's pick" and has to
+     stay the loudest thing on a card, so a past win must not compete with it.
+     The scoreline is legible without these — own goals are printed first, so
+     the digits already say who won and the colour only agrees. */
+  --win-bg:  #17351F;
+  --win-fg:  #79BC8B;
+  --draw-bg: #22252D;
+  --draw-fg: #9AA0AB;
+  --loss-bg: #37201E;
+  --loss-fg: #C98A82;
+
+  --sans: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --measure: 42rem;    /* single-column max width */
+  --radius: 3px;       /* barely-there rounding */
+
+  color-scheme: dark;
+}
+
+/* --- 2. Reset ------------------------------------------------------------ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, p, dl, dd, ul, ol, figure, figcaption {
+  margin: 0;
+  padding: 0;
+}
+
+ul { list-style: none; }
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+b, strong { font-weight: 500; }
+
+/* Keyboard focus stays visible everywhere. */
+:focus-visible {
+  outline: 2px solid var(--warm);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 10;
+  padding: 0.6rem 1rem;
+  background: var(--warm);
+  color: var(--ink);
+  font: 500 13px/1 var(--mono);
+}
+.skip:focus { left: 0; }
+
+/* Shared small-caps label, used for every field name on the page. */
+.label {
+  font: 400 10px/1 var(--mono);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+/* --- 3. Layout ---------------------------------------------------------- */
+.shell {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 5.5rem 1.5rem 4rem;
+}
+
+/* --- 4. Masthead -------------------------------------------------------- */
+.masthead-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.wordmark {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.wordmark .dot { color: var(--warm); }
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  font: 400 13px/1 var(--mono);
+  color: var(--mute);
+}
+.nav a {
+  padding-bottom: 2px;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.nav a:hover {
+  color: var(--text);
+  border-bottom-color: var(--warm);
+}
+/* The page you are on. There is no build step to share this header, so the
+   marker is written into each page's markup and a test asserts the three nav
+   blocks stay identical apart from it. */
+.nav a.is-here {
+  color: var(--text);
+  border-bottom-color: var(--line);
+}
+
+.thesis {
+  max-width: 32rem;
+  margin-top: 1.5rem;
+  color: var(--dim);
+  font-size: 15px;
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+
+/* --- 5. Status strip ---------------------------------------------------- */
+.status {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  margin-top: 2.75rem;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  font: 400 11px/1 var(--mono);
+  letter-spacing: 0.06em;
+  color: var(--mute);
+  text-transform: uppercase;
+}
+.status b {
+  font-weight: 500;
+  color: var(--text);
+}
+.status-sep { color: var(--line); }
+.status-mute { color: var(--warm); }
+
+/* --- 6. Match card ------------------------------------------------------ */
+.fixtures {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+
+.match {
+  padding: 1.5rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  /* Staggered entrance — --i is set per card in the markup. */
+  animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.match-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.comp {
+  font: 400 10px/1 var(--mono);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+.kick {
+  font: 500 12px/1 var(--mono);
+  color: var(--dim);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- 7. Recent form strip ------------------------------------------------ */
+/* One line per side: team name, then five crest-and-scoreline units, most
+   recent first. Both lines are left-aligned and share one label column width,
+   so the crests form a column you can read down and compare — mirroring the
+   away side to the right would put the two runs back to back and make them
+   almost impossible to line up.
+
+   The label column is declared once, on the row, because the two lines are
+   separate elements and only a shared value keeps them in step.
+
+   Colour here is redundant by design. Own goals print first, so "2–1" is a win
+   from the digits alone; the background only agrees with them. That matters
+   both for colour blindness and for keeping amber — which means "the model's
+   pick" — the loudest thing on the card. */
+.form-row {
+  --form-label: 5.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: 0.9rem;
+}
+
+.form-side {
+  display: grid;
+  grid-template-columns: var(--form-label) minmax(0, 1fr);
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.form-team {
+  font: 400 10px/1 var(--mono);
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.form-runs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  min-width: 0;
+}
+
+.form-game {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 5px 2px 3px;
+  border-radius: 2px;
+  background: var(--draw-bg);
+  cursor: help;
+}
+.form-game.is-w { background: var(--win-bg); }
+.form-game.is-l { background: var(--loss-bg); }
+
+.form-crest {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  object-fit: contain;
+}
+/* Same footprint as a real crest, so a side ESPN gave us no images for still
+   lines up with one it did. */
+.form-crest.is-none {
+  display: grid;
+  place-items: center;
+  border-radius: 2px;
+  background: var(--line);
+  font: 500 8px/1 var(--mono);
+  color: var(--mute);
+}
+
+.form-score {
+  font: 500 10px/1 var(--mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--draw-fg);
+}
+.form-game.is-w .form-score { color: var(--win-fg); }
+.form-game.is-l .form-score { color: var(--loss-fg); }
+
+.form-none {
+  font: 400 11px/1 var(--mono);
+  color: var(--mute);
+}
+
+/* --- 8. Outcome rows ---------------------------------------------------- */
+.outcomes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 1.25rem;
+}
+
+.outcome {
+  display: grid;
+  grid-template-columns: minmax(0, 7.5rem) 1fr 3.25rem;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.outcome-name {
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.outcome-bar {
+  height: 3px;
+  background: var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.outcome-bar > i {
+  display: block;
+  width: var(--w, 0%);
+  height: 100%;
+  background: var(--mute);
+  border-radius: inherit;
+  animation: fill 0.7s cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+  animation-delay: calc(var(--i, 0) * 70ms + 120ms);
+}
+
+@keyframes fill {
+  from { width: 0; }
+  to   { width: var(--w, 0%); }
+}
+
+.outcome-pct {
+  font: 500 15px/1 var(--mono);
+  color: var(--dim);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.outcome-pct em {
+  font-style: normal;
+  font-size: 10px;
+  color: var(--mute);
+}
+
+/* The model's favoured outcome is the only place amber touches text. */
+.outcome.is-pick .outcome-name { color: var(--text); font-weight: 500; }
+.outcome.is-pick .outcome-pct  { color: var(--warm); }
+.outcome.is-pick .outcome-bar > i { background: var(--warm); }
+
+/* --- 9. Readout: confidence + markets ----------------------------------- */
+.readout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin-top: 1.4rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--line);
+}
+
+.conf {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.meter {
+  display: inline-flex;
+  gap: 3px;
+}
+.meter > i {
+  width: 14px;
+  height: 4px;
+  background: var(--line);
+  border-radius: 1px;
+}
+.meter > i.on { background: var(--warm); }
+
+.conf-word {
+  font: 400 11px/1 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.markets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 1.1rem;
+}
+.markets > div {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+.markets dt {
+  font: 400 10px/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+.markets dd {
+  font: 500 12px/1 var(--mono);
+  color: var(--dim);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- 10. Insights -------------------------------------------------------- */
+.insights {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+}
+.insights li {
+  position: relative;
+  padding-left: 1rem;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--dim);
+  text-wrap: pretty;
+}
+.insights li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 4px;
+  height: 1px;
+  background: var(--mute);
+}
+.insights b {
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- 11. Day dividers ---------------------------------------------------- */
+/* A week across six competitions is a long list. These are the cheapest
+   possible way to make it scannable: a hairline and a small-caps label. */
+.day {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 1.15rem 0 -0.1rem;
+  font: 400 10px/1 var(--mono);
+  font-weight: 400;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+.day:first-child { margin-top: 0.35rem; }
+.day::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+/* --- 12. Fixtures with no prediction ------------------------------------- */
+/* A fixture the model refuses to price still gets a card. Hiding it would
+   misrepresent what is actually on this week. */
+.match.is-blank { border-style: dashed; }
+
+.blank-teams {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-top: 1.25rem;
+  font-size: 15px;
+  color: var(--dim);
+}
+.blank-v {
+  font: 400 11px/1 var(--mono);
+  color: var(--mute);
+}
+
+.blank-note {
+  margin-top: 0.85rem;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--mute);
+  text-wrap: pretty;
+}
+
+/* A fixture whose prediction is still being computed — phase 1 has the match,
+   phase 2 has the numbers. Deliberately NOT dashed: a dashed border is the
+   site's mark for "no prediction is coming", and one is coming here. The border
+   stays solid and only the note moves, which is the smallest signal that reads
+   as activity rather than as a broken card. */
+.match.is-pending .blank-note {
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+/* --- 13. Notices --------------------------------------------------------- */
+.notice {
+  padding: 1.35rem 1.5rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.notice.is-warn { border-left: 2px solid var(--warm); }
+
+.notice-title {
+  font: 500 13px/1.4 var(--mono);
+  color: var(--text);
+}
+.notice-body {
+  margin-top: 0.5rem;
+  max-width: 34rem;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--mute);
+  text-wrap: pretty;
+}
+
+/* --- 14. Loading skeleton ------------------------------------------------ */
+/* Shown only during the first load, so the page never sits blank looking
+   broken. aria-hidden, because there is nothing here to read. */
+.match.is-skeleton { animation: none; }
+
+.sk {
+  display: block;
+  height: 9px;
+  background: var(--line);
+  border-radius: 2px;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.sk-xs  { width: 2.5rem; }
+.sk-sm  { width: 6rem; }
+.sk-md  { width: 100%; }
+.sk-bar { height: 3px; border-radius: 999px; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 0.22; }
+}
+
+/* --- 15. Method page ----------------------------------------------------- */
+/* Prose in the same voice as the cards: one narrow column, small-caps section
+   labels, and dense two-column rows for anything numeric. No diagrams — a
+   labelled row says the same thing in a tenth of the height. */
+.page-title {
+  margin-top: 2.75rem;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.sec { margin-top: 2.5rem; }
+
+.sec-h {
+  font: 400 11px/1 var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--warm);
+}
+
+.copy {
+  max-width: 36rem;
+  margin-top: 0.9rem;
+  color: var(--dim);
+  font-size: 14.5px;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+.copy + .copy { margin-top: 0.8rem; }
+.copy b { color: var(--text); }
+.copy code {
+  font: 400 13px/1 var(--mono);
+  color: var(--text);
+}
+
+/* Links inside prose. Styled on the element rather than behind a class, so a
+   link added to any page later cannot silently arrive unstyled. */
+.copy a {
+  color: var(--text);
+  border-bottom: 1px solid var(--line);
+  transition: border-color 0.15s ease;
+}
+.copy a:hover { border-bottom-color: var(--warm); }
+
+/* Numbered build steps. The numeral is mono and amber-free — it is a label,
+   not data. list-style is killed here rather than in the reset, because this
+   list draws its own numeral in ::before and would otherwise show two. A plain
+   <ol> added later should still number itself. */
+.steps {
+  margin-top: 1.1rem;
+  list-style: none;
+  counter-reset: step;
+}
+.steps > li {
+  position: relative;
+  padding-left: 2.1rem;
+  counter-increment: step;
+}
+.steps > li + li { margin-top: 1.1rem; }
+.steps > li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  font: 500 11px/1.4 var(--mono);
+  color: var(--mute);
+}
+.step-h {
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--text);
+}
+.steps .copy { margin-top: 0.35rem; }
+
+/* Label → value rows. The densest honest way to publish a parameter list. */
+.spec { margin-top: 1.1rem; }
+.spec > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.spec > div:first-child { border-top: 1px solid var(--line); }
+.spec dt {
+  font-size: 13.5px;
+  color: var(--dim);
+}
+.spec dd {
+  flex: none;
+  font: 500 12.5px/1.4 var(--mono);
+  color: var(--text);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.spec dd .unit {
+  color: var(--mute);
+  font-weight: 400;
+}
+
+/* The limits list, where every line is something Prediq does NOT know. */
+.limits { margin-top: 1.1rem; }
+.limits li {
+  position: relative;
+  padding-left: 1.15rem;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--dim);
+  text-wrap: pretty;
+}
+.limits li + li { margin-top: 0.4rem; }
+.limits li::before {
+  content: "×";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font: 400 12px/1.75 var(--mono);
+  color: var(--mute);
+}
+.limits b { color: var(--text); }
+
+/* --- 16. Ratings table --------------------------------------------------- */
+/* A real table, because this is real tabular data. Every width is fixed, so
+   the league tables stacked down the page share one grid rather than each
+   finding its own and making the eye re-learn the layout six times. Everything
+   numeric is mono and tabular-nums: a rating column is only readable if the
+   digits sit above each other. */
+.rt {
+  width: 100%;
+  margin-top: 1.25rem;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.rt + .rt { margin-top: 2.5rem; }
+
+/* The caption carries the league name and what the fit was built from. Stating
+   the match count beside the ratings is the point: a rating is only as good as
+   the evidence under it, and here the evidence is named. */
+.rt-cap {
+  caption-side: top;
+  text-align: left;
+  padding-bottom: 0.65rem;
+}
+.rt-cap-name {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--text);
+}
+.rt-cap-meta {
+  display: block;
+  margin-top: 0.2rem;
+  font: 400 10px/1.5 var(--mono);
+  letter-spacing: 0.05em;
+  color: var(--mute);
+  font-variant-numeric: tabular-nums;
+}
+
+.rt-h {
+  padding: 0 0 0.5rem;
+  border-bottom: 1px solid var(--line);
+  font: 400 10px/1 var(--mono);
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--mute);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* A sortable header is a real button, so it is reachable by keyboard and
+   announced as pressable. It is then styled back down to look like the header
+   text it sits inside — the affordance is the hover, not a box. */
+.rt-sort {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+.rt-sort:hover { color: var(--text); }
+.rt-sort.is-on { color: var(--warm); }
+
+/* aria-sort tells assistive software which way the table runs. This is the same
+   fact drawn for everyone else. */
+.rt-caret { margin-left: 0.3em; }
+
+.rt-row { border-bottom: 1px solid var(--line); }
+.rt-row:hover { background: var(--panel); }
+.rt-row > * {
+  padding: 0.5rem 0;
+  vertical-align: baseline;
+}
+
+/* Column geometry, declared once and shared by the header and the body cells
+   under the same class. Team takes whatever is left. */
+.rt-rank    { width: 2.1rem; text-align: left; }
+.rt-team    { text-align: left; font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rt-pl      { width: 2.8rem; }
+.rt-attack  { width: 3.4rem; }
+.rt-defence { width: 3.4rem; }
+.rt-xpts    { width: 3.8rem; }
+
+.rt-name {
+  font-size: 14px;
+  color: var(--text);
+}
+/* Division tag, cross-league table only, where a hundred names in one list is
+   otherwise impossible to place. */
+.rt-abbr {
+  margin-left: 0.5rem;
+  font: 400 9px/1 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+/* Figures. Scoped under .rt-row so the header keeps its own small-caps type. */
+.rt-row .rt-rank,
+.rt-row .rt-pl,
+.rt-row .rt-attack,
+.rt-row .rt-defence,
+.rt-row .rt-xpts {
+  font: 400 12.5px/1.4 var(--mono);
+  color: var(--dim);
+  font-variant-numeric: tabular-nums;
+}
+.rt-row .rt-rank { font-size: 11px; color: var(--mute); }
+.rt-row .rt-pl   { color: var(--mute); }
+.rt-row .rt-xpts { font-weight: 500; color: var(--text); }
+
+/* The leader. Amber encodes data here as everywhere else — the datum is
+   "first in the current sort". */
+.rt-row.is-top .rt-xpts { color: var(--warm); }
+
+/* Under the match threshold a rating still rests mostly on last season. The
+   row is dimmed rather than hidden or footnoted, because the figure is not
+   wrong — it is a weaker claim, and the two should not look identical. This
+   rule deliberately follows is-top: a leader with four matches played gets the
+   dimming, not the amber. */
+.rt-row.is-thin .rt-name { color: var(--dim); }
+.rt-row.is-thin .rt-pl,
+.rt-row.is-thin .rt-attack,
+.rt-row.is-thin .rt-defence,
+.rt-row.is-thin .rt-xpts { color: var(--mute); }
+
+.rt.is-skeleton .rt-row:hover { background: none; }
+
+/* The scale switch. Amber is reserved for data, so the selected side is marked
+   by weight and a raised background rather than by the accent. */
+.toggle {
+  display: inline-flex;
+  margin-top: 1.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.toggle-b {
+  margin: 0;
+  padding: 0.45rem 0.9rem;
+  background: none;
+  border: 0;
+  color: var(--mute);
+  font: 400 11px/1 var(--mono);
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.toggle-b + .toggle-b { border-left: 1px solid var(--line); }
+.toggle-b:hover { color: var(--text); }
+.toggle-b.is-on {
+  color: var(--text);
+  background: var(--line);
+  font-weight: 500;
+  cursor: default;
+}
+
+/* --- 17. Footer --------------------------------------------------------- */
+.foot {
+  margin-top: 3.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.foot-note {
+  max-width: 30rem;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--mute);
+  text-wrap: pretty;
+}
+
+.foot-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+  font: 400 11px/1 var(--mono);
+  letter-spacing: 0.05em;
+  color: var(--mute);
+}
+.foot-meta a {
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--line);
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.foot-meta a:hover {
+  color: var(--text);
+  border-bottom-color: var(--warm);
+}
+
+/* --- 18. Responsive ----------------------------------------------------- */
+@media (max-width: 34rem) {
+  .shell { padding: 3.5rem 1.15rem 3rem; }
+  .match { padding: 1.15rem; }
+  .notice { padding: 1.15rem; }
+
+  .outcome {
+    grid-template-columns: minmax(0, 5.5rem) 1fr 3rem;
+    gap: 0.7rem;
+  }
+  .outcome-name { font-size: 14px; }
+
+  .readout { gap: 0.9rem; }
+  .markets { gap: 0.4rem 0.85rem; }
+
+  /* A label column plus five crest-and-score units will not fit on one 320px
+     line, so the name moves above its own strip. That costs two lines per card
+     and keeps the crests, which are the part carrying information. The gap
+     grows at the same time, because the two sides now need to read as two
+     blocks rather than four loose lines. */
+  .form-row { gap: 0.7rem; }
+  .form-side {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.25rem;
+  }
+  .form-game { gap: 3px; padding: 2px 4px 2px 2px; }
+  .form-crest { width: 13px; height: 13px; }
+  .form-score { font-size: 9px; }
+
+  /* A long parameter name and its value stop competing for one line. */
+  .spec > div { flex-wrap: wrap; gap: 0.15rem 1rem; }
+  .spec dd { text-align: left; }
+
+  /* Six columns will not fit at 320px, so the rank goes. It is the only column
+     that carries nothing the order of the rows does not already say. */
+  .rt-rank { display: none; }
+  .rt-pl      { width: 2.4rem; }
+  .rt-attack  { width: 3rem; }
+  .rt-defence { width: 3rem; }
+  .rt-xpts    { width: 3.3rem; }
+  .rt-row .rt-pl,
+  .rt-row .rt-attack,
+  .rt-row .rt-defence,
+  .rt-row .rt-xpts { font-size: 12px; }
+  .rt-name { font-size: 13.5px; }
+  .rt + .rt { margin-top: 2rem; }
+  .toggle-b { padding: 0.45rem 0.7rem; }
+}
+
+/* --- 19. Reduced motion ------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  /* This list is explicit rather than a blanket `* { animation: none }`, so
+     every new animation has to be added here by hand. Adding one and forgetting
+     this block is the failure mode — the hygiene check greps for it. */
+  .match,
+  .outcome-bar > i,
+  .match.is-pending .blank-note,
+  .sk {
+    animation: none;
+  }
+  .outcome-bar > i { width: var(--w, 0%); }
+  * { transition-duration: 0.01ms !important; }
+}

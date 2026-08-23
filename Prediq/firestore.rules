@@ -1,0 +1,61 @@
+rules_version = '2';
+
+/* =============================================================================
+   Firestore security rules for Prediq.
+
+   These rules ARE the security. The web config in assets/js/firebase-config.js is
+   public by design — it ships in browser JavaScript, so every visitor has it, and
+   that is how Firebase is meant to work. Nothing is protected by being hidden;
+   everything is protected by what follows.
+
+   Deploy from the Firebase console (Firestore Database → Rules → paste → Publish)
+   or with `firebase deploy --only firestore:rules`. Until they are published, the
+   rules in force are whatever the console last saved — and a project created in
+   "test mode" starts out readable AND WRITABLE by anyone on the internet for 30
+   days. Publish these before putting anything real in the database.
+   ========================================================================== */
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /* --- the archive -------------------------------------------------------
+       Anyone may read a prediction. That is the point of the site: the record
+       is published so it can be checked.
+
+       Nobody may write one from a browser. Not create, not edit, not delete.
+       The only writer is the scheduled GitHub Actions job, which authenticates
+       as a service account and therefore bypasses these rules entirely.
+
+       Why that asymmetry is deliberate: a browser that could write here could
+       also write a prediction an hour after kickoff, and no reader could tell
+       afterwards. Making the client read-only removes that possibility for
+       everyone except us — and the reason `data/` in the repository is kept as
+       the primary copy is that OUR writes are the ones these rules cannot
+       restrain. A service account is admin; git history is not.
+    --------------------------------------------------------------------------*/
+    match /predictions/{recordId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    /* Derived documents: the index and the accuracy summary. Same posture.
+       Both are rebuilt from the predictions on every run, so a lost or damaged
+       one costs nothing. */
+    match /meta/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    /* --- everything else ---------------------------------------------------
+       Closed. Firestore grants access if ANY matching rule allows it, so this
+       does not weaken the two blocks above — it means a collection nobody
+       thought about is unreachable rather than open. If a new collection is
+       added later it must be named here explicitly, which is the intended
+       friction: an accidentally public collection should be impossible to
+       create by forgetting something.
+    --------------------------------------------------------------------------*/
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

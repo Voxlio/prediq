@@ -1,0 +1,21 @@
+# Prediq has no dependencies and no build step, so there is very little to ignore.
+# If node_modules ever appears here, something was installed that should not have
+# been — the site must keep running from a plain checkout with no install step.
+node_modules/
+package-lock.json
+
+# Editor and OS clutter.
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*~
+*.swp
+
+# Scratch archives produced by running the writers against a temporary directory
+# (PREDIQ_ROOT). The real archive lives in data/ and is deliberately NOT ignored:
+# it is the record, and its git history is the only part of the accuracy claim an
+# outsider can check.
+/tmp-archive/
+/scratch/

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Method — how Prediq builds a prediction</title>
+<meta name="description" content="The full method behind Prediq's football predictions: the data, the Poisson goals model, every parameter, and the things the model cannot know.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<a class="skip" href="#method">Skip to the method</a>
+
+<div class="shell">
+
+  <header class="masthead">
+    <div class="masthead-row">
+      <a class="wordmark" href="index.html">prediq<span class="dot">.</span></a>
+      <nav class="nav">
+        <a href="index.html">fixtures</a>
+        <a href="ratings.html">ratings</a>
+        <a href="method.html" class="is-here" aria-current="page">method</a>
+      </nav>
+    </div>
+    <p class="thesis">
+      Every number on this site is computed, and this page is the whole
+      derivation &mdash; the data, the maths, each setting, and the things the
+      model cannot know. None of it is a trade secret.
+    </p>
+  </header>
+
+  <main id="method">
+
+    <h1 class="page-title">How a prediction gets built</h1>
+
+    <!-- ================= 1. DATA ================= -->
+    <section class="sec">
+      <h2 class="sec-h">1 &middot; Where the numbers come from</h2>
+
+      <p class="copy">
+        Everything is computed in your browser the moment you open the page.
+        There is no Prediq server, no database, no account, and nothing recorded
+        about you. Close the tab and nothing of yours persists except a cache
+        you can clear.
+      </p>
+      <p class="copy">
+        Match data comes from ESPN's public football endpoints. For each of the
+        <b data-cfg="DOMESTIC.length">11</b> domestic leagues Prediq rates, it
+        reads last season's final table, the current table, and this season's
+        completed matches. It also reads the next
+        <b data-cfg="FIXTURE_DAYS">7</b> days of fixtures for those leagues and
+        for the three European competitions &mdash; the Champions League, the
+        Europa League and the Conference League &mdash;
+        <b data-cfg="LEAGUES.length">14</b> competitions in all. Odds are taken
+        from the same feed, wherever a bookmaker has priced the match.
+      </p>
+      <p class="copy">
+        The European competitions are read for fixtures only. They have no
+        ratings of their own: a Champions League tie is predicted from the two
+        clubs' domestic records, which is the subject of section 4. They also sit
+        idle from roughly June to September, so for part of the year they
+        correctly return nothing at all.
+      </p>
+      <p class="copy">
+        One cap is worth stating plainly, because it is the one place Prediq
+        reads less than it could. Results are fetched a calendar month at a time,
+        and only the most recent
+        <b data-cfg="MODEL.RESULT_MONTHS">5</b> months of the season are
+        requested. By May that leaves the opening months of the season out of the
+        match list. The reason it is defensible rather than merely cheaper: with
+        recency weighting halving every eight matches, a match played thirty
+        matches ago already carries about a fourteenth of the weight of the most
+        recent one, so fetching August in May would add sixty-odd requests to
+        move a rating in the third decimal place. The season-long picture is not
+        lost either way &mdash; last season's full table and the current table
+        are both read in full, and neither is truncated.
+      </p>
+      <p class="copy">
+        The page loads in two passes, which is why a card can appear with its
+        teams and kickoff time before it has any numbers. The first pass is the
+        fixture list, one request per competition; the second reads the tables
+        and results the model is fitted from. The model is then fitted once, so a
+        card goes from &ldquo;working out the prediction&rdquo; straight to its
+        final figures. <b>No probability shown here is ever revised while you
+        read it.</b>
+      </p>
+      <p class="copy">
+        One deliberate exclusion: <b>the current league table is used only for
+        the list of teams and their names, never for strength.</b> Early in a
+        season that table can be contaminated by cup results &mdash; while
+        building this, Arsenal's Premier League row showed a 3&ndash;0 win over
+        Coventry City, which was a cup tie. Strength is computed from the match
+        list instead, where a fixture against a side outside the division can be
+        identified and discarded. Prediq threw out one such match per league in
+        testing.
+      </p>
+      <p class="copy">
+        The W/D/L strip on each card is read from that same match list rather
+        than from ESPN's own form field, so what you see there is exactly the
+        run of results the ratings beside it were fitted on. Hover any mark for
+        the scoreline.
+      </p>
+      <p class="copy">
+        Requests are cached in your browser, so a repeat visit usually makes no
+        network requests at all.
+      </p>
+
+      <dl class="spec">
+        <div><dt>Leagues rated from their own results</dt><dd data-cfg="DOMESTIC.length">11</dd></div>
+        <div><dt>Competitions listed for fixtures</dt><dd data-cfg="LEAGUES.length">14</dd></div>
+        <div><dt>Days of fixtures shown</dt><dd data-cfg="FIXTURE_DAYS">7</dd></div>
+        <div><dt>Months of results read, at most</dt><dd data-cfg="MODEL.RESULT_MONTHS">5</dd></div>
+        <div><dt>Requests allowed in flight at once</dt><dd data-cfg="CACHE.concurrency">4</dd></div>
+        <div><dt>A finished month is cached for</dt><dd data-cfg="CACHE.ttl.monthPast" data-div="86400000">90 <span class="unit">days</span></dd></div>
+        <div><dt>Last season's table, cached for</dt><dd data-cfg="CACHE.ttl.standingsPrev" data-div="86400000">30 <span class="unit">days</span></dd></div>
+        <div><dt>Fixtures and odds, cached for</dt><dd data-cfg="CACHE.ttl.fixtures" data-div="60000">30 <span class="unit">min</span></dd></div>
+      </dl>
+    </section>
+
+    <!-- ================= 2. THE MODEL ================= -->
+    <section class="sec">
+      <h2 class="sec-h">2 &middot; The model, in four steps</h2>
+
+      <ol class="steps">
+        <li>
+          <p class="step-h">Rate every team's attack and defence</p>
+          <p class="copy">
+            Each team gets two numbers. Attack is how many goals it scores
+            relative to the average side in its division; defence is how many it
+            concedes, on the same scale. <b>1.00 is exactly average.</b> An
+            attack of 1.20 means twenty per cent more goals than a typical side
+            in that league; a defence of 1.20 means twenty per cent more
+            conceded, so for defence, lower is better. Recent matches count for
+            more, halving in weight every
+            <b data-cfg="MODEL.RECENCY_HALFLIFE">8</b> matches.
+          </p>
+          <p class="copy">
+            There is a circularity to escape here. Scoring three goals against a
+            strong defence says more than three against a weak one &mdash; so a
+            team's rating depends on its opponents' ratings, which depend on
+            theirs. Prediq resolves it by repetition: rate everyone, then
+            re-rate everyone against those ratings,
+            <b data-cfg="MODEL.ITERATIONS">5</b> times over. The numbers stop
+            moving after about three passes, and every pass reads from a frozen
+            snapshot of the previous one, so the order teams are visited in
+            cannot change the answer.
+          </p>
+          <p class="copy">
+            Last season is not thrown away. It enters as
+            <b data-cfg="MODEL.PRIOR_WEIGHT">6</b> virtual matches against an
+            average opponent on neutral ground. In August those dominate; by
+            twenty matches played the current season has taken over on its own,
+            with no switch to flip. A promoted side has no record in the
+            division, so it starts at
+            <b data-cfg="MODEL.PROMOTED_ATTACK">0.85</b> attack and
+            <b data-cfg="MODEL.PROMOTED_DEFENCE">1.15</b> defence &mdash;
+            roughly where promoted teams historically land. The same defaults
+            apply to any side with fewer than
+            <b data-cfg="MODEL.PRIOR_MIN_GAMES">10</b> games in that league last
+            season, since a partial record is not a reliable prior.
+          </p>
+          <p class="copy">
+            That default is now cruder than it needs to be, and saying so is
+            fairer than leaving you to find out. Prediq rates the Championship,
+            so a promoted English club's actual second-division record is
+            already loaded &mdash; and the flat default is still applied to it
+            instead. Using the real record, scaled across divisions the way
+            section 4 describes, is a known improvement that has not been made
+            yet. Until it is, treat a newly promoted side's first few weeks as
+            the weakest ratings on the site.
+          </p>
+        </li>
+
+        <li>
+          <p class="step-h">Turn ratings into expected goals</p>
+          <p class="copy">
+            For each side, multiply four things: the league's average goals per
+            team per game, that team's attack, its opponent's defence, and a
+            venue factor. Home sides score about eleven per cent above the
+            league mean and away sides about eleven per cent below
+            (<b data-cfg="MODEL.HOME_ADVANTAGE">1.11</b> and
+            <b data-cfg="MODEL.AWAY_PENALTY">0.89</b>), and once enough of the
+            season has been played Prediq measures that season's actual home
+            effect rather than assuming the long-run one. The two factors always
+            sum to 2, so home advantage tilts a match without inventing goals in
+            it.
+          </p>
+        </li>
+
+        <li>
+          <p class="step-h">Build the full scoreline grid</p>
+          <p class="copy">
+            Expected goals are not a prediction &mdash; a match ends in whole
+            goals. So Prediq computes the probability of every scoreline from
+            0&ndash;0 up to
+            <b data-cfg="MODEL.MAX_GOALS">9</b>&ndash;<b data-cfg="MODEL.MAX_GOALS">9</b>
+            using the Poisson distribution, giving a grid of 100 cells. Stopping
+            at 4&ndash;4, as many simple models do, throws away between three
+            and eight per cent of the probability in an ordinary match and
+            around eighteen per cent when a strong side meets a weak one
+            &mdash; exactly the matches where the error would be most visible.
+            A ceiling of 9 leaves under a fifth of one per cent unaccounted for
+            even at the extremes, and the grid is then rescaled so it sums to
+            exactly 1.
+          </p>
+          <p class="copy">
+            Two independent Poisson distributions have a known flaw: they
+            under-predict draws and low-scoring games, because real matches are
+            not independent &mdash; the moment one side scores, both teams
+            change how they play. The Dixon&ndash;Coles correction adjusts the
+            four lowest-scoring cells for this, nudging 0&ndash;0 and
+            1&ndash;1 up and 1&ndash;0 and 0&ndash;1 down. Prediq uses
+            <b data-cfg="MODEL.DC_RHO">-0.06</b>, which is deliberately milder
+            than the &minus;0.13 usually reported from fitted models, because
+            Prediq has not backtested its own value and a conservative
+            correction is the safer error.
+          </p>
+        </li>
+
+        <li>
+          <p class="step-h">Read every answer off the same grid</p>
+          <p class="copy">
+            A home win is the sum of every cell where the home side scores more;
+            the draw is the diagonal; over 2.5 goals is every cell totalling
+            three or more; both teams to score is every cell where neither
+            number is zero. This is why the figures on a card can never
+            contradict each other &mdash; they are four views of one grid, not
+            four separate guesses.
+          </p>
+          <p class="copy">
+            The likeliest scoreline is simply the largest single cell, and it is
+            often a draw even when one side is clearly favoured. That is not a
+            contradiction: the favourite's win is spread across many different
+            scorelines, while 1&ndash;1 concentrates in one. Displayed
+            percentages are rounded by the largest-remainder method so they sum
+            to exactly 100 rather than 99 or 101.
+          </p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ================= 3. CONFIDENCE ================= -->
+    <section class="sec">
+      <h2 class="sec-h">3 &middot; What the confidence meter means</h2>
+
+      <p class="copy">
+        Confidence describes <b>how clearly the model separates the outcomes</b>,
+        not how likely it is to be right. It is the gap in percentage points
+        between the likeliest outcome and the second likeliest.
+      </p>
+      <p class="copy">
+        That gap is then capped by how much of the current season actually sits
+        behind it, using the less-observed of the two teams. A twenty-point gap
+        in August rests almost entirely on last season, so it cannot earn the
+        top rating no matter how wide it looks. This is why nearly every card
+        reads low or medium in the opening weeks.
+      </p>
+
+      <dl class="spec">
+        <div><dt>High &mdash; gap of at least</dt><dd data-cfg="MODEL.CONFIDENCE.0.min">30 <span class="unit">pts</span></dd></div>
+        <div><dt>Moderate &mdash; gap of at least</dt><dd data-cfg="MODEL.CONFIDENCE.1.min">18 <span class="unit">pts</span></dd></div>
+        <div><dt>Medium &mdash; gap of at least</dt><dd data-cfg="MODEL.CONFIDENCE.2.min">8 <span class="unit">pts</span></dd></div>
+        <div><dt>Low &mdash; anything below that</dt><dd>&mdash;</dd></div>
+        <div><dt>High requires this many matches played</dt><dd data-cfg="MODEL.CONFIDENCE_CAP.0.minMatches">12</dd></div>
+        <div><dt>Moderate requires</dt><dd data-cfg="MODEL.CONFIDENCE_CAP.1.minMatches">6</dd></div>
+      </dl>
+    </section>
+
+    <!-- ================= 4. CROSS-LEAGUE ================= -->
+    <section class="sec">
+      <h2 class="sec-h">4 &middot; Ties between different leagues</h2>
+
+      <p class="copy">
+        A rating of 1.20 does not mean the same thing in Ligue 1 as in the
+        Premier League, because it is measured against a different set of
+        opponents. For a European tie between teams from different leagues,
+        Prediq scales both ratings by a league quality coefficient before
+        comparing them.
+      </p>
+      <p class="copy">
+        <b>These coefficients are an informed judgement, not a measurement.</b>
+        They are the least rigorous numbers on the site and they are stated here
+        so you can discount them as you see fit. The Premier League is the 1.00
+        baseline.
+      </p>
+
+      <dl class="spec">
+        <div><dt>Premier League</dt><dd data-cfg="LEAGUES.0.quality">1.00</dd></div>
+        <div><dt>La Liga</dt><dd data-cfg="LEAGUES.1.quality">0.98</dd></div>
+        <div><dt>Serie A</dt><dd data-cfg="LEAGUES.2.quality">0.96</dd></div>
+        <div><dt>Bundesliga</dt><dd data-cfg="LEAGUES.3.quality">0.96</dd></div>
+        <div><dt>Ligue 1</dt><dd data-cfg="LEAGUES.4.quality">0.92</dd></div>
+        <div><dt>Primeira Liga</dt><dd data-cfg="LEAGUES.5.quality">0.86</dd></div>
+        <div><dt>Eredivisie</dt><dd data-cfg="LEAGUES.6.quality">0.85</dd></div>
+        <div><dt>Championship</dt><dd data-cfg="LEAGUES.7.quality">0.82</dd></div>
+        <div><dt>Belgian Pro League</dt><dd data-cfg="LEAGUES.8.quality">0.81</dd></div>
+        <div><dt>S&uuml;per Lig</dt><dd data-cfg="LEAGUES.9.quality">0.80</dd></div>
+        <div><dt>Scottish Premiership</dt><dd data-cfg="LEAGUES.10.quality">0.76</dd></div>
+      </dl>
+
+      <p class="copy">
+        Two of these deserve more scepticism than the rest. The Championship is a
+        second division rated on the same scale as first divisions, so 0.82 is
+        asserting how far below the Premier League it sits &mdash; a claim with
+        no measurement behind it. And the Scottish Premiership is a twelve-team
+        league where two clubs beat the other ten most weeks, which stretches its
+        internal ratings wider than a balanced division's; a single coefficient
+        cannot express that.
+      </p>
+
+      <p class="copy">
+        The coefficient is paired with a second adjustment for how freely each
+        league scores, applied as a square root to each of the two ratings. That
+        detail matters for one reason worth stating: <b>for a match between two
+        teams from the same league, both adjustments cancel out exactly.</b> A
+        Premier League fixture is therefore computed identically whether it is
+        reached through the domestic list or a European one, and these
+        judgement-call numbers can only ever affect a genuine cross-border tie.
+      </p>
+    </section>
+
+    <!-- ================= 5. LIMITS ================= -->
+    <section class="sec">
+      <h2 class="sec-h">5 &middot; What the model cannot see</h2>
+
+      <p class="copy">
+        Prediq reads goals. That is all it reads. Everything below is invisible
+        to it, and every one of these can matter more than the ratings do:
+      </p>
+
+      <ul class="limits">
+        <li><b>Injuries and suspensions.</b> A side missing its two leading scorers rates exactly as it did with them.</li>
+        <li><b>Transfers.</b> A team that sold its striker in July carries last season's attack rating into August regardless.</li>
+        <li><b>Team selection.</b> A rotated side before a European night looks identical to a full-strength one.</li>
+        <li><b>Managerial change.</b> A new appointment three days ago has no effect on any number here.</li>
+        <li><b>Motivation.</b> A mid-table team safe in May and a side fighting relegation are treated the same way.</li>
+        <li><b>Fixture congestion, travel, and weather.</b> None of it is in the feed, so none of it is in the model.</li>
+        <li><b>What happened inside a match.</b> A red card on six minutes, a penalty shootout, a game overwhelmingly dominated but lost 1&ndash;0 &mdash; only the final goals are read.</li>
+      </ul>
+
+      <p class="copy">
+        And the honest limit that matters most: <b>Prediq has no accuracy record,
+        because none has been measured.</b> The parameters on this page are
+        reasoned defaults drawn from published work on football modelling, not
+        values fitted against a backtest of past seasons. The model has been
+        tested extensively for correctness &mdash; that the probabilities sum to
+        one, that the ratings average to one, that the maths converges, that a
+        stronger side is always favoured over a weaker one &mdash; but
+        correctness is not accuracy. Until a season has been recorded and
+        scored, treat the output as a well-built estimate rather than a proven
+        one. No accuracy claim will appear on this site before it has been
+        measured.
+      </p>
+    </section>
+
+    <!-- ================= 6. THE MARKET COLUMN ================= -->
+    <section class="sec">
+      <h2 class="sec-h">6 &middot; The bookmaker column</h2>
+
+      <p class="copy">
+        Where a match has been priced, the card shows a <code>mkt</code> field
+        with the bookmaker's implied probabilities beside the model's. Betting
+        odds carry a built-in margin, so the three implied probabilities sum to
+        more than 100 &mdash; that excess is the bookmaker's edge, and Prediq
+        divides it out first so the two views are comparable. Hover the field to
+        see the provider and the margin removed.
+      </p>
+      <p class="copy">
+        <b>The market is never an input to the model.</b> Blending the two would
+        produce better-looking numbers and destroy the only useful thing here:
+        the ability to see where an independent model and the market actually
+        disagree. When that gap exceeds
+        <b data-cfg="MODEL.EDGE_THRESHOLD" data-scale="100">6</b> percentage
+        points, a card says so in plain words. A disagreement is not a
+        prediction that the market is wrong; bookmakers price injuries, team
+        news, and money flow, all of which Prediq cannot see. Read it as a
+        prompt to look closer, and note that at most
+        <b data-cfg="MODEL.INSIGHT_MAX">3</b> insight lines appear under any
+        match, chosen by how much they actually tell you.
+      </p>
+      <p class="copy">
+        There is a limit here that is worth being exact about, because it decides
+        what this site can ever prove. <b>The odds vanish from the feed the moment
+        a match finishes.</b> Checking a full month of last season across all
+        fourteen competitions found the results intact and not one priced
+        fixture &mdash; the prices exist only while a match is still to come.
+        Prediq therefore cannot go back and score itself against the bookmaker on
+        seasons already played, and any comparison claiming to have done so would
+        be reconstructing prices it never saw. A model-versus-market record can
+        only be accumulated forwards, by recording each price before kickoff and
+        keeping it. Until that record exists and is long enough to mean something,
+        the <code>mkt</code> field is a comparison you can make yourself on a
+        single match, and nothing more.
+      </p>
+    </section>
+
+    <!-- ================= 7. RESPONSIBLE USE ================= -->
+    <section class="sec">
+      <h2 class="sec-h">7 &middot; Responsible use</h2>
+
+      <p class="copy">
+        These are probabilities, not tips. A prediction given at 70% is meant to
+        lose roughly three times in every ten &mdash; if it never lost, the
+        number would be wrong. A model that is well calibrated on average is
+        still individually wrong constantly, and no run of correct calls on this
+        site would be evidence of anything else.
+      </p>
+      <p class="copy">
+        Prediq publishes statistical output for information and interest. It is
+        <b>not betting advice</b>, it is not a tipping service, and it should
+        not be treated as a reason to stake money. Nothing here accounts for
+        your circumstances. Betting is restricted to adults, and where you are
+        matters &mdash; the law differs by country and by state.
+      </p>
+      <p class="copy">
+        If gambling has stopped being entertainment for you or someone close to
+        you, support exists and it is worth using early rather than late. In the
+        United Kingdom, <b>BeGambleAware</b> offers free confidential advice at
+        begambleaware.org. In the United States, the National Problem Gambling
+        Helpline runs on <b>1-800-522-4700</b>, by call or text, at any hour.
+        Most other countries run an equivalent service.
+      </p>
+    </section>
+
+  </main>
+
+  <footer class="foot">
+    <p class="foot-note">
+      Prediq publishes statistical model output for information. These are
+      probabilities, not tips &mdash; a 70% call still loses three times in ten.
+      Not betting advice. 18+.
+    </p>
+    <p class="foot-meta">
+      <span>Built with a Poisson goals model.</span>
+      <a href="index.html">Back to fixtures</a>
+    </p>
+  </footer>
+
+</div>
+
+</body>
+</html>

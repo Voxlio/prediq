@@ -1,0 +1,73 @@
+# Prediq tests
+
+No framework, no `npm install`, no dependencies. Plain Node ES modules that
+import the real files in `../assets/` and read the real `.html` and `.css`.
+
+```
+node tests/run.mjs            # everything
+node tests/run.mjs -v         # everything, printing each assertion
+node tests/run.mjs r1 m4      # only those suites
+```
+
+Exit code is 0 if every assertion passed, 1 otherwise. Nothing here is served to
+visitors — no page links to this folder.
+
+## What each suite guards
+
+| Suite | Seam | Guards |
+|---|---|---|
+| `t3` | `api.js` parsers | American-odds conversion, overround removal, standings and results parsing against the exact shapes ESPN returns |
+| `t4` | `api.js` calendar | season labelling and the month list, including the June off-season boundary |
+| `m1` | `model.js` | Poisson matrix sums to 1, truncation at 9 goals, largest-remainder rounding to exactly 100 |
+| `m2` | `model.js` | attack/defence fitting, the 1.00 divisional average, recency weighting, the last-season prior |
+| `m3` | `model.js` | the cross-league quality identity — that `q` and the global mean cancel exactly |
+| `m4` | `model.js` | refusal messages: when the model declines, and that it never blames the teams for a network error |
+| `p1` | `model.js` | power ratings as expected points per game, and the exact `xPoints` identity |
+| `rec1` | `record.js` | the frozen prediction: what it refuses to write, that it survives JSON unchanged, hand-computed log loss and Brier, and that no judgement is ever stored |
+| `l1` | `api.js` loader | phase 1 reads fixtures only, phase 2 never asks a cup for a table, the two compose to `loadAll`, the history cap bounds a cold visit for every month of a season, the progress bar is sized once and ends full |
+| `r1` | `render.js` | the match card on a hand-rolled DOM shim: no `innerHTML` anywhere, the form strip, the confidence meter, that the list does not reorganise between the two phases, and that every class emitted is styled |
+| `rt1` | `table.js` | the ratings table on the same shim, including header/body column-class agreement |
+| `e1` | `main.js` | the whole page end to end with `fetch` and `localStorage` mocked: request count, cache behaviour, a second visit, one league failing |
+| `h1` | `method.html`, `style.css` | every `data-cfg` number on the page against `config.js`, in both directions; local links exist; animations have keyframes and are switched off under `prefers-reduced-motion` |
+| `w1` | `store.js`, `tools/freeze.mjs`, `tools/settle.mjs` | **the archive.** That a prediction is written once and never rewritten, that a result is the only thing that can be added later, that a second run leaves every byte identical, and that a day nothing settled reports `null` rather than a flattering zero. Runs both writers as child processes against a fake ESPN |
+| `f1` | `tools/firestore.mjs`, `tools/mirror.mjs` | the Firestore mirror: a real frozen record round-tripping through the value encoder, the `exists: false` precondition that stops a prediction being overwritten, the `updateMask` that stops a result write touching anything else, and a service account from the wrong project being refused |
+
+## Conventions worth keeping
+
+Each suite runs in its own process. They install conflicting fake globals —
+`fetch`, `localStorage`, a hand-rolled DOM — so sharing one process would let one
+suite's shims leak into another's, and a suite that passes only because a
+neighbour ran first is worse than no suite at all. `run.mjs` also reports a
+non-zero exit with zero failures as `CRASHED`, because a suite that dies before
+its first assertion would otherwise read as a pass.
+
+Paths resolve from `import.meta.url`, never from an absolute path. `import()`
+takes `new URL('../assets/js/', import.meta.url).href`; `fs` takes a URL
+*object*, since `readFileSync` rejects a `file://` string.
+
+Mocks freeze their clock at module load. A mock that stamps dates with
+`Date.now()` at call time makes two identical runs differ by a millisecond, which
+silently defeats any byte-for-byte comparison.
+
+Every assertion prints a line starting `  pass  ` or `  FAIL  `, because that is
+what `run.mjs` counts. A suite that only prints its passes under `-v` reports "0
+assertions, ok" — which run.mjs's own comments call the one verdict a test runner
+must never invent. `f1` did exactly this on its first run.
+
+Never hand-write a data shape that a real module produces. `f1`'s first draft
+hand-fed a `prediction` object to `freeze()` and got nothing back, because the
+real shape puts `home` at the top level, makes `lambda` a `{home, away}` object
+rather than an array, and requires `teams.home.matches`. Build the input with the
+producing code — `M.predictAll(data)` — and a shape change breaks the suite
+instead of hiding in it.
+
+Mock data is built from the shapes the browser diagnostics actually returned, and
+where one module feeds another the mock is generated by the producing code rather
+than hand-written — otherwise a seam bug survives the test that was meant to
+catch it.
+
+A failing assertion is not automatically a bug in `assets/`. Several have been
+wrong tests: an across-league comparison made on the own-league scale, an
+identity that only holds at even odds, a word table that stopped at "ten". Check
+the assertion before editing the code, and when the assertion was too loose,
+replace it with the exact invariant rather than widening the tolerance.

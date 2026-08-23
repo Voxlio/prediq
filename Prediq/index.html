@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prediq — football predictions from a goals model</title>
+<meta name="description" content="Football match predictions built from a Poisson goals model on live team form. Probabilities, not tips.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<a class="skip" href="#fixtures">Skip to fixtures</a>
+
+<div class="shell">
+
+  <header class="masthead">
+    <div class="masthead-row">
+      <a class="wordmark" href="index.html">prediq<span class="dot">.</span></a>
+      <nav class="nav">
+        <a href="index.html" class="is-here" aria-current="page">fixtures</a>
+        <a href="ratings.html">ratings</a>
+        <a href="method.html">method</a>
+      </nav>
+    </div>
+    <p class="thesis">
+      Football predictions from a Poisson goals model, rebuilt from each
+      team&rsquo;s current form. Every number below is computed, not picked.
+    </p>
+  </header>
+
+  <!-- Model status. Replaced by render.js once the data lands. -->
+  <div class="status" id="status">
+    <span class="status-mute">loading fixtures</span>
+  </div>
+
+  <noscript>
+    <div class="notice is-warn" style="margin-top:1.25rem">
+      <p class="notice-title">JavaScript is required</p>
+      <p class="notice-body">
+        Prediq builds every prediction in your browser from live match data,
+        which means it needs JavaScript enabled. Nothing is precomputed on a
+        server, and nothing is tracked.
+      </p>
+    </div>
+  </noscript>
+
+  <!-- Match cards are built by render.js. -->
+  <main id="fixtures" class="fixtures"></main>
+
+  <footer class="foot">
+    <p class="foot-note">
+      Prediq publishes statistical model output for information. These are
+      probabilities, not tips &mdash; a 70% call still loses three times in ten.
+      Not betting advice. 18+.
+    </p>
+    <p class="foot-meta">
+      <span>Built with a Poisson goals model.</span>
+      <a href="method.html">How it works</a>
+    </p>
+  </footer>
+
+</div>
+
+<script type="module" src="assets/js/main.js"></script>
+
+</body>
+</html>
