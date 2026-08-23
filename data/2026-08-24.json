@@ -1,0 +1,102 @@
+{
+  "day": "2026-08-24",
+  "updatedAt": "2026-08-23T18:26:46.807Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401874927",
+      "kickoff": "2026-08-24T16:30:00.000Z",
+      "league": "ita.1",
+      "home": {
+        "id": "107",
+        "name": "Bologna"
+      },
+      "away": {
+        "id": "112",
+        "name": "Lazio"
+      },
+      "predicted": {
+        "at": "2026-08-23T18:26:46.807Z",
+        "lambda": [
+          1.219,
+          0.981
+        ],
+        "probs": [
+          0.4076,
+          0.3045,
+          0.2879
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1404
+        ],
+        "over25": 0.3773,
+        "btts": 0.4483,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          0,
+          0
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401882909",
+      "kickoff": "2026-08-24T17:30:00.000Z",
+      "league": "esp.1",
+      "home": {
+        "id": "97",
+        "name": "Osasuna"
+      },
+      "away": {
+        "id": "1538",
+        "name": "Levante"
+      },
+      "predicted": {
+        "at": "2026-08-23T18:26:46.807Z",
+        "lambda": [
+          1.674,
+          0.956
+        ],
+        "probs": [
+          0.5357,
+          0.2565,
+          0.2079
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1223
+        ],
+        "over25": 0.4891,
+        "btts": 0.507,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          0,
+          1
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
