@@ -1,0 +1,135 @@
+{
+  "at": "2026-08-23T03:37:36.845Z",
+  "n": 26,
+  "days": 1,
+  "currentRev": "1.0",
+  "coverage": 1,
+  "overall": {
+    "rev": "1.0",
+    "revs": {
+      "1.0": 26
+    },
+    "revConsistent": true,
+    "n": 26,
+    "scored": 0,
+    "pending": 26,
+    "hitRate": null,
+    "exactRate": null,
+    "logLoss": null,
+    "brier": null,
+    "baseline": {
+      "logLoss": 1.0986122886681096,
+      "brier": 0.6666666666666666
+    },
+    "over25Rate": null,
+    "bttsRate": null,
+    "byConfidence": [
+      {
+        "level": 4,
+        "word": "high",
+        "n": 0,
+        "hitRate": null,
+        "logLoss": null
+      },
+      {
+        "level": 3,
+        "word": "moderate",
+        "n": 0,
+        "hitRate": null,
+        "logLoss": null
+      },
+      {
+        "level": 2,
+        "word": "medium",
+        "n": 0,
+        "hitRate": null,
+        "logLoss": null
+      },
+      {
+        "level": 1,
+        "word": "low",
+        "n": 0,
+        "hitRate": null,
+        "logLoss": null
+      }
+    ],
+    "calibration": [],
+    "market": {
+      "n": 0,
+      "coverage": null,
+      "modelLogLoss": null,
+      "marketLogLoss": null,
+      "modelBrier": null,
+      "marketBrier": null,
+      "modelHitRate": null,
+      "marketHitRate": null,
+      "disagreed": 0,
+      "wonDisagreements": null
+    }
+  },
+  "byRev": {
+    "1.0": {
+      "rev": "1.0",
+      "revs": {
+        "1.0": 26
+      },
+      "revConsistent": true,
+      "n": 26,
+      "scored": 0,
+      "pending": 26,
+      "hitRate": null,
+      "exactRate": null,
+      "logLoss": null,
+      "brier": null,
+      "baseline": {
+        "logLoss": 1.0986122886681096,
+        "brier": 0.6666666666666666
+      },
+      "over25Rate": null,
+      "bttsRate": null,
+      "byConfidence": [
+        {
+          "level": 4,
+          "word": "high",
+          "n": 0,
+          "hitRate": null,
+          "logLoss": null
+        },
+        {
+          "level": 3,
+          "word": "moderate",
+          "n": 0,
+          "hitRate": null,
+          "logLoss": null
+        },
+        {
+          "level": 2,
+          "word": "medium",
+          "n": 0,
+          "hitRate": null,
+          "logLoss": null
+        },
+        {
+          "level": 1,
+          "word": "low",
+          "n": 0,
+          "hitRate": null,
+          "logLoss": null
+        }
+      ],
+      "calibration": [],
+      "market": {
+        "n": 0,
+        "coverage": null,
+        "modelLogLoss": null,
+        "marketLogLoss": null,
+        "modelBrier": null,
+        "marketBrier": null,
+        "modelHitRate": null,
+        "marketHitRate": null,
+        "disagreed": 0,
+        "wonDisagreements": null
+      }
+    }
+  }
+}
