@@ -157,7 +157,7 @@ export function docId(day, id) {
 export function firestore({ credentials, fetch: doFetch = globalThis.fetch, now = () => new Date() }) {
   const sa = credentials;
   const project = sa.project_id;
-  const root = API + '/projects/' + project + '/databases/(default)/documents';
+  const docPath = '/projects/' + project + '/databases/(default)/documents';
   let token = null;
 
   async function bearer() {
@@ -191,7 +191,7 @@ export function firestore({ credentials, fetch: doFetch = globalThis.fetch, now 
 
     for (let i = 0; i < writes.length; i += BATCH_LIMIT) {
       const chunk = writes.slice(i, i + BATCH_LIMIT);
-      const res = await doFetch(root + ':batchWrite', {
+      const res = await doFetch(API + '/' + docPath + ':batchWrite', {
         method: 'POST',
         headers: { authorization: 'Bearer ' + auth, 'content-type': 'application/json' },
         body: JSON.stringify({ writes: chunk.map(w => w.write) }),
@@ -230,7 +230,7 @@ export function firestore({ credentials, fetch: doFetch = globalThis.fetch, now 
         label: docId(day, record.id),
         write: {
           update: {
-            name: root + '/' + collection + '/' + docId(day, record.id),
+            name: docPath + '/' + collection + '/' + docId(day, record.id),
             fields: encode({ ...record, day }).mapValue.fields,
           },
           currentDocument: { exists: false },
@@ -247,7 +247,7 @@ export function firestore({ credentials, fetch: doFetch = globalThis.fetch, now 
         label: docId(day, record.id) + ' result',
         write: {
           update: {
-            name: root + '/' + collection + '/' + docId(day, record.id),
+            name: docPath + '/' + collection + '/' + docId(day, record.id),
             fields: encode({ result: record.result }).mapValue.fields,
           },
           updateMask: { fieldPaths: ['result'] },
@@ -264,7 +264,7 @@ export function firestore({ credentials, fetch: doFetch = globalThis.fetch, now 
         label: 'meta/' + id,
         write: {
           update: {
-            name: root + '/' + collection + '/' + id,
+            name: docPath + '/' + collection + '/' + id,
             fields: encode(payload).mapValue.fields,
           },
         },
