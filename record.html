@@ -70,35 +70,13 @@
     <h1 class="page-title">The record</h1>
 
     <p class="copy">
-      Every prediction on this page was written down and committed to a public
-      repository <b data-cfg="FREEZE_WITHIN_HOURS">24</b> hours or less before
-      kickoff, before the result existed. It is then never edited. The only
-      thing ever added to a stored prediction is the final score, and the only
-      way to change one would be a commit that anybody can see.
-    </p>
-    <p class="copy">
-      The <b>&#10003;</b> and <b>&#10007;</b> marks are worked out on this page
-      as you load it, from the stored probabilities and the stored score &mdash;
-      they are not saved anywhere. That is deliberate: a saved verdict would ask
-      you to trust that whoever saved it applied the rule honestly, whereas this
-      one you can check. Open any file in <code>data/</code>, read the three
-      probabilities, read the score, and see whether the mark agrees.
-    </p>
-    <p class="copy">
-      <b>gave it</b> is the probability the model put on the thing that actually
-      happened, which is the number that says most about a result. A miss where
-      the model had the outcome at 30% is a normal day for a probability; a miss
-      where it had it at 4% is the model being wrong about the match. A hit at
-      31% is closer to luck than to skill, and it is marked the same as any
-      other, because the mark alone was never the interesting part.
-    </p>
-    <p class="copy">
-      Counts appear from the first finished match. A percentage does not, until
-      <b data-cfg="MIN_FOR_RATE">50</b> matches have been settled under the
-      current model &mdash; a hit rate off a dozen games mostly measures which
-      dozen games they were. Aggregate accuracy, whether calls made at 70% land
-      near 70%, and how the model compares to the bookmakers will go on a
-      separate page once there is enough record to support them.
+      Every prediction below was written into a public repository up to
+      <b data-cfg="FREEZE_WITHIN_HOURS">24</b> hours before kickoff, and never
+      edited afterwards. The <b>&#10003;</b> and <b>&#10007;</b> marks are
+      recomputed from the stored numbers each time this page loads, so they can
+      be checked rather than trusted &mdash;
+      <a href="method.html#record">the method</a> explains how, and what
+      <b>gave it</b> means.
     </p>
 
     <!-- Day strip, built by verdicts.js so a day is never offered without a

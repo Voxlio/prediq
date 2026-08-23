@@ -203,15 +203,45 @@ ok('no top-level setting is silently undocumented', topUndoc.length === 0, topUn
 /* ---------- links, assets, and classes ---------- */
 console.log('');
 console.log('=== links and assets ===');
+/* All four pages, not just two of them: a dead href on the ratings page is as
+   dead as one here, and the shared bar means a rename breaks all four at once. */
+const PAGES = ['index.html', 'record.html', 'ratings.html', 'method.html'];
+const pageSrc = new Map(PAGES.map(p => [p, file(p)]));
+/* Comments come out first. A grep for id="..." otherwise counts ids that are
+   only *mentioned* in a comment — the same trap the CSS class audit fell into,
+   and it fired here immediately: a comment explaining an anchor made the page
+   look like it declared that anchor twice. */
+const bare = s => s.replace(/<!--[\s\S]*?-->/g, '');
+const idsIn = s => [...bare(s).matchAll(/\sid="([^"]+)"/g)].map(mm => mm[1]);
+
 const localLinks = new Set();
-for (const src of [html, index]) {
-  for (const mm of src.matchAll(/(?:href|src)="([^"#]+)"/g)) {
-    if (!/^https?:/.test(mm[1])) localLinks.add(mm[1]);
+const badFrag = [];
+const dupIds = [];
+for (const [page, src] of pageSrc) {
+  const ids = idsIn(src);
+  const dups = ids.filter((v, i) => ids.indexOf(v) !== i);
+  if (dups.length) dupIds.push(page + ': ' + [...new Set(dups)].join(', '));
+  for (const mm of bare(src).matchAll(/(?:href|src)="([^"]+)"/g)) {
+    const raw = mm[1];
+    if (/^(?:https?:|mailto:)/.test(raw)) continue;
+    const [path, frag] = raw.split('#');
+    if (path) localLinks.add(path);
+    /* A fragment is the one kind of link that rots without a 404: the browser
+       lands at the top of the page and nothing looks wrong. The previous check
+       skipped any href containing a '#' outright, so every skip link and
+       method.html#record went unverified. */
+    if (frag !== undefined) {
+      const target = path || page;
+      const tsrc = pageSrc.get(target);
+      if (!tsrc || !idsIn(tsrc).includes(frag)) badFrag.push(page + ' → ' + raw);
+    }
   }
 }
 const missing = [...localLinks].filter(p => !fs.existsSync(new URL(p, root)));
 console.log('    ' + [...localLinks].join(', '));
 ok('every local link and asset exists', missing.length === 0, missing);
+ok('every #fragment link lands on an id that exists', badFrag.length === 0, badFrag);
+ok('no page declares the same id twice', dupIds.length === 0, dupIds);
 ok('index links to the method page', /href="method\.html"/.test(index));
 ok('method links back to the fixtures', /href="index\.html"/.test(html));
 ok('both pages load the same stylesheet',
@@ -250,11 +280,10 @@ ok('the audit rejects a class that is only a prefix of a real rule',
    it stays derived from --bar-h instead of being typed out as a number. */
 console.log('');
 console.log('=== the fixed bar, on all four pages ===');
-const PAGES = ['index.html', 'record.html', 'ratings.html', 'method.html'];
 const MARK = ' class="is-here" aria-current="page"';
 const bars = new Map();
 for (const p of PAGES) {
-  const src = file(p);
+  const src = pageSrc.get(p);
   const all = [...src.matchAll(/<header class="topbar">[\s\S]*?<\/header>/g)];
   ok(p + ' has exactly one bar', all.length === 1, all.length);
   if (all.length === 1) bars.set(p, all[0][0]);
@@ -285,7 +314,7 @@ if (bars.size === PAGES.length) {
       /<nav class="nav" aria-label="Primary">/.test(bar));
     /* The bar is the first thing in the body, so it is also the first thing
        tabbed into. The skip link has to come before it or it skips nothing. */
-    const src = file(p);
+    const src = pageSrc.get(p);
     ok(p + ' puts the skip link ahead of the bar',
       src.indexOf('class="skip"') > 0 && src.indexOf('class="skip"') < src.indexOf('<header class="topbar">'));
   }

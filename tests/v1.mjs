@@ -690,12 +690,26 @@ console.log('=== record.html and verdicts.js agree about the page ===');
   /* The same documentation-drift guard h1.mjs puts on method.html. A number
      written into the prose is a promise, and this is what keeps it one. */
   const cfgs = [...html.matchAll(/data-cfg="([^"]+)">([^<]*)</g)];
-  ok('record.html states at least two config numbers in its prose', cfgs.length >= 2, cfgs.length);
+  /* Named rather than counted. The old form demanded "at least two", which was
+     only ever a non-vacuity check, and it started fighting the copy the moment
+     the intro was cut to two sentences — the rate threshold left this page
+     because ledger.js already prints it in the tally, next to the count it
+     gates, which is a better place for it than a preamble. The freeze lead time
+     is the one number this page genuinely asserts, so require that by name. */
+  ok('record.html tags the freeze lead time in its prose',
+    cfgs.some(([, path]) => path === 'FREEZE_WITHIN_HOURS'), cfgs.map(c => c[1]));
   const resolve = path => path.split('.').reduce((o, k) => o?.[k], C);
   for (const [, path, text] of cfgs) {
     ok('data-cfg ' + path + ' matches config.js',
       String(resolve(path)) === text.trim(), [path, text.trim(), resolve(path)]);
   }
+
+  /* The rate gate has to be stated somewhere the reader will meet it, and that
+     somewhere is now the tally rather than the intro. If ledger.js ever stops
+     saying so, the page silently withholds a percentage without explaining. */
+  const ledgerSrc = readFileSync(new URL('../assets/js/ledger.js', import.meta.url), 'utf8');
+  ok('the tally still explains why no percentage is shown yet',
+    /no rate published until ' \+ MIN_FOR_RATE/.test(ledgerSrc));
 
   /* The nav used to be checked here, and it belongs in h1 instead: this suite is
      about the record page, and the bar is on all four. h1 now holds the four

@@ -132,3 +132,10 @@ code sixteen ways and confirm each break names itself: that is how the vacuous
 version of the narrow-screen check was found, which compared a rule's position
 against the position of an `@media` line and so passed for a rule sitting outside
 the query entirely. Match braces, don't compare offsets.
+
+When breaking code to test a guard, read the exit code and not just the `FAIL`
+lines. Twice during the run above a breakage left an unbalanced parenthesis, the
+suite died on import before its first assertion, and zero failures looked exactly
+like a passing guard — which is the same trap `run.mjs` already guards against by
+treating a non-zero exit with no failures as CRASHED. A breakage must be valid
+code that is wrong, not code that will not parse.
