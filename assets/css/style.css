@@ -1415,6 +1415,80 @@ b, strong { font-weight: 500; }
 }
 
 /* --- 21. Responsive ----------------------------------------------------- */
+/* Three ranges, split by cause rather than by device.
+
+   Two different things go wrong as the viewport narrows, and they go wrong at
+   two different widths. The first version of this section conflated them into a
+   single 34rem block, which left a cliff: at 545px every compaction switched off
+   at once, so a 560px screen got the six-column ratings table, seven weekday
+   tabs and a four-column ledger, all sized for a 42rem column it did not have.
+
+   So 44rem is where the *column* stops fitting its contents, and the measure
+   decides that, not the device. 34rem is where the *bar* stops fitting the nav
+   labels, which really is a phone. The narrow block inherits everything in the
+   44rem block rather than repeating it, and no selector appears in both.
+
+   75rem is the other end, where a 42rem column leaves a monitor mostly empty.
+   The measure does not change there either — that block says why. */
+
+@media (max-width: 44rem) {
+  /* A label column plus five crest-and-score units will not fit side by side in
+     a column this narrow, so the name moves above its own strip. That costs two
+     lines per card and keeps the crests, which are the part carrying
+     information. The gap grows at the same time, because the two sides now need
+     to read as two blocks rather than four loose lines. */
+  .form-row { gap: 0.7rem; }
+  .form-side {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.25rem;
+  }
+
+  /* A long parameter name and its value stop competing for one line. */
+  .spec > div { flex-wrap: wrap; gap: 0.15rem 1rem; }
+  .spec dd { text-align: left; }
+
+  /* Six columns will not fit, so the rank goes. It is the only column carrying
+     nothing that the order of the rows does not already say. */
+  .rt-rank { display: none; }
+
+  /* Seven tabs with a weekday each need about 34rem of tab. The weekday goes and
+     the day number stays, so all seven days remain on screen and reachable —
+     the alternative was a scrolling strip with two days hidden off the right
+     edge and nothing to say they were there. The full date is still on each
+     button's title. */
+  .daytab-wd { display: none; }
+  .daytab { padding: 0.45rem 0.55rem; }
+
+  /* Except on today's tab, where the weekday span holds the word "Today" and
+     there is no day number beside it — hiding it would leave an empty button.
+     This rule has to follow the one above to win, since both are one class. */
+  .daytab.is-today .daytab-wd { display: inline; }
+
+  /* The verdict column is the first to go. "gave it 24%" is the one figure on
+     this page with nowhere else to live, so the row keeps three columns and the
+     verdict moves under the fixture, indented to the fixture's edge and spanning
+     to the row's. The mark stays inline with it rather than becoming a fourth
+     stacked line.
+
+     v1 requires exactly two `.lg-h, .lg-row` blocks — four tracks, then three
+     — so the narrow layout is declared here and nowhere else. The wide block
+     below widens the container instead of redeclaring these tracks, for that
+     reason. */
+  .lg-h,
+  .lg-row {
+    grid-template-columns: minmax(0, 1fr) 4.6rem 3.2rem;
+    gap: 0.6rem;
+  }
+  .lg-h-verdict { display: none; }
+  .lg-verdict {
+    grid-column: 1 / -1;
+    grid-template-columns: auto auto minmax(0, 1fr);
+    margin-top: 0.35rem;
+  }
+  .lg-mark { grid-row: 1; }
+  .lg-flag { grid-column: 3; }
+}
+
 @media (max-width: 34rem) {
   .shell { padding: calc(var(--bar-h) + 1.5rem) 1.15rem 3rem; }
   .topbar-in { padding: 0 1.15rem; }
@@ -1425,7 +1499,8 @@ b, strong { font-weight: 500; }
      Hidden by clipping rather than display:none, deliberately: the icon is
      aria-hidden, so the label IS the link's accessible name, and removing it
      from the accessibility tree would leave four links that announce as
-     nothing but their href. h1 asserts this rule never becomes display:none. */
+     nothing but their href. h1 asserts this rule never becomes display:none,
+     and that it appears at no other width. */
   .nav { gap: 1.15rem; }
   .nav-t {
     position: absolute;
@@ -1451,27 +1526,14 @@ b, strong { font-weight: 500; }
   .readout { gap: 0.9rem; }
   .markets { gap: 0.4rem 0.85rem; }
 
-  /* A label column plus five crest-and-score units will not fit on one 320px
-     line, so the name moves above its own strip. That costs two lines per card
-     and keeps the crests, which are the part carrying information. The gap
-     grows at the same time, because the two sides now need to read as two
-     blocks rather than four loose lines. */
-  .form-row { gap: 0.7rem; }
-  .form-side {
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: 0.25rem;
-  }
+  /* The strip has already stacked at 44rem. At 320px the units inside it have to
+     shrink as well. */
   .form-game { gap: 3px; padding: 2px 4px 2px 2px; }
   .form-crest { width: 13px; height: 13px; }
   .form-score { font-size: 9px; }
 
-  /* A long parameter name and its value stop competing for one line. */
-  .spec > div { flex-wrap: wrap; gap: 0.15rem 1rem; }
-  .spec dd { text-align: left; }
-
-  /* Six columns will not fit at 320px, so the rank goes. It is the only column
-     that carries nothing the order of the rows does not already say. */
-  .rt-rank { display: none; }
+  /* The rank column has already gone at 44rem; the five that remain have to fit
+     320px between them. */
   .rt-pl      { width: 2.4rem; }
   .rt-attack  { width: 3rem; }
   .rt-defence { width: 3rem; }
@@ -1484,39 +1546,38 @@ b, strong { font-weight: 500; }
   .rt + .rt { margin-top: 2rem; }
   .toggle-b { padding: 0.45rem 0.7rem; }
 
-  /* Seven tabs with a weekday each need about 34rem of tab, which is the whole
-     screen. The weekday goes and the day number stays, so all seven days remain
-     on screen and reachable — the alternative was a scrolling strip with two
-     days hidden off the right edge and nothing to say they were there. The full
-     date is still on each button's title. */
-  .daytab-wd { display: none; }
-  .daytab { padding: 0.45rem 0.55rem; }
-
-  /* Except on today's tab, where the weekday span holds the word "Today" and
-     there is no day number beside it — hiding it would leave an empty button.
-     This rule has to follow the one above to win, since both are one class. */
-  .daytab.is-today .daytab-wd { display: inline; }
-
-  /* The verdict column is the first to go. "gave it 24%" is the one figure on
-     this page that has nowhere else to live, so the row keeps three columns and
-     the verdict moves under the fixture, indented to the fixture's edge and
-     spanning to the row's. The mark stays inline with it rather than becoming a
-     fourth stacked line. */
-  .lg-h,
-  .lg-row {
-    grid-template-columns: minmax(0, 1fr) 4.6rem 3.2rem;
-    gap: 0.6rem;
-  }
-  .lg-h-verdict { display: none; }
-  .lg-verdict {
-    grid-column: 1 / -1;
-    grid-template-columns: auto auto minmax(0, 1fr);
-    margin-top: 0.35rem;
-  }
-  .lg-mark { grid-row: 1; }
-  .lg-flag { grid-column: 3; }
   .lg-teams { font-size: 13px; }
   .lg-said { font-size: 11px; }
+}
+
+@media (min-width: 75rem) {
+  /* A monitor, and the interesting decision here is what does *not* change.
+
+     --measure stays at 42rem. That is roughly 75 characters of Space Grotesk,
+     which is about where a line stops being comfortable to read; widening it
+     would make method.html measurably worse rather than better, and method.html
+     is nothing but prose. Widening the token was the first attempt at this
+     block and that is exactly what it did.
+
+     What changes is the two blocks that are tabular rather than prose. They
+     break out of the measure symmetrically, so the page stays centred and every
+     paragraph on every page stays exactly where it was at 43rem. Nothing on
+     method.html matches either selector, so that page is identical at every
+     width above 44rem.
+
+     The container widens rather than the rows: redeclaring the ledger's tracks
+     here would be a third `.lg-h, .lg-row` block, which v1 refuses, and the
+     four-column layout is already correct — it only wants more room. */
+  .shell { padding: calc(var(--bar-h) + 3rem) 1.5rem 5rem; }
+  #ledger,
+  .rt { margin-inline: -4.5rem; }
+
+  /* The day strip selects the rows below it, so it widens with them rather than
+     sitting visibly narrower than what it controls. */
+  #days:not(:empty) { margin-inline: -4.5rem; }
+
+  /* Two tables that far apart need the extra separation to stay two tables. */
+  .rt + .rt { margin-top: 3.25rem; }
 }
 
 /* --- 22. Reduced motion ------------------------------------------------- */

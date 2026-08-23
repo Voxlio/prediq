@@ -438,12 +438,59 @@ ok('in-page jumps clear the bar via scroll-padding-top',
 ok('the skip link sits above the bar',
   /\.skip\s*\{[^}]*position:\s*fixed[^}]*\}/.test(cssBare));
 
-const shellPads = [...cssBare.matchAll(/\.shell\s*\{[^}]*padding:\s*calc\(var\(--bar-h\)\s*\+\s*([\d.]+)rem\)/g)]
-  .map(mm => +mm[1]);
+/* Counted against the number of .shell rules that set padding at all, rather
+   than against a fixed number. Pinning it to 2 was the earlier version, and it
+   made adding a breakpoint fail the suite for no reason — while a *fourth*
+   breakpoint that hardcoded its top padding would then have been "fixed" by
+   bumping the number, which is the wrong repair. This says: however many there
+   are, every one of them derives the top from --bar-h. */
+const shellDecls = [...cssBare.matchAll(/\.shell\s*\{([^}]*)\}/g)].map(mm => mm[1]);
+const shellPadding = shellDecls.filter(d => /padding:/.test(d));
+const shellPads = shellPadding
+  .map(d => /padding:\s*calc\(var\(--bar-h\)\s*\+\s*([\d.]+)rem\)/.exec(d))
+  .filter(Boolean).map(mm => +mm[1]);
 ok('every .shell padding reserves the bar height plus clearance, derived not typed',
-  shellPads.length === 2 && shellPads.every(v => v > 0), shellPads);
+  shellPadding.length >= 2 && shellPads.length === shellPadding.length &&
+  shellPads.every(v => v > 0), [shellPadding.length, shellPads]);
 ok('no .shell padding hardcodes a length where --bar-h belongs',
   ![...cssBare.matchAll(/\.shell\s*\{([^}]*)\}/g)].some(mm => /padding:\s*[\d.]/.test(mm[1])));
+
+/* The three ranges encode a decision that is easy to undo by accident: they are
+   split by what stops fitting, not by device. 44rem is where the column stops
+   fitting its contents, 34rem is where the bar stops fitting the nav labels, and
+   the narrow block inherits the wider one rather than repeating it. Nest them the
+   wrong way round and the narrow rules would be overridden by the wide ones at
+   phone width — silently, since both blocks would still be present. */
+const maxBps = [...cssBare.matchAll(/@media \(max-width: ([\d.]+)rem\)/g)].map(mm => +mm[1]);
+const minBps = [...cssBare.matchAll(/@media \(min-width: ([\d.]+)rem\)/g)].map(mm => +mm[1]);
+ok('there are exactly two narrow ranges and they nest, widest declared first',
+  maxBps.length === 2 && maxBps[0] > maxBps[1], maxBps);
+ok('and one wide range, starting clear of both', minBps.length === 1 &&
+  minBps[0] > maxBps[0], [minBps, maxBps]);
+/* The wide block widens containers, never the reading measure. 42rem is about 75
+   characters, and method.html is nothing but prose. */
+const wide = blockAt(cssBare, cssBare.indexOf('@media (min-width: ' + minBps[0] + 'rem)'));
+ok('the wide range leaves the reading measure alone',
+  wide.length > 0 && !/--measure:/.test(wide));
+
+/* Section 21 claims the narrow block inherits the wider one rather than repeating
+   it. This is what makes that true instead of aspirational. A duplicated selector
+   would break nothing visibly — it would just mean two places to edit and the
+   later one silently winning, which is how the two ranges got conflated in the
+   first place. */
+const selsIn = block => {
+  const inner = block.slice(block.indexOf('{') + 1, block.lastIndexOf('}'));
+  return new Set([...inner.matchAll(/([^{}]+)\{[^{}]*\}/g)]
+    .map(mm => mm[1].replace(/\s+/g, ' ').trim()).filter(Boolean));
+};
+const colSels = selsIn(blockAt(cssBare, cssBare.indexOf('@media (max-width: ' + maxBps[0] + 'rem)')));
+const phoneSels = selsIn(blockAt(cssBare, cssBare.indexOf('@media (max-width: ' + maxBps[1] + 'rem)')));
+const dupSel = [...colSels].filter(s => phoneSels.has(s));
+console.log('    ' + colSels.size + ' selectors at ' + maxBps[0] + 'rem, ' +
+  phoneSels.size + ' at ' + maxBps[1] + 'rem, ' + selsIn(wide).size + ' wide');
+ok('both ranges actually carry rules', colSels.size > 5 && phoneSels.size > 5);
+ok('and no selector is declared in both, so the narrow range inherits the wider',
+  dupSel.length === 0, dupSel);
 
 /* fill:none is the load-bearing declaration. SVG fills black by default, so a
    stroke-drawn icon that loses it renders as a solid blob — a failure that
