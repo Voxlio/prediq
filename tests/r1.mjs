@@ -8,14 +8,18 @@
 const base = new URL('../assets/js/', import.meta.url).href;
 
 /* ---------- 1. the shim ---------- */
+const XHTML = 'http://www.w3.org/1999/xhtml';
+const SVG = 'http://www.w3.org/2000/svg';
+
 class TextNode {
   constructor(data) { this.nodeType = 3; this.data = String(data); this.childNodes = []; }
   get textContent() { return this.data; }
 }
 class Element {
-  constructor(tag) {
-    this.nodeType = 1; this.tagName = tag; this.className = '';
-    this.childNodes = []; this.attributes = {};
+  constructor(tag, ns) {
+    this.nodeType = 1; this.tagName = tag; this.namespaceURI = ns || XHTML;
+    this.className = '';
+    this.childNodes = []; this.attributes = {}; this.listeners = {};
     this.style = { props: {}, setProperty(k, v) { this.props[k] = v; } };
   }
   get firstChild() { return this.childNodes[0] ?? null; }
@@ -24,22 +28,42 @@ class Element {
   removeChild(n) { const i = this.childNodes.indexOf(n); if (i >= 0) this.childNodes.splice(i, 1); return n; }
   setAttribute(k, v) { this.attributes[k] = String(v); }
   getAttribute(k) { return this.attributes[k] ?? null; }
+  addEventListener(type, fn) { (this.listeners[type] ||= []).push(fn); }
+  /* Honours `disabled`, as a browser does. Without that a dead chevron would
+     still fire here and the assertion that it does nothing would be about this
+     shim rather than about the page. */
+  click() { if (this.disabled) return; (this.listeners.click || []).forEach(fn => fn()); }
   set textContent(v) { this.childNodes = v === '' ? [] : [new TextNode(v)]; }
   get textContent() { return this.childNodes.map(c => c.textContent).join(''); }
 }
 globalThis.document = {
   createElement: t => new Element(t),
+  /* Icons need this. In a browser document.createElement('svg') returns an
+     HTMLUnknownElement that renders absolutely nothing and reports no error, so
+     the namespace is not a formality. */
+  createElementNS: (ns, t) => new Element(t, ns),
   createTextNode: t => new TextNode(t),
 };
 
+/* An element's classes, from wherever they were set.
+   HTML elements get them through .className; an SVG element cannot, because
+   there .className is a read-only SVGAnimatedString, so dom.js's icon() sets the
+   attribute instead. The two are kept SEPARATE here on purpose. Aliasing them
+   would be the friendlier shim and would also let someone "simplify" icon() back
+   to el() + className, watch every assertion below still pass, and ship chevrons
+   with no class and therefore no fill:none — solid black wedges in every
+   browser. The asymmetry is the test. */
+const clsOf = n => n.className || n.attributes.class || '';
+const hasCls = (n, c) => clsOf(n).split(/\s+/).includes(c);
+
 const walk = (n, out = []) => { out.push(n); n.childNodes.forEach(c => walk(c, out)); return out; };
-const els = (n, cls) => walk(n).filter(x => x.nodeType === 1 && x.className.split(/\s+/).includes(cls));
+const els = (n, cls) => walk(n).filter(x => x.nodeType === 1 && hasCls(x, cls));
 const texts = n => walk(n).filter(x => x.nodeType === 3);
 
 function show(n, depth = 0) {
   const pad = '  '.repeat(depth + 2);
   if (n.nodeType === 3) return n.data.trim() ? pad + '"' + n.data + '"\n' : '';
-  const cls = n.className ? ' .' + n.className.split(/\s+/).join('.') : '';
+  const cls = clsOf(n) ? ' .' + clsOf(n).split(/\s+/).join('.') : '';
   const attrs = Object.entries(n.attributes).map(([k, v]) => ' ' + k + '="' + v + '"').join('');
   return pad + n.tagName + cls + attrs + '\n' + n.childNodes.map(c => show(c, depth + 1)).join('');
 }
@@ -243,7 +267,7 @@ function expectedForm(teamId) {
    never off the text, because the text is now digits — which is the whole point
    of the redesign and worth asserting rather than assuming. */
 const unitsOf = card => els(card, 'form-runs')
-  .map(r => r.childNodes.filter(n => n.nodeType === 1 && n.className.split(/\s+/).includes('form-game')));
+  .map(r => r.childNodes.filter(n => n.nodeType === 1 && hasCls(n, 'form-game')));
 const letterOf = u => (u.className.match(/\bis-([wdl])\b/) || [, '?'])[1].toUpperCase();
 const scoreOf  = u => (els(u, 'form-score')[0] || { textContent: '' }).textContent;
 
@@ -411,9 +435,8 @@ ok('phase 1: the status strip counts only what it actually has',
 
 const dayText = root => els(root, 'day').map(d => d.textContent);
 const layout = root => walk(root)
-  .filter(n => n.nodeType === 1 && (n.className.split(/\s+/).includes('match') ||
-                                    n.className.split(/\s+/).includes('day')))
-  .map(n => n.className.split(/\s+/).includes('day') ? 'DAY ' + n.textContent : 'card');
+  .filter(n => n.nodeType === 1 && (hasCls(n, 'match') || hasCls(n, 'day')))
+  .map(n => hasCls(n, 'day') ? 'DAY ' + n.textContent : 'card');
 const beforeDays = dayText(pmount), beforeLayout = layout(pmount);
 
 V.showPredictions(pmount, pstatus, predictions, index, data);
@@ -446,15 +469,222 @@ ok('fallback: invents no probabilities in their place',
 ok('fallback: the status strip admits it has no predictions',
   fstatus.textContent.includes('no predictions'), fstatus.textContent);
 
+/* ---------- 11. the pager ----------
+   Twelve fixtures on one calendar day, at fixed offsets from a fixed hour, so
+   the arithmetic below never depends on what time the suite is run at. */
+console.log('');
+console.log('=== the pager ===');
+{
+  const { PAGE_SIZE } = await import(base + 'config.js');
+  const many = Array.from({ length: 12 }, (_, i) => F('p' + i, '1', '16', 3 + i * 0.1));
+
+  /* One render, with `page` as the request. Returns everything worth asserting
+     about, so each case below is three lines rather than thirty. */
+  let asked = [];
+  const draw = (page, list = many, size = 5) => {
+    const m = new Element('main'), s = new Element('div');
+    asked = [];
+    V.showFixtureList(m, s, list, null,
+      { page, size, onPage: n => asked.push(n) });
+    const box = els(m, 'pager')[0] ?? null;
+    const btns = box ? els(box, 'pager-b') : [];
+    return { m, s, box, btns,
+      cards: els(m, 'match').length,
+      label: box ? els(box, 'pager-n')[0].textContent : null,
+      ids: els(m, 'kick').map(t => t.dateTime) };
+  };
+
+  const p0 = draw(0);
+  console.log('    ' + show(p0.box).trimEnd());
+  ok('a page shows five cards, not twelve', p0.cards === 5, p0.cards);
+  ok('the pager says which five, and how many there are', p0.label === '1–5 of 12', p0.label);
+  ok('the range uses an en dash rather than a hyphen, like every other range on the site',
+    p0.label.includes('–') && !p0.label.includes('-'), p0.label);
+  ok('two controls, both real buttons of type button',
+    p0.btns.length === 2 && p0.btns.every(b => b.tagName === 'button' && b.type === 'button'),
+    p0.btns.map(b => [b.tagName, b.type]));
+  ok('back is dead on the first page and forward is live',
+    p0.btns[0].disabled === true && !p0.btns[1].disabled,
+    p0.btns.map(b => !!b.disabled));
+
+  /* The chevron is aria-hidden, so a button with no label announces as "button"
+     and nothing else — twice, identically, on the same row. */
+  ok('each control says what it does, for a reader who cannot see the arrow',
+    p0.btns[0].getAttribute('aria-label') === 'Previous fixtures' &&
+    p0.btns[1].getAttribute('aria-label') === 'More fixtures',
+    p0.btns.map(b => b.getAttribute('aria-label')));
+  ok('and carries the same words as a tooltip for everyone else',
+    p0.btns.every(b => b.title === b.getAttribute('aria-label')),
+    p0.btns.map(b => b.title));
+  ok('the group is named, so the two buttons are not loose in the page',
+    p0.box.getAttribute('role') === 'group' &&
+    p0.box.getAttribute('aria-label') === 'Fixture pages',
+    [p0.box.getAttribute('role'), p0.box.getAttribute('aria-label')]);
+
+  /* --- the icons are really SVG --------------------------------------------
+     document.createElement('svg') produces an element that renders nothing at
+     all, silently, so this is the assertion that catches the mistake. */
+  const svgs = p0.btns.map(b => b.childNodes[0]);
+  ok('each arrow is an svg element in the SVG namespace',
+    svgs.every(s => s.tagName === 'svg' && s.namespaceURI === SVG),
+    svgs.map(s => [s.tagName, s.namespaceURI]));
+  ok('and its paths are too — a path in the HTML namespace draws nothing either',
+    svgs.every(s => s.childNodes.length === 1 &&
+                    s.childNodes[0].tagName === 'path' &&
+                    s.childNodes[0].namespaceURI === SVG),
+    svgs.map(s => s.childNodes.map(c => [c.tagName, c.namespaceURI])));
+  ok('the class arrives as an attribute, because .className on an SVG element is read-only',
+    svgs.every(s => s.getAttribute('class') === 'pager-i' && s.className === ''),
+    svgs.map(s => [s.getAttribute('class'), s.className]));
+  ok('each carries a viewBox, or it scales to nothing',
+    svgs.every(s => s.getAttribute('viewBox') === '0 0 24 24'),
+    svgs.map(s => s.getAttribute('viewBox')));
+  ok('and is hidden from assistive tech, since the button is already labelled',
+    svgs.every(s => s.getAttribute('aria-hidden') === 'true'));
+  ok('the two arrows point opposite ways, rather than both being one glyph',
+    svgs[0].childNodes[0].getAttribute('d') !== svgs[1].childNodes[0].getAttribute('d'),
+    svgs.map(s => s.childNodes[0].getAttribute('d')));
+  ok('no presentation is set as an attribute — fill and stroke belong in the stylesheet',
+    svgs.every(s => walk(s).every(n => n.nodeType !== 1 ||
+      !['fill', 'stroke', 'stroke-width'].some(a => a in n.attributes))),
+    svgs.map(s => Object.keys(s.attributes)));
+
+  /* --- pressing them ------------------------------------------------------- */
+  p0.btns[1].click();
+  ok('forward asks for the next page, and asks once', asked.join() === '1', asked);
+  p0.btns[0].click();
+  ok('and the disabled control asks for nothing at all', asked.join() === '1', asked);
+
+  const p1 = draw(1);
+  ok('page two holds the next five, with none repeated and none skipped',
+    p1.ids.join() === p0.ids.map(() => 0).join() ? false
+      : p1.ids.length === 5 && p1.ids.every(d => !p0.ids.includes(d)),
+    [p0.ids.length, p1.ids.length]);
+  ok('and says so', p1.label === '6–10 of 12', p1.label);
+  ok('with both controls live in the middle of a list',
+    !p1.btns[0].disabled && !p1.btns[1].disabled,
+    p1.btns.map(b => !!b.disabled));
+  p1.btns[0].click();
+  ok('back asks for the page before, not for the first page', asked.join() === '0', asked);
+
+  const p2 = draw(2);
+  ok('the last page holds the remainder rather than padding to five', p2.cards === 2, p2.cards);
+  ok('and counts it honestly', p2.label === '11–12 of 12', p2.label);
+  ok('forward is dead at the end, back is live',
+    !p2.btns[0].disabled && p2.btns[1].disabled === true,
+    p2.btns.map(b => !!b.disabled));
+
+  /* Every fixture reachable, exactly once: the property the whole feature rests
+     on. Anything else is a list that quietly loses a match. */
+  const walked = [...p0.ids, ...p1.ids, ...p2.ids];
+  ok('the three pages partition the day — nothing hidden, nothing counted twice',
+    walked.length === 12 && new Set(walked).size === 12, walked.length);
+  ok('and in the order they kick off',
+    walked.join() === many.map(f => f.date).join(), walked.slice(0, 2));
+
+  /* --- a request for a page that is not there ------------------------------
+     main.js stores the page unclamped on purpose, so these are the live cases
+     rather than defensive ones: phase 2 can shorten a day under the reader. */
+  ok('a page past the end lands on the last real page, not on an empty one',
+    draw(9).label === '11–12 of 12', draw(9).label);
+  ok('a negative page lands on the first', draw(-4).label === '1–5 of 12');
+  ok('a page that is not a number lands on the first', draw(NaN).label === '1–5 of 12');
+  ok('a fractional page is floored rather than slicing between cards',
+    draw(1.9).label === '6–10 of 12', draw(1.9).label);
+
+  /* --- when there is nothing to page -------------------------------------- */
+  ok('exactly one page means no pager: two dead arrows are not information',
+    draw(0, many.slice(0, 5)).box === null);
+  ok('one fixture over means there is', draw(0, many.slice(0, 6)).box !== null);
+  ok('and it counts the six rather than the five it shows',
+    draw(0, many.slice(0, 6)).label === '1–5 of 6', draw(0, many.slice(0, 6)).label);
+  ok('a single fixture pages not at all', draw(0, many.slice(0, 1)).box === null);
+
+  /* --- the stagger restarts, so page three does not open with a pause ------ */
+  const delays = r => els(r.m, 'match').map(c => c.style.props['--i']);
+  ok('the entrance stagger counts from zero on every page',
+    delays(p1).join() === '0,1,2,3,4', delays(p1));
+  ok('so no card on any page waits longer than the first page\'s last',
+    Math.max(...[p0, p1, p2].flatMap(r => delays(r).map(Number))) === 4,
+    [p0, p1, p2].map(delays));
+
+  /* --- the heading survives the cut ---------------------------------------
+     A slice starting mid-day still has to say which day, even though the
+     previous page already said it. `lastDay` resetting on every paint is what
+     does it, and it is one line away from being "optimised" into a bug that
+     leaves a page of undated cards.
+
+     Anchored to local midnight rather than to now + N hours: eight fixtures
+     spread across a working day have to stay on ONE calendar day for this to
+     test anything, and offsets from the moment the suite runs stop doing that
+     after mid-afternoon. */
+  const midnight = (() => { const d = new Date(); d.setHours(0, 0, 0, 0); return +d; })();
+  const at = h => new Date(midnight + h * 3600e3).toISOString();
+  const spread = [10, 12, 13, 14, 15, 16, 17, 18, 34, 35]
+    .map((h, i) => ({ ...F('s' + i, '1', '16', 0), date: at(h) }));
+
+  const sp0 = draw(0, spread), sp1 = draw(1, spread);
+  const headings = r => els(r.m, 'day').map(d => d.textContent);
+  console.log('    page 1: ' + headings(sp0).join(' | ') + '   page 2: ' + headings(sp1).join(' | '));
+  ok('the eight-then-two split really does cut a day in half, or the next two prove nothing',
+    sp0.cards === 5 && headings(sp0).length === 1, [sp0.cards, headings(sp0)]);
+  ok('a page that starts in the middle of a day repeats that day\'s heading',
+    headings(sp1)[0] === headings(sp0)[0], [headings(sp0), headings(sp1)]);
+  ok('and a slice spanning midnight still carries a heading for each day in it',
+    headings(sp1).length === 2 && headings(sp1)[1] !== headings(sp1)[0], headings(sp1));
+
+  /* --- both phases agree ---------------------------------------------------
+     The reader is usually mid-list when phase 2 lands. If the two disagreed
+     about which five those are, the page would swap five cards for five others
+     at a moment nobody asked it to. */
+  const pm = new Element('main'), ps = new Element('div');
+  const pg = { page: 1, size: 5, onPage: () => {} };
+  V.showFixtureList(pm, ps, predictions.map(p => p.fixture), null, pg);
+  const phase1 = els(pm, 'kick').map(t => t.dateTime);
+  V.showPredictions(pm, ps, predictions, index, data, null, pg);
+  const phase2 = els(pm, 'kick').map(t => t.dateTime);
+  ok('phase 1 and phase 2 show the same slice of the same list',
+    phase1.join() === phase2.join(), [phase1, phase2]);
+
+  /* --- the status strip describes the day, not the page -------------------- */
+  ok('the strip counts the whole day above five cards, and the pager reconciles it',
+    p0.s.textContent.includes('12 fixtures') && p0.label.endsWith('of 12'),
+    [p0.s.textContent, p0.label]);
+
+  /* --- paging is opt-in ---------------------------------------------------- */
+  const nm = new Element('main'), ns2 = new Element('div');
+  V.showFixtureList(nm, ns2, many);
+  ok('a caller that passes no paging gets the whole list and no pager, as before',
+    els(nm, 'match').length === 12 && els(nm, 'pager').length === 0,
+    els(nm, 'match').length);
+  ok('and PAGE_SIZE is what the site actually pages by', PAGE_SIZE === 5, PAGE_SIZE);
+}
+
 console.log('=== class audit ===');
 const fs = await import('node:fs');
 const css = fs.readFileSync(new URL('../assets/css/style.css', import.meta.url), 'utf8');
 const emitted = new Set();
 [mount, status, pmount, pstatus, fmount, fstatus].concat(allCards).forEach(root => walk(root).forEach(n => {
-  if (n.nodeType === 1 && n.className) n.className.split(/\s+/).forEach(c => emitted.add(c));
+  /* clsOf, not .className: an icon's class is an attribute, and reading only
+     .className would leave every SVG class unaudited — which is exactly the set
+     of classes whose absence renders a black blob rather than nothing. */
+  if (n.nodeType === 1 && clsOf(n)) clsOf(n).split(/\s+/).forEach(c => emitted.add(c));
 }));
-const orphans = [...emitted].filter(c => !new RegExp('\\.' + c + '\\b').test(css));
+/* The lookahead, not \b: `\.pager\b` matches inside `.pager-b`, so a class with
+   no rule of its own passes as styled on the strength of a longer relative. */
+const styled = c => new RegExp('\\.' + c + '(?![\\w-])').test(css);
+const orphans = [...emitted].filter(c => !styled(c));
 console.log('    ' + emitted.size + ' distinct classes emitted');
 ok('no class without styling', orphans.length === 0, orphans);
+ok('the audit rejects a class that is only the prefix of a real rule',
+  !/\.pager(?![\w-])/.test('.pager-b { color: red }'));
 
 console.log(fails ? '\n' + fails + ' FAILED' : '\nall passed');
+/* Every other suite in this folder ends this way; r1 was the one that did not,
+   and printed "9 FAILED" while exiting 0 for as long as it existed. run.mjs
+   counts FAIL lines itself so the full run was never fooled, but anything that
+   asks the process instead of reading its output — CI, a shell `&&`, a
+   deliberate-breakage harness — was told this suite had passed. Found by a
+   harness that trusted the exit code, which is the whole argument for reading
+   it. */
+process.exit(fails ? 1 : 0);

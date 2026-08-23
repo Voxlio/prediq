@@ -30,6 +30,44 @@ export function clear(node) {
   while (node.firstChild) node.removeChild(node.firstChild);
 }
 
+/* An inline SVG icon from path geometry. Lucide (ISC) supplies the paths.
+
+   Two things make this worth a helper rather than three lines at each call site.
+
+   The first is that document.createElement('svg') does not work and does not
+   complain. HTML and SVG are different namespaces; createElement produces an
+   HTMLUnknownElement that sits in the document rendering absolutely nothing —
+   no error, no warning, no console output, just a gap where the icon should be.
+   createElementNS is not optional.
+
+   The second is that `className` is useless on an SVG element: there it is a
+   read-only SVGAnimatedString, so `n.className = 'x'` silently fails to apply
+   the class, which is why el() cannot be reused here. setAttribute works on
+   both, so this uses that.
+
+   Presentation lives in style.css. Only geometry is passed in, and the icon is
+   aria-hidden throughout: an icon button gets its accessible name from a label
+   or aria-label, never from the drawing. */
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+export function icon(paths, className = 'i') {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('class', className);
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('aria-hidden', 'true');
+  for (const d of paths) {
+    const p = document.createElementNS(SVG_NS, 'path');
+    p.setAttribute('d', d);
+    svg.append(p);
+  }
+  return svg;
+}
+
+/* Lucide chevron-left and chevron-right, verbatim. Named here so the two call
+   sites cannot end up with mirrored or mismatched arrows. */
+export const CHEVRON_LEFT = ['m15 18-6-6 6-6'];
+export const CHEVRON_RIGHT = ['m9 18 6-6-6-6'];
+
 /* A label→value pair, the densest honest way to publish a figure. Used by the
    card readout and by both ratings tables. */
 export function field(dl, term, value, title) {

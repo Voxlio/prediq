@@ -8,7 +8,7 @@
 
 import {
   el, clear, field, stat, setStatus, notice, errorNotice, leagueName,
-  dayLabel, localDayKey,
+  dayLabel, localDayKey, icon, CHEVRON_LEFT, CHEVRON_RIGHT,
 } from './dom.js';
 import { FIXTURE_DAYS } from './config.js';
 
@@ -350,6 +350,68 @@ export function showEmpty(mount, statusNode, days) {
 }
 
 /* =============================================================================
+   PAGING
+
+   A busy Saturday is forty cards. The reader gets PAGE_SIZE of them at a time,
+   within whichever day is selected.
+
+   `page` arrives as a *request*, not a fact. Only this file knows how many
+   fixtures survived the day filter, so only this file can say whether page 3
+   exists — and it may stop existing between phase 1 and phase 2, or when the
+   day changes. So the request is clamped here and the controls are built from
+   the clamped value, which means prev and next are always arithmetic on a page
+   that really exists rather than on one the reader was notionally left at.
+
+   The page index is deliberately not in the URL, unlike the day. A day says
+   what the page is about and is worth linking to; a page number is closer to a
+   scroll position, and it would go stale against a list that changes every few
+   hours anyway.
+   ========================================================================== */
+
+function pageCount(total, size) {
+  return Math.max(1, Math.ceil(total / size));
+}
+
+function clampPage(page, total, size) {
+  return Math.min(Math.max(Number.isFinite(page) ? Math.floor(page) : 0, 0),
+                  pageCount(total, size) - 1);
+}
+
+/* Two chevrons and a count. The count is the part that earns its place: without
+   it, paging replaces "a long list" with "a short list and no idea how much is
+   behind it", which is worse than the scrolling it was meant to fix. */
+function pager(page, total, size, onPage) {
+  const pages = pageCount(total, size);
+  const from = page * size + 1;
+  const to = Math.min(total, (page + 1) * size);
+
+  const box = el('div', 'pager');
+  box.setAttribute('role', 'group');
+  box.setAttribute('aria-label', 'Fixture pages');
+
+  const step = (label, delta, paths, disabled) => {
+    const b = el('button', 'pager-b');
+    b.type = 'button';
+    /* The chevron is aria-hidden, so without this the button announces as
+       "button" and nothing else. */
+    b.setAttribute('aria-label', label);
+    b.title = label;
+    b.append(icon(paths, 'pager-i'));
+    if (disabled) b.disabled = true;
+    else b.addEventListener('click', () => onPage(page + delta));
+    return b;
+  };
+
+  /* Both ends stay in place when disabled rather than being removed: a control
+     that vanishes on the first page moves the other one sideways, and the row
+     changes width as you walk through it. */
+  box.append(step('Previous fixtures', -1, CHEVRON_LEFT, page === 0));
+  box.append(el('span', 'pager-n', from + '–' + to + ' of ' + total));
+  box.append(step('More fixtures', 1, CHEVRON_RIGHT, page >= pages - 1));
+  return box;
+}
+
+/* =============================================================================
    5. THE FULL PAGE
    ========================================================================== */
 
@@ -360,10 +422,26 @@ export function showEmpty(mount, statusNode, days) {
 
    With a day selected there is exactly one heading. It stays rather than being
    dropped as redundant: the tab above says "Today" or "Sat 23", and this is the
-   only place the unabbreviated date appears. */
-function dayGroupedList(mount, items, dateOf, card) {
+   only place the unabbreviated date appears.
+
+   The index handed to `card` is the position within the SLICE, not within the
+   filtered list. It has exactly one job — it becomes --i, which delays the
+   card's entrance by 70ms per step — and every card is rebuilt from scratch on
+   each paint, so the stagger runs again on every page. Absolute indexes would
+   therefore open page three by counting 700ms before showing anything, on a
+   page the reader had just deliberately asked for. Nothing else reads it: it
+   identifies no card and is never compared across phases. */
+function dayGroupedList(mount, items, dateOf, card, paging) {
+  const size = paging ? paging.size : items.length || 1;
+  const page = paging ? clampPage(paging.page, items.length, size) : 0;
+  const from = page * size;
+  const slice = paging ? items.slice(from, from + size) : items;
+
+  /* Starts null on every paint, which is what makes a page opening mid-Saturday
+     still carry the Saturday heading. Dropping it as "already seen on the
+     previous page" would leave a page of undated cards. */
   let lastDay = null;
-  items.forEach((item, i) => {
+  slice.forEach((item, i) => {
     const key = localDayKey(new Date(dateOf(item)));
     if (key !== lastDay) {
       lastDay = key;
@@ -373,12 +451,24 @@ function dayGroupedList(mount, items, dateOf, card) {
     }
     mount.append(card(item, i));
   });
+
+  /* One page is not a choice, the same reasoning as the day strip: a pager
+     reading "1–3 of 3" with both arrows dead is a broken control, not
+     information. */
+  if (paging && items.length > size) {
+    mount.append(pager(page, items.length, size, paging.onPage));
+  }
 }
 
-/* Counts describing what is on screen, plus the window total when a day filter
+/* Counts describing the selected day, plus the window total when the day filter
    is narrowing it. Showing only the day's count would make the page look emptier
    than the week is; showing only the week's would not describe the list under
-   it. Both, in that order. */
+   it. Both, in that order.
+
+   The day's count, not the page's, now that the list is paged. So the strip
+   reads "23 fixtures" above five cards — which is why the pager underneath says
+   "1–5 of 23" and repeats the 23: the two controls answer different questions
+   and have to be reconcilable at a glance rather than merely both true. */
 function dayCounts(shown, total, leagues, day) {
   const parts = [
     stat(shown, shown === 1 ? 'fixture' : 'fixtures'),
@@ -391,7 +481,7 @@ function dayCounts(shown, total, leagues, day) {
 /* Phase 1: every fixture, no predictions yet. The status strip carries the
    counts rather than a bare spinner, because "31 fixtures across 9 leagues" is
    already the answer to a question somebody came here with. */
-export function showFixtureList(mount, statusNode, fixtures, day = null) {
+export function showFixtureList(mount, statusNode, fixtures, day = null, paging = null) {
   clear(mount);
   const shown = onDay(fixtures, f => f.date, day);
   const leagues = new Set(shown.map(f => f.leagueSlug));
@@ -400,14 +490,14 @@ export function showFixtureList(mount, statusNode, fixtures, day = null) {
     'reading league tables',
   ]);
   dayGroupedList(mount, shown, f => f.date,
-    (f, i) => pendingCard(f, leagueName(f.leagueSlug), i));
+    (f, i) => pendingCard(f, leagueName(f.leagueSlug), i), paging);
 }
 
 /* Phase 1 worked, phase 2 did not. The fixtures on screen are still true, so
    they stay: throwing away a correct fixture list because the predictions
    failed would take away information the reader already had. The notice sits
    above the list and says which half is missing. */
-export function showFixtureFallback(mount, statusNode, fixtures, message, day = null) {
+export function showFixtureFallback(mount, statusNode, fixtures, message, day = null, paging = null) {
   clear(mount);
   const shown = onDay(fixtures, f => f.date, day);
   setStatus(statusNode, [
@@ -422,10 +512,11 @@ export function showFixtureFallback(mount, statusNode, fixtures, message, day = 
     'place. A reload normally fixes it.',
     'warn'));
   dayGroupedList(mount, shown, f => f.date,
-    (f, i) => pendingCard(f, leagueName(f.leagueSlug), i, 'No prediction — model data did not load.'));
+    (f, i) => pendingCard(f, leagueName(f.leagueSlug), i, 'No prediction — model data did not load.'),
+    paging);
 }
 
-export function showPredictions(mount, statusNode, predictions, index, data, day = null) {
+export function showPredictions(mount, statusNode, predictions, index, data, day = null, paging = null) {
   clear(mount);
 
   const shown = onDay(predictions, p => p.fixture.date, day);
@@ -451,5 +542,5 @@ export function showPredictions(mount, statusNode, predictions, index, data, day
       'Predictions are still shown, but they rest on less evidence than usual.'));
   }
 
-  dayGroupedList(mount, shown, p => p.fixture.date, matchCard);
+  dayGroupedList(mount, shown, p => p.fixture.date, matchCard, paging);
 }

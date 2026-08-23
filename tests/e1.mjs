@@ -19,7 +19,7 @@ import { fileURLToPath } from 'node:url';
    These suites used to carry an absolute sandbox path, which broke the moment
    the sandbox was renamed. */
 const base = new URL('../assets/js/', import.meta.url).href;
-const { LEAGUES, DOMESTIC, FIXTURE_DAYS, CACHE } = await import(base + 'config.js');
+const { LEAGUES, DOMESTIC, FIXTURE_DAYS, PAGE_SIZE, CACHE } = await import(base + 'config.js');
 
 const CHILD = process.env.E1_DAY || '';
 
@@ -41,10 +41,14 @@ const ok = (l, c, g) => { console.log((c ? '  pass  ' : '  FAIL  ') + l + (c ? '
 /* ---------- DOM shim ----------
    Past r1's copy by what the day strip needs: `dataset`, because the day key
    rides on the button as data-day, and listeners recorded rather than ignored
-   so a tab can actually be clicked. */
+   so a tab can actually be clicked. Also createElementNS, without which the
+   pager's chevrons throw rather than render. */
+const XHTML = 'http://www.w3.org/1999/xhtml';
+const SVG = 'http://www.w3.org/2000/svg';
 class TextNode { constructor(d) { this.nodeType = 3; this.data = String(d); this.childNodes = []; } get textContent() { return this.data; } }
 class Element {
-  constructor(tag) { this.nodeType = 1; this.tagName = tag; this.className = ''; this.childNodes = []; this.attributes = {};
+  constructor(tag, ns) { this.nodeType = 1; this.tagName = tag; this.namespaceURI = ns || XHTML;
+    this.className = ''; this.childNodes = []; this.attributes = {};
     this.dataset = {}; this.listeners = {};
     this.style = { props: {}, setProperty(k, v) { this.props[k] = v; } }; }
   get firstChild() { return this.childNodes[0] ?? null; }
@@ -54,19 +58,23 @@ class Element {
   setAttribute(k, v) { this.attributes[k] = String(v); }
   getAttribute(k) { return this.attributes[k] ?? null; }
   addEventListener(type, fn) { (this.listeners[type] ||= []).push(fn); }
-  click() { (this.listeners.click || []).forEach(fn => fn()); }
+  click() { if (this.disabled) return; (this.listeners.click || []).forEach(fn => fn()); }
   set textContent(v) { this.childNodes = v === '' ? [] : [new TextNode(v)]; }
   get textContent() { return this.childNodes.map(c => c.textContent).join(''); }
 }
 const mount = new Element('main'), statusNode = new Element('div'), stripNode = new Element('div');
 globalThis.document = {
   createElement: t => new Element(t),
+  createElementNS: (ns, t) => new Element(t, ns),
   createTextNode: t => new TextNode(t),
   getElementById: id => ({ fixtures: mount, status: statusNode, days: stripNode }[id] ?? null),
 };
 globalThis.window = globalThis;
 const walk = (n, out = []) => { out.push(n); n.childNodes.forEach(c => walk(c, out)); return out; };
-const els = (n, cls) => walk(n).filter(x => x.nodeType === 1 && x.className.split(/\s+/).includes(cls));
+/* An SVG element's class is an attribute — .className is read-only there — so
+   both sources are read. See the longer note in r1. */
+const clsOf = n => n.className || n.attributes.class || '';
+const els = (n, cls) => walk(n).filter(x => x.nodeType === 1 && clsOf(x).split(/\s+/).includes(cls));
 
 /* ---------- location / history shim ----------
    The selected day lives in the URL so it can be linked and survive a reload.
@@ -260,6 +268,21 @@ const shownDays = () => [...new Set(els(mount, 'kick').map(t => localKey(t.dateT
 const leaguesOn = () => new Set(els(mount, 'comp').map(n => n.textContent));
 const plural = (n, w) => n + ' ' + w + (n === 1 ? '' : 's');
 
+/* ---------- the pager ----------
+   The day tabs are one filter and the pager is another, so a day is only fully
+   accounted for by walking both. Everything below reads the controls the reader
+   would press rather than reaching into state, so a pager that renders wrong is
+   a pager that fails here. */
+const pagerBox = () => els(mount, 'pager')[0] ?? null;
+const pagerBtns = () => { const b = pagerBox(); return b ? els(b, 'pager-b') : []; };
+const pagerLabel = () => { const b = pagerBox(); return b ? els(b, 'pager-n')[0].textContent : null; };
+const kicks = () => els(mount, 'kick').map(t => t.dateTime);
+/* What identifies a card, for the "nothing shown twice" claim. Kickoff will not
+   do: every division in the mock plays its opener at the same hour, so eleven
+   cards share a time and a duplicate check on time alone would fail on correct
+   code. The card's own text is the only identifier a reader can see. */
+const cardIds = () => els(mount, 'match').map(c => c.textContent);
+
 /* ---------- child mode: a day already in the URL ----------
    Reported and exited before the rest of the suite runs, so a deep link costs
    one boot rather than a second full pass. */
@@ -275,23 +298,30 @@ ok('every card carries exactly one kickoff time',
   els(mount, 'kick').length === cards.length, [els(mount, 'kick').length, cards.length]);
 ok('no error notice when everything loaded', els(mount, 'notice').length === 0);
 
-const firstDayCards = cards.length;
+/* The day's total, read off the pager rather than recomputed from the mock. The
+   pager is the thing making the claim, so if it says "of 23" over a day holding
+   22 the error surfaces here rather than being reproduced by the test. */
+const totalOnDay = () => {
+  const l = pagerLabel();
+  return l ? +l.split(' of ')[1] : els(mount, 'match').length;
+};
+
 ok('the page opens on a single day rather than the whole window',
-  shownDays().length === 1 && firstDayCards < TOTAL, [shownDays(), firstDayCards, TOTAL]);
+  shownDays().length === 1 && totalOnDay() < TOTAL, [shownDays(), totalOnDay(), TOTAL]);
+ok('and pages that day rather than listing all of it',
+  cards.length === PAGE_SIZE && totalOnDay() > PAGE_SIZE, [cards.length, totalOnDay()]);
 ok('and on the earliest day there is football, which is what a visitor wants first',
   current() && current().dataset.day === tabs()[0].dataset.day,
   [current() && current().dataset.day, tabs().map(b => b.dataset.day)]);
 ok('one day heading, since one day is shown', els(mount, 'day').length === 1, els(mount, 'day').length);
 
-/* The strip counts leagues that actually have a fixture on the day shown, not
-   every league configured. The two idle European cups contribute nothing in
-   August, so saying "14 leagues" over a list drawn from twelve would be false. */
-ok('the status strip counts the leagues on the day shown',
-  statusNode.textContent.includes(plural(leaguesOn().size, 'league')),
-  [statusNode.textContent, leaguesOn().size]);
-ok('and the fixtures actually on screen',
-  statusNode.textContent.includes(plural(firstDayCards, 'fixture')),
-  [statusNode.textContent, firstDayCards]);
+/* The strip describes the DAY, not the page: five cards under "23 fixtures" is
+   the intended reading, and the pager underneath says "1–5 of 23" so the two are
+   reconcilable at a glance. Counting the page here instead would leave nothing on
+   the screen saying how much football the day holds. */
+ok('the status strip counts the whole day, not the five cards under it',
+  statusNode.textContent.includes(plural(totalOnDay(), 'fixture')),
+  [statusNode.textContent, totalOnDay()]);
 ok('while still saying how many the whole window holds, so the day looks like a filter',
   statusNode.textContent.includes(TOTAL + ' in ' + FIXTURE_DAYS + ' days'),
   statusNode.textContent);
@@ -319,56 +349,121 @@ console.log('=== the day tabs ===');
   ok('no day is offered twice', new Set(keys).size === keys.length, keys);
   ok('every tab is a real button', tabs().every(b => b.tagName === 'button'), tabs().map(b => b.tagName));
 
-  /* Walk every tab and add up what each shows. Disjoint groups that sum to the
-     window total is the whole correctness claim of the filter: nothing hidden,
-     nothing counted twice. */
+  /* Walk every tab, and every page inside every tab, adding up what each shows.
+     Disjoint groups that sum to the window total is the whole correctness claim
+     of both filters together: nothing hidden, nothing counted twice. Before the
+     pager this loop only had to click tabs; now a day that is not walked to its
+     last page would make the sum come out short, which is exactly the failure a
+     partition assertion exists to catch. */
   let sum = 0;
   const everyLeague = new Set();
   const perDayLeagues = [];
   const refusals = [];
+  const pagedDays = [];
+  let tabClicks = 0, pagerClicks = 0;
   for (const key of keys) {
     const btn = tabs().find(b => b.dataset.day === key);
-    if (!btn.disabled) btn.click();
+    if (!btn.disabled) { btn.click(); tabClicks++; }
 
-    const n = els(mount, 'match').length;
-    sum += n;
-    leaguesOn().forEach(l => everyLeague.add(l));
-    perDayLeagues.push(leaguesOn().size);
-    els(mount, 'blank-note').forEach(x => refusals.push(x.textContent));
+    ok('the ' + key + ' tab opens on the first page of that day',
+      !pagerBox() || pagerLabel().startsWith('1–'), pagerLabel());
 
-    ok('the ' + key + ' tab shows something', n > 0, n);
-    ok('and only matches that kick off on ' + key,
-      shownDays().join() === key, shownDays());
-    ok('with one day heading above them', els(mount, 'day').length === 1, els(mount, 'day').length);
-    ok('and that tab marked current, alone',
+    /* Assertions that must hold on every page of the day, checked as we go. */
+    const dayLeagues = new Set();
+    const perPage = [];
+    const dayKicks = [];
+    const dayIds = [];
+    const labels = [];
+    let guard = 0;
+    for (;;) {
+      const n = els(mount, 'match').length;
+      perPage.push(n);
+      labels.push(pagerLabel());
+      dayKicks.push(...kicks());
+      dayIds.push(...cardIds());
+      sum += n;
+      leaguesOn().forEach(l => { dayLeagues.add(l); everyLeague.add(l); });
+      els(mount, 'blank-note').forEach(x => refusals.push(x.textContent));
+
+      ok('a page of the ' + key + ' tab shows something', n > 0, n);
+      ok('and only matches that kick off on ' + key, shownDays().join() === key, shownDays());
+      ok('with one day heading above them, repeated on each page',
+        els(mount, 'day').length === 1, els(mount, 'day').length);
+      ok('and no more than a page-full', n <= PAGE_SIZE, n);
+      ok('every card on the page still carries exactly one kickoff time',
+        els(mount, 'kick').length === n, [els(mount, 'kick').length, n]);
+      /* The fit is done once over every league before any filtering, so a
+         Saturday's predictions rest on all of it and this count must not move —
+         not for a tab, and not for a page either. */
+      ok('matches fitted moves with neither the day nor the page',
+        statusNode.textContent.includes(DOM_SLUGS.length * 8 + ' matches fitted'),
+        statusNode.textContent);
+
+      /* Bounded rather than while(true): a pager that never reports itself
+         finished should fail the suite, not hang it. */
+      const next = pagerBtns()[1];
+      if (!next || next.disabled || ++guard > 50) break;
+      next.click();
+      pagerClicks++;
+    }
+    const dayTotal = perPage.reduce((a, b) => a + b, 0);
+    pagedDays.push(perPage);
+    perDayLeagues.push(dayLeagues.size);
+
+    /* Counted over the whole day, so this is the assertion that catches a strip
+       describing only the cards on screen. */
+    ok('the strip counts every league playing on ' + key + ', not only those on the page',
+      statusNode.textContent.includes(plural(dayLeagues.size, 'league')),
+      [statusNode.textContent, dayLeagues.size]);
+    ok('the ' + key + ' tab holds ' + dayTotal + ' fixtures over ' + perPage.length +
+       ' page' + (perPage.length === 1 ? '' : 's'),
+      perPage.length === Math.ceil(dayTotal / PAGE_SIZE), [perPage, dayTotal]);
+    ok('every page but the last is full, so nothing pads the middle of the day',
+      perPage.slice(0, -1).every(n => n === PAGE_SIZE), perPage);
+    ok('the label ends on the day total on every page of ' + key,
+      labels.every(l => l === null || l.endsWith(' of ' + dayTotal)), labels);
+    ok('and the ranges it names run consecutively from 1 to ' + dayTotal,
+      labels[0] === null ||
+      labels.map(l => l.split(' of ')[0]).join() ===
+      perPage.map((n, i) => { const from = i * PAGE_SIZE + 1;
+        return from + '–' + (from + n - 1); }).join(),
+      labels);
+    /* The point of paging: a day is cut up, not sampled. */
+    ok('no fixture on ' + key + ' is shown on two pages',
+      new Set(dayIds).size === dayIds.length, [dayIds.length, new Set(dayIds).size]);
+    ok('and paging keeps the day in kickoff order across the cut',
+      dayKicks.join() === [...dayKicks].sort().join(), dayKicks);
+    ok('and the day is still the one in the URL after paging through it',
+      location.search === '?day=' + key, location.search);
+    ok('with that tab still marked current, alone',
       current().dataset.day === key &&
       tabs().filter(b => b.getAttribute('aria-current')).length === 1,
       tabs().map(b => [b.dataset.day, b.getAttribute('aria-current')]));
-    ok('the day is written to the URL, so the view can be linked',
-      location.search === '?day=' + key, location.search);
-    /* The fit is done once over every league before any filtering, so a
-       Saturday's predictions rest on all of it and this count must not move. */
-    ok('matches fitted does not move with the day',
-      statusNode.textContent.includes(DOM_SLUGS.length * 8 + ' matches fitted'), statusNode.textContent);
   }
 
-  /* The assertion above is only worth anything if some day is short of a league.
-     While every tab happened to show all of them, computing "matches fitted" from
-     the leagues on screen — the obvious wrong way to write it — read identically
-     on every tab and the assertion passed on broken code. Verified by making that
-     exact edit and watching this line fail. */
+  console.log('    pages per day: ' + JSON.stringify(pagedDays));
+
+  /* The per-day assertions above are only worth anything if some day is short of
+     a league. While every tab happened to show all of them, computing "matches
+     fitted" from the leagues on screen — the obvious wrong way to write it —
+     read identically on every tab and the assertion passed on broken code.
+     Verified by making that exact edit and watching this line fail. */
   ok('and at least one day is missing a division, or that assertion proves nothing',
     perDayLeagues.some(n => n < everyLeague.size), perDayLeagues);
+  /* Likewise: a pager only proves anything if some day actually needed one. */
+  ok('and at least one day ran to more than one page, or the pager proves nothing',
+    pagedDays.some(p => p.length > 1), pagedDays.map(p => p.length));
 
-  ok('the tabs partition the window: ' + sum + ' across ' + keys.length + ' days',
+  ok('the tabs and the pager together partition the window: ' + sum + ' across ' +
+     keys.length + ' days and ' + pagedDays.flat().length + ' pages',
     sum === TOTAL, [sum, TOTAL]);
   ok('and between them cover every division plus the Champions League',
     everyLeague.size === DOMESTIC.length + 1, [everyLeague.size, DOMESTIC.length + 1]);
 
   /* The refusal is a Champions League tie against a side outside the tracked
      divisions, and it kicks off on a later day than the page opens on. Counted
-     across every tab rather than on one, which also proves the filter shows it
-     exactly once instead of on every day. */
+     across every tab and every page rather than on one, which also proves the
+     filters show it exactly once instead of on every day. */
   ok('exactly one refusal in the whole window, for the untracked side',
     refusals.length === 1, refusals);
   ok('and it names Ajax rather than blaming the network',
@@ -376,7 +471,55 @@ console.log('=== the day tabs ===');
 
   ok('a tab click replaces the URL rather than pushing, so Back still leaves the page',
     pushes === 0, pushes);
-  ok('and returns to the top of the list', scrolls === keys.length - 1, [scrolls, keys.length - 1]);
+  /* A page number stays out of the URL deliberately: it is closer to a scroll
+     position than to a place, and a link to page 3 of a list that has since
+     gained two fixtures points at different matches than the one shared. */
+  ok('and paging writes nothing to the URL at all',
+    !location.search.includes('page'), location.search);
+  /* The pager sits at the BOTTOM of the list, so without this the five new cards
+     would all be above the viewport. */
+  ok('every tab and every page returns to the top of the list',
+    scrolls === tabClicks + pagerClicks, [scrolls, tabClicks, pagerClicks]);
+
+  /* ---------- back the other way ----------
+     The loop above only ever pressed Next, so a back chevron wired to the wrong
+     index — or to nothing — would have passed everything so far. Walking a day
+     forwards and then backwards has to retrace the same pages in reverse: the
+     pager is the only navigation the list has, and a reader who overshoots has
+     no other way back. */
+  const busy = keys[pagedDays.findIndex(p => p.length > 1)];
+  const busyTab = tabs().find(b => b.dataset.day === busy);
+  if (!busyTab.disabled) busyTab.click();
+
+  const forward = [pagerLabel()];
+  for (let i = 0; i < 50; i++) {
+    const next = pagerBtns()[1];
+    if (!next || next.disabled) break;
+    next.click();
+    forward.push(pagerLabel());
+  }
+  ok('the last page of ' + busy + ' has a dead forward chevron rather than none',
+    pagerBtns()[1] && pagerBtns()[1].disabled === true, pagerBtns().map(b => b.disabled));
+  ok('and a live back one', pagerBtns()[0].disabled !== true, pagerBtns().map(b => b.disabled));
+
+  const backward = [pagerLabel()];
+  for (let i = 0; i < 50; i++) {
+    const prev = pagerBtns()[0];
+    if (!prev || prev.disabled) break;
+    prev.click();
+    backward.push(pagerLabel());
+  }
+  console.log('    ' + busy + ' forwards: ' + forward.join('  ') );
+  ok('walking back retraces the same pages in reverse',
+    backward.join() === [...forward].reverse().join(), [forward, backward]);
+  ok('and lands on the first page, where the back chevron goes dead',
+    pagerLabel().startsWith('1–') && pagerBtns()[0].disabled === true,
+    [pagerLabel(), pagerBtns().map(b => b.disabled)]);
+  /* A dead chevron that still fires would page past the end. The shim honours
+     `disabled` the way a browser does, so this is a claim about the page. */
+  const held = pagerLabel();
+  pagerBtns()[0].click();
+  ok('and pressing it again does nothing at all', pagerLabel() === held, [held, pagerLabel()]);
 
   /* ---------- deep links ---------- */
   const deeplink = day => {

@@ -192,6 +192,11 @@ ok('the cache policy is at least broadly published', ttlUndoc.length <= 2, ttlUn
    — they are audited by their own paths above, or are not settings at all. */
 const TOP_EXEMPT = {
   currentSeason: 'a function, not a setting',
+  /* The method page explains how a number is arrived at, and this one changes
+     nothing about any number — the fit runs over every league and every match
+     before a single card is filtered or sliced. Documenting it there would
+     invite the reading that page size affects the model. */
+  PAGE_SIZE: 'how many cards are shown at once; affects no computed value',
 };
 const topUndoc = Object.entries(cfg)
   .filter(([, v]) => typeof v === 'number' || typeof v === 'string')
@@ -267,6 +272,46 @@ ok('no class without styling', orphans.length === 0, orphans);
 const sample = '.foo-bar { color: red } .baz { color: red }';
 ok('the audit rejects a class that is only a prefix of a real rule',
   !styledIn('foo', sample) && styledIn('foo-bar', sample) && styledIn('baz', sample));
+
+/* ---------- the stylesheet's table of contents ----------
+   style.css opens with an "Order:" list of its sections. A list of contents that
+   has drifted from its contents is worse than none, because it is trusted for
+   exactly as long as it takes someone to act on it — and this one had already
+   drifted before anything checked it: it omitted "The record" entirely and still
+   called section 4 "masthead" after that name was gone from the file.
+
+   Numbered headers only. The record section has unnumbered sub-headers of the
+   same shape (`--- what happened ---`), and they are not sections. */
+console.log('');
+console.log('=== the stylesheet index ===');
+const sections = [...css.matchAll(/^\/\* --- (\d+)\. (.+?) -{3,}/gm)]
+  .map(mm => ({ n: +mm[1], name: mm[2].trim() }));
+const order = (/^ {3}Order: ([\s\S]*?)\n {3}=+ \*\//m.exec(css) || [, ''])[1]
+  .split('→').map(s => s.replace(/\s+/g, ' ').trim()).filter(Boolean);
+
+console.log('    ' + sections.length + ' sections, ' + order.length + ' listed in the index');
+ok('the stylesheet has sections to check at all', sections.length > 10, sections.length);
+ok('and its index lists exactly as many', order.length === sections.length,
+  [order.length, sections.length]);
+ok('the section numbers run 1..n with no gaps and no repeats',
+  sections.every((s, i) => s.n === i + 1), sections.map(s => s.n));
+/* Compared by name and in order, so moving a section without moving its entry
+   fails as loudly as deleting one. */
+const nameDrift = (found, listed) => found
+  .map((s, i) => (s.name === listed[i] ? null : (i + 1) + ': index says "' +
+    (listed[i] ?? '(nothing)') + '", file says "' + s.name + '"'))
+  .filter(Boolean);
+ok('every section appears in the index, in the same order, under the same name',
+  nameDrift(sections, order).length === 0, nameDrift(sections, order));
+/* That the comparison can still say no, proved on a fixed pair rather than on
+   the real file — a non-vacuity check that leans on real section names is one
+   rename away from being vacuous itself, which is the trap it exists to catch. */
+const fake = [{ n: 1, name: 'Tokens' }, { n: 2, name: 'Masthead' }];
+ok('the comparison notices a rename, a reorder and a missing entry',
+  nameDrift(fake, ['Tokens', 'The bar']).length === 1 &&
+  nameDrift(fake, ['Masthead', 'Tokens']).length === 2 &&
+  nameDrift(fake, ['Tokens']).length === 1 &&
+  nameDrift(fake, ['Tokens', 'Masthead']).length === 0);
 
 /* ---------- the fixed bar ----------
    There is no build step and no template, so the bar is four hand-written

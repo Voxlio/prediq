@@ -32,7 +32,7 @@
 
 import { clearCache, estimateModelJobs, loadFixtures, loadModel } from './api.js';
 import { predictAll } from './model.js';
-import { FIXTURE_DAYS, LEAGUES } from './config.js';
+import { FIXTURE_DAYS, LEAGUES, PAGE_SIZE } from './config.js';
 import { clear, dayStrip } from './dom.js';
 import * as view from './render.js';
 
@@ -53,6 +53,12 @@ const state = {
   data: null,
   message: null,
   day: null,
+  /* Which slice of the selected day is on screen. A request, not a fact:
+     render.js owns the day filter, so it is the only thing that knows how many
+     fixtures a page index has to fit inside, and it clamps accordingly. Kept
+     here for the same reason `day` is — phase 2 usually lands after the reader
+     has started browsing, and it must not scroll them back to the first five. */
+  page: 0,
 };
 
 /* =============================================================================
@@ -93,15 +99,35 @@ function syncURL(day) {
    PAINTING
    ========================================================================== */
 
+/* Back to the top. The reader asked for a different set of matches, and the
+   first of them is the answer; without this, clicking a tab from halfway down a
+   long Saturday leaves you halfway down a short Tuesday, looking at whatever
+   happens to sit at that scroll offset. The pager needs it more than the tabs
+   do, because its buttons sit at the BOTTOM of the list — press Next and the
+   five new cards would otherwise all be above the viewport. */
+function toTop() {
+  if (typeof scrollTo === 'function') scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 function pick(day) {
   state.day = day;
+  /* A new day starts at its first match. Carrying page 3 across would open
+     Tuesday at its sixteenth fixture, or — far more often, since most days are
+     short — get clamped straight back to 0 and make the reset look like it had
+     never been needed. */
+  state.page = 0;
   paint();
+  toTop();
+}
 
-  /* Back to the top. The reader asked to see a different day, and the first
-     match of it is the answer; without this, clicking a tab from halfway down a
-     long Saturday leaves you halfway down a short Tuesday, looking at whatever
-     happens to sit at that scroll offset. */
-  if (typeof scrollTo === 'function') scrollTo({ top: 0, behavior: 'smooth' });
+function pickPage(page) {
+  /* Stored unclamped and deliberately. render.js owns the day filter, so it is
+     the only place that knows how many fixtures this page has to fit inside;
+     clamping here as well would mean two answers to one question, and they
+     would drift the moment phase 2 changed the list under us. */
+  state.page = page;
+  paint();
+  toTop();
 }
 
 function paintStrip(days) {
@@ -146,17 +172,30 @@ function paint() {
 
   const day = nodes.strip ? state.day : null;
 
+  /* Paging is presentation, so the whole of it is decided here and passed down:
+     which slice is wanted, how big a slice is, and what to do when a chevron is
+     pressed. render.js clamps the request against the list it ends up with and
+     builds the controls from the clamped value, which is why nothing above needs
+     to know how many fixtures survived the day filter.
+
+     Unlike the day, the page index is NOT written to the URL. A page number is
+     closer to a scroll position than to a place — it says how far through
+     Saturday you had got, not which football you were looking at — and a link
+     that opens on page 3 of a list that has since gained two fixtures points at
+     different matches than the one that was shared. */
+  const paging = { page: state.page, size: PAGE_SIZE, onPage: pickPage };
+
   switch (state.phase) {
     case 'fatal':
       return view.showFatal(nodes.mount, nodes.status, state.message);
     case 'empty':
       return view.showEmpty(nodes.mount, nodes.status, FIXTURE_DAYS);
     case 'fixtures':
-      return view.showFixtureList(nodes.mount, nodes.status, state.fixtures, day);
+      return view.showFixtureList(nodes.mount, nodes.status, state.fixtures, day, paging);
     case 'fallback':
-      return view.showFixtureFallback(nodes.mount, nodes.status, state.fixtures, state.message, day);
+      return view.showFixtureFallback(nodes.mount, nodes.status, state.fixtures, state.message, day, paging);
     case 'predictions':
-      return view.showPredictions(nodes.mount, nodes.status, state.predictions, state.index, state.data, day);
+      return view.showPredictions(nodes.mount, nodes.status, state.predictions, state.index, state.data, day, paging);
     default:
       return view.showLoading(nodes.mount, nodes.status);
   }

@@ -1,9 +1,16 @@
 /* ==========================================================================
    Prediq — stylesheet
-   Order: tokens → reset → layout → masthead → status → match card → form strip
-          → outcomes → readout → insights → day dividers → blank card
-          → notices → skeleton → method page → ratings table → footer
-          → responsive → reduced motion
+
+   Sections, in order. Kept accurate because h1 checks it against the section
+   headers below — a list of contents that has drifted from its contents is
+   worse than none, since it is trusted for exactly as long as it takes someone
+   to act on it. (It had already lost "the record" before that check existed.)
+
+   Order: Design tokens → Reset → Layout → The bar → Status strip → Match card
+          → Recent form strip → Outcome rows → Readout: confidence + markets
+          → Insights → Day dividers → Fixtures with no prediction → Notices
+          → Loading skeleton → Method page → Ratings table → The fixture pager
+          → The record → Footer → Responsive → Reduced motion
    ========================================================================== */
 
 /* --- 1. Design tokens ---------------------------------------------------- */
@@ -884,14 +891,22 @@ b, strong { font-weight: 500; }
 .rt.is-skeleton .rt-row:hover { background: none; }
 
 /* The scale switch. Amber is reserved for data, so the selected side is marked
-   by weight and a raised background rather than by the accent. */
-.toggle {
+   by weight and a raised background rather than by the accent.
+
+   The frame is shared with the fixture pager in section 17: one hairline border,
+   square-cornered children clipped by the parent's radius. Grouped here rather
+   than written out twice — two near-identical blocks are how a border ends up
+   1px on one control and 2px on the other, and they are meant to read as the
+   same kind of thing. Spacing is not shared: each sits under something
+   different, so each sets its own margin below. */
+.toggle,
+.pager {
   display: inline-flex;
-  margin-top: 1.75rem;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   overflow: hidden;
 }
+.toggle { margin-top: 1.75rem; }
 .toggle-b {
   margin: 0;
   padding: 0.45rem 0.9rem;
@@ -914,7 +929,7 @@ b, strong { font-weight: 500; }
 
 /* Seven day tabs have to fit a 42rem page, so they are narrower than the
    two-item scale switch: less horizontal padding, and the weekday drops out
-   under 34rem (see section 19).
+   under 34rem (see section 20).
 
    Named for what they are rather than for the page they started on: the fixtures
    list and the record share one strip, and a class called .lg-tab on the
@@ -952,7 +967,93 @@ b, strong { font-weight: 500; }
 .daytab.is-today .daytab-wd { color: var(--dim); font-weight: 500; }
 .daytab.is-on.is-today .daytab-wd { color: var(--text); }
 
-/* --- 17. The record ------------------------------------------------------
+/* --- 17. The fixture pager -----------------------------------------------
+   Under the last card of the page: a back chevron, a count, a forward chevron.
+
+   The frame is the scale switch's, grouped with it in section 16 rather than
+   restated here. Deliberately, and not out of laziness: the day strip and the
+   pager are the only two controls on the fixtures page, they are the same kind
+   of thing — pick which matches to look at — and giving the second one a look of
+   its own would imply it did something different in kind.
+
+   Left-aligned, sharing the strip's left edge rather than centred under the
+   list. The two controls then line up vertically with each other, one at the top
+   of the list and one at the bottom, which is a true description of what they
+   are. A centred pager would be the only centred element on the site.
+--------------------------------------------------------------------------- */
+.pager {
+  /* `align-self`, and it is not optional. .fixtures is a column flex container,
+     which blockifies its children: the inherited `inline-flex` alone is ignored
+     there and the pill stretches the full width of the page, hairline border and
+     all, with the count marooned beside a chevron at the far left. Shrink to fit
+     and sit at the leading edge. */
+  align-self: flex-start;
+  align-items: stretch;   /* so the label's dividers run the full height */
+  /* Small because it is not the whole gap: .fixtures already puts 1.25rem
+     between its children, so this reads as 2.25rem under the last card. */
+  margin-top: 1rem;
+}
+
+/* Mostly .toggle-b, but not shared with it: that button holds mono text and this
+   one holds a 15px drawing, so the padding, the typography and the disabled
+   state all differ. Only the frame above is genuinely the same. */
+.pager-b {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0.45rem 0.85rem;
+  background: none;
+  border: 0;
+  color: var(--mute);
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.pager-b:hover:not(:disabled) { color: var(--text); background: var(--line); }
+
+/* The end of the list is shown, not removed. A chevron that vanishes on the last
+   page changes the pill's width and slides the count sideways, which reads as
+   the control having broken rather than as having run out of matches. Disabled
+   is also the accessible answer: the button keeps its place and announces itself
+   as unavailable instead of disappearing from under the reader's cursor.
+
+   Receding to exactly the border colour is the point — an arrow that has become
+   part of the frame is inert at a glance. It fails colour contrast against the
+   page, which is correct here and should not be "fixed": WCAG exempts inactive
+   controls, and the whole job of this state is to not look pressable. */
+.pager-b:disabled { color: var(--line); cursor: default; }
+
+/* Geometry comes from dom.js; everything presentational is here, because these
+   are CSS properties on SVG and not attributes. `fill: none` is load-bearing —
+   a path fills black by default, so without it each chevron renders as a solid
+   wedge rather than a stroked arrow. */
+.pager-i {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* "6–10 of 23". The count is why the pager can be trusted: it says how much list
+   there is, which the endlessly scrolling version never did.
+   Tabular figures, and after the font shorthand rather than before it — `font`
+   resets font-variant-numeric, so the other order silently drops them and the
+   pill twitches by a pixel or two on every press. */
+.pager-n {
+  display: flex;
+  align-items: center;
+  padding: 0 0.9rem;
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  color: var(--mute);
+  font: 400 11px/1 var(--mono);
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- 18. The record ------------------------------------------------------
    One row per match: what was claimed on the left, what happened on the right.
    Built as a grid rather than a table because the cells stack two deep and a
    table cell holding its own two-line block fights the row's baseline.
@@ -1140,7 +1241,7 @@ b, strong { font-weight: 500; }
 .lg-row.is-skeleton { pointer-events: none; }
 .lg-row.is-skeleton:hover { background: none; }
 
-/* --- 18. Footer --------------------------------------------------------- */
+/* --- 19. Footer --------------------------------------------------------- */
 .foot {
   margin-top: 3.5rem;
   padding-top: 1.5rem;
@@ -1175,7 +1276,7 @@ b, strong { font-weight: 500; }
   border-bottom-color: var(--warm);
 }
 
-/* --- 19. Responsive ----------------------------------------------------- */
+/* --- 20. Responsive ----------------------------------------------------- */
 @media (max-width: 34rem) {
   .shell { padding: calc(var(--bar-h) + 1.5rem) 1.15rem 3rem; }
   .topbar-in { padding: 0 1.15rem; }
@@ -1280,7 +1381,7 @@ b, strong { font-weight: 500; }
   .lg-said { font-size: 11px; }
 }
 
-/* --- 20. Reduced motion ------------------------------------------------- */
+/* --- 21. Reduced motion ------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   /* This list is explicit rather than a blanket `* { animation: none }`, so
      every new animation has to be added here by hand. Adding one and forgetting

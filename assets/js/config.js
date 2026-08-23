@@ -97,6 +97,20 @@ export function currentSeason(now = new Date()) {
 /* How many days of upcoming fixtures to show. */
 export const FIXTURE_DAYS = 7;
 
+/* How many match cards to show at once, within whichever day is selected.
+
+   A busy Saturday runs to forty fixtures across eleven divisions. Each card is
+   a four-block panel — outcome probabilities, markets, confidence, recent form
+   — so forty of them is several screens of scrolling to find out whether the
+   one match you came for is even listed. Five is about a screen and a half on a
+   laptop, and the pager underneath says how many there are in total, which the
+   endless version never did.
+
+   This is presentation only. The model is still fitted over every league and
+   every match before anything is filtered or sliced, so what a card says does
+   not depend on which page it lands on. */
+export const PAGE_SIZE = 5;
+
 /* --- When a prediction gets written down ------------------------------------
    The archive records a fixture the first time the scheduled writer sees it
    inside this window, and never again. So this number IS the lead time of every
