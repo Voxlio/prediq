@@ -420,3 +420,84 @@ export function summarise(records, { rev = null } = {}) {
     },
   };
 }
+
+/* =============================================================================
+   THE RUN OF PLAY
+
+   summarise() answers "how good is this model", which is the right question and
+   the wrong one to put on a front page: it is an average over the whole archive,
+   so it barely moves, and a number that barely moves is not a reason to come
+   back. This answers the smaller question a visitor actually has — how did it do
+   last time out, and is it on a run — and the front page prints it beside the
+   fixtures.
+
+   Everything here is derived from score() and dayKey(), so there is no second
+   definition of what counts as a correct call. If summarise() and this ever
+   disagree, it is because one of them filtered differently, not because they
+   grade differently.
+
+   THREE DECISIONS WORTH THE WORDS
+
+   Current revision only, by the same argument as summarise(): a run of correct
+   calls made by a model that no longer exists is not this model's run.
+
+   Days come from the DATA, not from a calendar window. Asking for "the last
+   seven days" and finding four of them empty would mean either printing zeros
+   for days nothing was settled on — a false claim about a day nobody was
+   scoring — or filtering them out afterwards, which is the same list by a longer
+   route. So this returns the most recent `span` days that actually have a
+   settled prediction in them, and a reader who sees "Saturday" knows Sunday had
+   nothing rather than nothing right.
+
+   The streak counts back from the most recent settled prediction and stops at
+   the first miss, so it is 0 whenever the last call was wrong. That is the
+   honest version and it costs us the more flattering one: a "best streak" figure
+   would sit there advertising a good week from March forever. A streak is only
+   interesting while it is alive.
+   ========================================================================== */
+export function runOfPlay(records, { rev = null, span = 7 } = {}) {
+  const pool = (records || []).filter(r =>
+    r?.predicted?.probs && (!rev || (r.model?.rev ?? 'unknown') === rev));
+
+  /* Ordered by kickoff rather than by when the result was attached: the run is a
+     property of the football, and the scorer settles a backlog in whatever order
+     it happens to read the files. */
+  const settled = [];
+  for (const r of pool) {
+    const v = score(r);
+    if (v) settled.push({ at: +new Date(r.kickoff), day: dayKey(r.kickoff), hit: v.hit });
+  }
+  settled.sort((a, b) => b.at - a.at);
+
+  let streak = 0;
+  for (const s of settled) {
+    if (!s.hit) break;
+    streak++;
+  }
+
+  const byDay = new Map();
+  for (const s of settled) {
+    const d = byDay.get(s.day) || { day: s.day, n: 0, hits: 0 };
+    d.n++;
+    if (s.hit) d.hits++;
+    byDay.set(s.day, d);
+  }
+  /* String comparison, not Date: these are zero-padded ISO calendar labels, so
+     they sort lexically exactly as they sort chronologically, and turning them
+     into instants to compare them is how a day key becomes a timezone bug. */
+  const days = [...byDay.values()].sort((a, b) => (a.day < b.day ? 1 : -1)).slice(0, span);
+
+  return {
+    streak,
+    days,
+    /* The aggregate over exactly the days listed, so "9 of 14 across 2 days"
+       always adds up to the rows beside it. A window figure computed over a
+       different denominator than the one shown is the kind of small
+       inconsistency that makes a reader stop trusting the big figures too. */
+    window: {
+      days: days.length,
+      n: days.reduce((t, d) => t + d.n, 0),
+      hits: days.reduce((t, d) => t + d.hits, 0),
+    },
+  };
+}

@@ -124,6 +124,21 @@
       "wonDisagreements": null
     }
   },
+  "recent": {
+    "streak": 0,
+    "days": [
+      {
+        "day": "2026-08-23",
+        "n": 19,
+        "hits": 11
+      }
+    ],
+    "window": {
+      "days": 1,
+      "n": 19,
+      "hits": 11
+    }
+  },
   "byRev": {
     "1.0": {
       "rev": "1.0",

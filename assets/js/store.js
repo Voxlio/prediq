@@ -31,7 +31,7 @@
    as staleness rather than passing as a current one.
    ========================================================================== */
 
-import { dayKey, summarise } from './record.js';
+import { dayKey, summarise, runOfPlay } from './record.js';
 
 export const DATA_DIR = 'data';
 export const paths = {
@@ -238,6 +238,13 @@ export async function writeSummary(io, currentRev, now = new Date()) {
        page has to print: how much of the archive the headline figure covers. */
     coverage: all.length ? (byRev[currentRev]?.n ?? 0) / all.length : null,
     overall: byRev[currentRev] ?? null,
+    /* The front page's scorecard, computed here rather than in the browser for
+       one reason: index.html already downloads this file for the footer's
+       "matches scored", so a precomputed block costs it nothing, while working it
+       out client-side would mean fetching every day file in the archive to
+       answer a question about the last one. Current revision only, same as
+       `overall`. */
+    recent: runOfPlay(all, { rev: currentRev }),
     byRev,
   };
   const res = await writeIfChanged(io, paths.summary(), payload, 'at');

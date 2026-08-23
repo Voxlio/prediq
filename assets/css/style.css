@@ -247,6 +247,32 @@ b, strong { font-weight: 500; }
 .status-sep { color: var(--line); }
 .status-mute { color: var(--warm); }
 
+/* The front-page scorecard borrows the status strip's whole visual language on
+   purpose — same mono, same case, same separators — because it is the same kind
+   of statement: a small number the page is willing to be held to. It differs only
+   in its borders. The strip above already draws a hairline underneath itself, and
+   a second one a few pixels below reads as a mistake rather than as structure, so
+   this row draws none of its own and leans on that one.
+
+   :empty is load-bearing, not defensive. scorecard.js prints nothing when the
+   archive has no settled matches, and without this the page would keep a blank
+   padded row where the accuracy is going to be. */
+.scorecard {
+  margin-top: 0;
+  padding: 0.7rem 0 0;
+  border-top: 0;
+  border-bottom: 0;
+}
+.scorecard:empty { display: none; }
+.scorecard a {
+  color: var(--warm);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s;
+}
+.scorecard a:hover,
+.scorecard a:focus-visible { border-bottom-color: var(--warm); }
+
 /* --- 6. Match card ------------------------------------------------------ */
 .fixtures {
   display: flex;

@@ -35,6 +35,7 @@ import { predictAll } from './model.js';
 import { FIXTURE_DAYS, LEAGUES, PAGE_SIZE } from './config.js';
 import { clear, dayStrip } from './dom.js';
 import { mountVitals } from './vitals.js';
+import { mountScorecard } from './scorecard.js';
 import * as view from './render.js';
 
 const nodes = {
@@ -215,6 +216,13 @@ async function boot() {
      worth delaying a prediction for — nor worth losing because ESPN was down.
      mountVitals() swallows every failure, so there is nothing to catch. */
   void mountVitals();
+
+  /* Same treatment, same reason: one small conditional request against the
+     archive, not awaited, and it prints nothing at all if the file is missing.
+     It reads data/summary.json separately from mountVitals() rather than sharing
+     one response — a duplicate 8 KB conditional GET is cheaper than threading a
+     second consumer through vitals.js's already-tested seam. */
+  void mountScorecard();
 
   /* Phase 2's size is known before it starts, which is what lets one bar span
      both phases instead of restarting at the halfway point. */

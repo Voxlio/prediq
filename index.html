@@ -74,6 +74,14 @@
     <span class="status-mute">loading fixtures</span>
   </div>
 
+  <!-- How the model actually did last time out, filled by scorecard.js from the
+       archive summary. Written with nothing between the tags, and no placeholder
+       text, for two reasons: :empty counts whitespace as content, and this line
+       has to be able to say nothing. An archive with no settled matches yet has
+       no accuracy, and inventing a zero for it would be the one dishonest number
+       on the page. -->
+  <p class="status scorecard" id="scorecard"></p>
+
   <!-- Day tabs, built by main.js once the fixtures are known, so a day is never
        offered without football behind it. Empty on purpose: with no script the
        page shows the whole window rather than an inert control. -->
