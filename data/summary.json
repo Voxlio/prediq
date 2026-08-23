@@ -1,5 +1,5 @@
 {
-  "at": "2026-08-23T03:37:36.845Z",
+  "at": "2026-08-23T15:20:27.172Z",
   "n": 26,
   "days": 1,
   "currentRev": "1.0",
@@ -11,18 +11,18 @@
     },
     "revConsistent": true,
     "n": 26,
-    "scored": 0,
-    "pending": 26,
-    "hitRate": null,
-    "exactRate": null,
-    "logLoss": null,
-    "brier": null,
+    "scored": 2,
+    "pending": 24,
+    "hitRate": 1,
+    "exactRate": 0,
+    "logLoss": 0.5401819048056882,
+    "brier": 0.26643758,
     "baseline": {
       "logLoss": 1.0986122886681096,
       "brier": 0.6666666666666666
     },
-    "over25Rate": null,
-    "bttsRate": null,
+    "over25Rate": 0.5,
+    "bttsRate": 1,
     "byConfidence": [
       {
         "level": 4,
@@ -41,9 +41,9 @@
       {
         "level": 2,
         "word": "medium",
-        "n": 0,
-        "hitRate": null,
-        "logLoss": null
+        "n": 2,
+        "hitRate": 1,
+        "logLoss": 0.5401819048056882
       },
       {
         "level": 1,
@@ -53,10 +53,39 @@
         "logLoss": null
       }
     ],
-    "calibration": [],
+    "calibration": [
+      {
+        "from": 0.1,
+        "to": 0.2,
+        "n": 2,
+        "predicted": 0.15360000000000001,
+        "observed": 0
+      },
+      {
+        "from": 0.2,
+        "to": 0.3,
+        "n": 2,
+        "predicted": 0.255,
+        "observed": 0
+      },
+      {
+        "from": 0.4,
+        "to": 0.5,
+        "n": 1,
+        "predicted": 0.49,
+        "observed": 1
+      },
+      {
+        "from": 0.6,
+        "to": 0.7,
+        "n": 1,
+        "predicted": 0.6928,
+        "observed": 1
+      }
+    ],
     "market": {
       "n": 0,
-      "coverage": null,
+      "coverage": 0,
       "modelLogLoss": null,
       "marketLogLoss": null,
       "modelBrier": null,
@@ -75,18 +104,18 @@
       },
       "revConsistent": true,
       "n": 26,
-      "scored": 0,
-      "pending": 26,
-      "hitRate": null,
-      "exactRate": null,
-      "logLoss": null,
-      "brier": null,
+      "scored": 2,
+      "pending": 24,
+      "hitRate": 1,
+      "exactRate": 0,
+      "logLoss": 0.5401819048056882,
+      "brier": 0.26643758,
       "baseline": {
         "logLoss": 1.0986122886681096,
         "brier": 0.6666666666666666
       },
-      "over25Rate": null,
-      "bttsRate": null,
+      "over25Rate": 0.5,
+      "bttsRate": 1,
       "byConfidence": [
         {
           "level": 4,
@@ -105,9 +134,9 @@
         {
           "level": 2,
           "word": "medium",
-          "n": 0,
-          "hitRate": null,
-          "logLoss": null
+          "n": 2,
+          "hitRate": 1,
+          "logLoss": 0.5401819048056882
         },
         {
           "level": 1,
@@ -117,10 +146,39 @@
           "logLoss": null
         }
       ],
-      "calibration": [],
+      "calibration": [
+        {
+          "from": 0.1,
+          "to": 0.2,
+          "n": 2,
+          "predicted": 0.15360000000000001,
+          "observed": 0
+        },
+        {
+          "from": 0.2,
+          "to": 0.3,
+          "n": 2,
+          "predicted": 0.255,
+          "observed": 0
+        },
+        {
+          "from": 0.4,
+          "to": 0.5,
+          "n": 1,
+          "predicted": 0.49,
+          "observed": 1
+        },
+        {
+          "from": 0.6,
+          "to": 0.7,
+          "n": 1,
+          "predicted": 0.6928,
+          "observed": 1
+        }
+      ],
       "market": {
         "n": 0,
-        "coverage": null,
+        "coverage": 0,
         "modelLogLoss": null,
         "marketLogLoss": null,
         "modelBrier": null,
