@@ -29,7 +29,7 @@ visitors — no page links to this folder.
 | `rt1` | `table.js` | the ratings table on the same shim, including header/body column-class agreement |
 | `v1` | `ledger.js`, `record.html` | **the record page.** That every verdict is derived, not read — the suite recomputes each one from the raw probabilities and goals, then rewrites a stored score and demands the mark move. That a prediction with no result yet is still on the page. That no rate appears before `MIN_FOR_RATE` and the denominator is settled matches. That a day key renders as the same calendar date at UTC−7 and UTC+14, checked in a child process per timezone |
 | `e1` | `main.js` | the whole page end to end with `fetch` and `localStorage` mocked: request count, cache behaviour, a second visit, one league failing. Also the day tabs — that they partition the window with nothing hidden or double-counted, that the day survives into the URL, and that a link or bookmark carrying `?day=` opens on it, checked by re-running the suite as a child process |
-| `h1` | `method.html`, `style.css` | every `data-cfg` number on the page against `config.js`, in both directions — the page cannot claim a value the code does not hold, and a setting cannot be added to `config.js` without being explained. Also that the honesty commitments are all still present, that local links exist, and that animations have keyframes and are switched off under `prefers-reduced-motion` |
+| `h1` | `method.html`, `style.css`, `SETUP.md` | every `data-cfg` number on the page against `config.js`, in both directions — the page cannot claim a value the code does not hold, and a setting cannot be added to `config.js` without being explained. Also that the honesty commitments are all still present, that local links exist, and that animations have keyframes and are switched off under `prefers-reduced-motion`. And the setup guide against the programs it describes: every log line it tells the reader to look for is a string those programs still print, every flag it tells them to type is still parsed, and the numbers it states in its own voice are `FREEZE_WITHIN_HOURS`, `MODEL_REV` and the cron |
 | `w1` | `store.js`, `tools/freeze.mjs`, `tools/settle.mjs` | **the archive.** That a prediction is written once and never rewritten, that a result is the only thing that can be added later, that a second run leaves every byte identical, and that a day nothing settled reports `null` rather than a flattering zero. Runs both writers as child processes against a fake ESPN |
 | `f1` | `tools/firestore.mjs`, `tools/mirror.mjs` | the Firestore mirror: a real frozen record round-tripping through the value encoder, the `exists: false` precondition that stops a prediction being overwritten, the `updateMask` that stops a result write touching anything else, and a service account from the wrong project being refused |
 
@@ -77,6 +77,14 @@ most of the day and on two different days after 21:00 local — so the day-tab
 assertions tested a different shape depending on when they ran. It now pins 09:00
 local, and passes the same instant to its child process so both place their
 fixtures on the same days.
+
+Documentation that quotes program output is code, and drifts like code. `h1` holds
+`SETUP.md`'s quoted log lines against the files that print them, and caught this on
+its first run: the troubleshooting section had been written with an invented error
+message, while the mirror was printing a perfectly good diagnosis of its own that
+the guide never mentioned. A reader would have searched the log for a string that
+was never in it. Where a guide tells someone what they'll see, assert the program
+still says it — and prefer quoting the real line to paraphrasing it.
 
 A grep for a forbidden API has to strip comments first. `v1` asserted that
 `ledger.js` contains no `innerHTML` and failed on the file's own header comment

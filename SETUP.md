@@ -98,17 +98,68 @@ Firestore database.
 7. **Delete the downloaded file from your computer.** GitHub has it now, and a
    copy sitting in Downloads is the most likely way it leaks.
 
-The service account also needs permission to write. Usually it has it already, but
-if the mirror later reports `PERMISSION_DENIED`:
-[Google Cloud IAM](https://console.cloud.google.com/iam-admin/iam) → find the
-`...@prediq-b5690.iam.gserviceaccount.com` account → **Edit** → add the role
-**Cloud Datastore User** → **Save**.
-
 > **Never paste this file into a chat, a code file, or a commit.** Unlike the web
 > config, this one really is a credential — and because it authenticates as an
 > administrator, it bypasses the rules from Step 1 entirely. That asymmetry is
 > exactly why `data/` in the repository, whose history anyone can audit, is the
 > primary copy of the archive and Firestore is only a mirror.
+
+### If the mirror ever reports `PERMISSION_DENIED`
+
+Skip this unless you see it. A key generated the way Step 4 describes normally
+arrives with Firestore access already attached, so most people never touch IAM.
+
+The mirror doesn't just pass the error on — it tells you the two things that cause
+it:
+
+```
+  code 7 ×6: Missing or insufficient permissions.  (e.g. 2026-08-23__401811)
+    PERMISSION_DENIED — the service account lacks Cloud Datastore User, or the
+    Firestore database has not been created yet.
+```
+
+If the database doesn't exist, go back to Step 1 — nothing below will help. There
+is also a third failure people confuse with this one, and it isn't
+`PERMISSION_DENIED` at all: if the log says
+`the service account is for project "X" but assets/js/firebase-config.js says "Y"`,
+the mirror refused before sending anything, because the wrong key went into the
+secret. Generate a new one from the **prediq-b5690** project and replace it.
+
+To grant the role:
+
+1. Open [Google Cloud IAM](https://console.cloud.google.com/iam-admin/iam).
+   Firebase and Google Cloud are two consoles onto the *same* project, and roles
+   only exist in the Cloud one — which is why this step can't be done where you
+   generated the key.
+2. Check the project selector in the blue bar at the top says **prediq-b5690**.
+   If you have other Google Cloud projects it may well have opened one of those,
+   and every instruction below would then be aimed at the wrong place.
+3. Find the row whose **Principal** looks like
+   `firebase-adminsdk-xxxxx@prediq-b5690.iam.gserviceaccount.com`. If no such row
+   appears, tick **Include Google-provided role grants** above the right-hand end
+   of the table — accounts holding a Google-managed role are filtered out of that
+   list, and this is one of them.
+
+   You don't have to guess which account it is: the mirror prints it. Open the
+   failed run in the **Actions** tab and look for the line
+   `project prediq-b5690, service account firebase-adminsdk-...`. That is the
+   exact principal to edit.
+4. Click the **pencil** at the right end of that row.
+5. **+ ADD ANOTHER ROLE** → type `Datastore` in the filter → pick **Cloud
+   Datastore User**.
+
+   Typing "Firestore" finds nothing useful, and that trips most people up.
+   Firestore runs on Datastore underneath, so the role that grants read and write
+   on your Firestore documents is the one with the older product's name on it.
+   Don't reach for **Owner** or **Editor** to make the problem go away — they
+   would work, and they would also hand that key permission over every other
+   service in the project.
+6. **Save**, then wait a couple of minutes before concluding anything. IAM changes
+   take a short while to propagate, so a retry in the first thirty seconds can fail
+   for a permission you have already granted.
+7. Re-run the workflow from the **Actions** tab. Nothing was lost while this was
+   broken: the mirror is only a mirror, `data/` was committed before it ran, and
+   `node tools/mirror.mjs --all` catches Firestore back up whenever you like.
 
 ---
 
@@ -198,11 +249,11 @@ Run the test suite first — it needs no credentials and no network:
 node tests/run.mjs
 ```
 
-The run ends with a line counting the assertions and the suites — a thousand-odd
-across sixteen files, and it prints the exact totals so this page does not have to
-carry a number that goes stale every time a test is added. What matters is that it
-says **all passed** and that no suite is missing. If it does, the code is fine and
-the problem is configuration: permissions, a secret, or ESPN.
+The run ends with a line counting the assertions and the suites — it prints the
+exact totals, so this page doesn't have to carry numbers that go stale every time a
+test is added. What matters is that it says **all passed** and that no suite is
+missing. If it does, the code is fine and the problem is configuration:
+permissions, a secret, or ESPN.
 
 One caveat learned the hard way: a green suite proved the mirror worked when it
 could not write a single document, because the assertion checking the Firestore

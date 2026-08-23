@@ -1,7 +1,10 @@
 /* method.html makes ~25 numeric claims about the model. Documentation drifts
    from code silently, so every claim carries data-cfg="PATH" and this suite
    resolves that path in config.js and compares. If someone retunes the model
-   and forgets the page, this fails. */
+   and forgets the page, this fails.
+
+   The last section applies the same idea to SETUP.md, which quotes program output
+   the reader is told to look for in a log. */
 
 /* Paths resolve from this file, not from wherever it happens to be run.
    These suites used to carry an absolute sandbox path, which broke the moment
@@ -310,6 +313,79 @@ ok('lang and viewport set', /<html lang="en">/.test(html) && /name="viewport"/.t
 ok('has a skip link to the content', /class="skip" href="#method"/.test(html) && /id="method"/.test(html));
 ok('page has its own title and description',
   /<title>Method/.test(html) && /name="description"/.test(html));
+
+/* ---------- SETUP.md against the code it describes ----------
+   The same problem as method.html, one step further out. SETUP.md is the only
+   thing standing between a new clone and a working archive, and it quotes program
+   output verbatim — a sample log, an error message, the flags to run. Reword a
+   console.log and the guide starts describing a program that no longer exists,
+   which is worse than no guide, because the reader trusts it and then can't find
+   the line it told them to look for.
+
+   Only claims are checked here. The sample log's own tallies (47 fixtures, 6
+   predictions) are illustrative and stay unasserted; the numbers below are
+   promises to the reader, derived from config. */
+console.log('');
+console.log('=== SETUP.md against the code it describes ===');
+const setup = file('SETUP.md');
+
+/* Output the guide quotes, against the file that prints it. Each is a string the
+   reader is told to search a log for. */
+const quoted = [
+  ['freeze reports what it left alone',      'left as first written',      'tools/freeze.mjs'],
+  ['settle reports an idle run',             'nothing awaiting a result',  'tools/settle.mjs'],
+  ['the workflow reports a no-op archive',   'archive unchanged',          '.github/workflows/predictions.yml'],
+  ['the mirror names its service account',   ', service account ',         'tools/mirror.mjs'],
+  ['the mirror rejects a wrong-project key', 'firebase-config.js says',    'tools/mirror.mjs'],
+  ['the mirror names the IAM role to add',   'lacks Cloud Datastore',      'tools/mirror.mjs'],
+  ['the mirror labels an example id',        '(e.g. ',                     'tools/mirror.mjs'],
+];
+for (const [label, needle, src] of quoted) {
+  ok(label + ' — and SETUP.md quotes it', setup.includes(needle) && file(src).includes(needle),
+    [setup.includes(needle) ? 'in SETUP.md' : 'NOT in SETUP.md',
+     file(src).includes(needle) ? 'in ' + src : 'NOT in ' + src]);
+}
+
+/* Flags the guide tells the reader to type. A flag documented but not parsed runs
+   the tool for real against a database. */
+for (const t of ['freeze', 'settle', 'mirror']) {
+  const src = file('tools/' + t + '.mjs');
+  ok('tools/' + t + '.mjs really parses --dry-run',
+    /argv\.includes\('--dry-run'\)/.test(src) && setup.includes('tools/' + t + '.mjs --dry-run'));
+}
+ok('the mirror really parses --all, as the catch-up instruction assumes',
+  /argv\.includes\('--all'\)/.test(file('tools/mirror.mjs')) && /mirror\.mjs --all/.test(setup));
+
+/* Numbers the guide states in its own voice. Each is FREEZE_WITHIN_HOURS or the
+   cron wearing different clothes, and hand-written in prose four times over. */
+const H = cfg.FREEZE_WITHIN_HOURS;
+ok('the skip message in the sample log is the one record.js builds',
+  setup.includes('kickoff more than ' + H + 'h away') &&
+  file('assets/js/record.js').includes("'kickoff more than ' + FREEZE_WITHIN_HOURS + 'h away'"),
+  H);
+ok('"only records matches starting within N hours" is the real lead time',
+  setup.includes('within ' + H + ' hours'), H);
+ok('the sample log\'s model revision is the current one',
+  setup.includes('model rev ' + cfg.MODEL_REV), cfg.MODEL_REV);
+ok('the sample log\'s competition count is how many we carry',
+  setup.includes(cfg.LEAGUES.length + ' competitions'), cfg.LEAGUES.length);
+if (cronM) {
+  ok('"it runs itself every three hours" matches the cron too',
+    /runs itself every three hours/.test(setup) === (+cronM[2] === 3), +cronM[2]);
+}
+ok('SETUP.md quotes no assertion or suite count, which would go stale every commit',
+  !/\d+\s+assertions|sixteen files|across \w+ files/.test(setup),
+  /\d+\s+assertions|sixteen files|across \w+ files/.exec(setup));
+
+/* Every file the guide tells the reader to open or run. Both forms count: named in
+   backticks in the prose, and typed after `node` in a fenced command block. */
+const named = [
+  ...[...setup.matchAll(/`((?:tools|tests|assets|\.github)\/[\w./-]+|firestore\.rules|\.nojekyll)`/g)].map(mm => mm[1]),
+  ...[...setup.matchAll(/\bnode ([\w./-]+\.mjs)/g)].map(mm => mm[1]),
+];
+const namedMissing = [...new Set(named)].filter(p => !fs.existsSync(new URL(p, root)));
+console.log('    files named in the guide: ' + [...new Set(named)].join(', '));
+ok('every file SETUP.md names exists', namedMissing.length === 0, namedMissing);
 
 /* ---------- the honesty commitments ---------- */
 console.log('');
