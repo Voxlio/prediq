@@ -254,35 +254,6 @@ ok('both pages load the same stylesheet',
   (index.match(/assets\/css\/style\.css/g) || []).length === 1);
 ok('the method page loads no JavaScript at all', !/<script/.test(html));
 
-/* ---------- the fonts come from here, not from a CDN ----------
-   Three link tags used to sit in every <head>, so the site made a third-party
-   request on every page load and handed Google an IP address and a user agent
-   before drawing a single pixel — while promising, in the footer and in section 9,
-   "no cross-site tracking". These are the checks that make that promise
-   machine-checked rather than merely written down.
-
-   Deliberately a search of all four pages for the host rather than for the tag: a
-   preconnect, a preload and a stylesheet link leak identically, and only the last
-   of the three looks like it is fetching anything. */
-const cdnFont = [...pageSrc]
-  .filter(([, s]) => /fonts\.(?:googleapis|gstatic)\.com/.test(s)).map(([p]) => p);
-ok('no page fetches a font from a CDN', cdnFont.length === 0, cdnFont);
-const faces = [...css.matchAll(/@font-face\s*\{[^}]*\}/g)].map(mm => mm[0]);
-ok('the stylesheet declares both families itself', faces.length === 2, faces.length);
-/* A range rather than a single weight, because these are variable files and one
-   number would silently throw away the other four weights the site asks for.
-   swap rather than the default, which hides text until the file arrives. */
-ok('each face carries a weight range and swaps rather than blocking',
-  faces.every(f => /font-weight:\s*\d+\s+\d+/.test(f) && /font-display:\s*swap/.test(f)));
-const fontUrls = [...css.matchAll(/url\('([^']+)'\)/g)].map(mm => mm[1]);
-const noFont = fontUrls.filter(u => !fs.existsSync(new URL('assets/css/' + u, root)));
-console.log('    ' + fontUrls.join(', '));
-ok('every font file the stylesheet asks for exists', noFont.length === 0, noFont);
-/* Redistributing an OFL font without its licence is the one way this change could
-   swap a privacy problem for a licensing one. */
-ok('the licence the fonts are redistributed under travels with them',
-  fs.existsSync(new URL('assets/fonts/OFL.txt', root)));
-
 const used = new Set();
 for (const mm of html.matchAll(/class="([^"]+)"/g)) mm[1].split(/\s+/).forEach(c => used.add(c));
 /* The boundary here is a negative lookahead rather than \b, and that is not

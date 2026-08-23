@@ -6,57 +6,14 @@
    worse than none, since it is trusted for exactly as long as it takes someone
    to act on it. (It had already lost "the record" before that check existed.)
 
-   Order: Web fonts → Design tokens → Reset → Layout → The bar
-          → Status strip → Match card → Recent form strip → Outcome rows
-          → Readout: confidence + markets → Insights → Day dividers
-          → Fixtures with no prediction → Notices → Loading skeleton
-          → Method page → Ratings table → The fixture pager → The record
-          → Footer → Responsive → Reduced motion
+   Order: Design tokens → Reset → Layout → The bar → Status strip → Match card
+          → Recent form strip → Outcome rows → Readout: confidence + markets
+          → Insights → Day dividers → Fixtures with no prediction → Notices
+          → Loading skeleton → Method page → Ratings table → The fixture pager
+          → The record → Footer → Responsive → Reduced motion
    ========================================================================== */
 
-/* --- 1. Web fonts -------------------------------------------------------- */
-/* Served out of this repository rather than from fonts.googleapis.com.
-
-   The three link tags that used to sit in every <head> made a third-party request
-   on every page load, handing Google an IP address and a user agent before a
-   single pixel was drawn. No cookie and no identifier, so not tracking in the
-   strict sense -- but the footer and section 9 of method.html promise "no
-   cross-site tracking", and a promise the site breaks while loading is worse than
-   no promise at all. It is also precisely the leak that was refused for the
-   favicon, and refusing it there while allowing it here would be arbitrary.
-
-   Both families are variable fonts subset to Latin, so two files cover all five
-   weights the stylesheet asks for, and the weight ranges below are the ranges the
-   files actually carry rather than optimistic ones. Both are under the SIL Open
-   Font License 1.1, which permits redistribution; assets/fonts/OFL.txt travels
-   with them because it requires that.
-
-   WOFF rather than WOFF2, which would be about a quarter smaller: WOFF2
-   compression is brotli by definition, and the environment these were cut in had
-   no brotli. Dropping .woff2 files in later needs nothing changed but the two
-   format hints.
-
-   font-display: swap preserves the behaviour the Google Fonts link had. Text
-   paints immediately in the fallback stack and reflows when the file lands, so a
-   slow font never leaves a reader looking at invisible text -- which is what the
-   default does. The fallback stacks are in --sans and --mono in the next
-   section, and they are load-bearing, not decoration. */
-@font-face {
-  font-family: 'Space Grotesk';
-  src: url('../fonts/space-grotesk-latin.woff') format('woff');
-  font-weight: 300 700;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'JetBrains Mono';
-  src: url('../fonts/jetbrains-mono-latin.woff') format('woff');
-  font-weight: 400 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* --- 2. Design tokens ---------------------------------------------------- */
+/* --- 1. Design tokens ---------------------------------------------------- */
 :root {
   /* Palette. Near-black page, one amber accent, everything else grey.
      The amber only ever encodes data — never decoration. */
@@ -94,7 +51,7 @@
   color-scheme: dark;
 }
 
-/* --- 3. Reset ------------------------------------------------------------ */
+/* --- 2. Reset ------------------------------------------------------------ */
 *, *::before, *::after { box-sizing: border-box; }
 
 html {
@@ -158,7 +115,7 @@ b, strong { font-weight: 500; }
   color: var(--mute);
 }
 
-/* --- 4. Layout ---------------------------------------------------------- */
+/* --- 3. Layout ---------------------------------------------------------- */
 .shell {
   max-width: var(--measure);
   margin: 0 auto;
@@ -168,7 +125,7 @@ b, strong { font-weight: 500; }
   padding: calc(var(--bar-h) + 2.25rem) 1.5rem 4rem;
 }
 
-/* --- 5. The bar --------------------------------------------------------- */
+/* --- 4. The bar --------------------------------------------------------- */
 /* Fixed rather than sticky. Sticky would need an ancestor tall enough to stick
    within and would stop working the moment any ancestor gained an overflow
    value; fixed is answerable to nothing but the viewport. The cost is that it
@@ -268,7 +225,7 @@ b, strong { font-weight: 500; }
   text-wrap: pretty;
 }
 
-/* --- 6. Status strip ---------------------------------------------------- */
+/* --- 5. Status strip ---------------------------------------------------- */
 .status {
   display: flex;
   align-items: center;
@@ -290,7 +247,7 @@ b, strong { font-weight: 500; }
 .status-sep { color: var(--line); }
 .status-mute { color: var(--warm); }
 
-/* --- 7. Match card ------------------------------------------------------ */
+/* --- 6. Match card ------------------------------------------------------ */
 .fixtures {
   display: flex;
   flex-direction: column;
@@ -335,7 +292,7 @@ b, strong { font-weight: 500; }
   font-variant-numeric: tabular-nums;
 }
 
-/* --- 8. Recent form strip ------------------------------------------------ */
+/* --- 7. Recent form strip ------------------------------------------------ */
 /* One line per side: team name, then five crest-and-scoreline units, most
    recent first. Both lines are left-aligned and share one label column width,
    so the crests form a column you can read down and compare — mirroring the
@@ -424,7 +381,7 @@ b, strong { font-weight: 500; }
   color: var(--mute);
 }
 
-/* --- 9. Outcome rows ---------------------------------------------------- */
+/* --- 8. Outcome rows ---------------------------------------------------- */
 .outcomes {
   display: flex;
   flex-direction: column;
@@ -486,7 +443,7 @@ b, strong { font-weight: 500; }
 .outcome.is-pick .outcome-pct  { color: var(--warm); }
 .outcome.is-pick .outcome-bar > i { background: var(--warm); }
 
-/* --- 10. Readout: confidence + markets ---------------------------------- */
+/* --- 9. Readout: confidence + markets ----------------------------------- */
 .readout {
   display: flex;
   align-items: center;
@@ -545,7 +502,7 @@ b, strong { font-weight: 500; }
   font-variant-numeric: tabular-nums;
 }
 
-/* --- 11. Insights -------------------------------------------------------- */
+/* --- 10. Insights -------------------------------------------------------- */
 .insights {
   display: flex;
   flex-direction: column;
@@ -578,7 +535,7 @@ b, strong { font-weight: 500; }
   font-variant-numeric: tabular-nums;
 }
 
-/* --- 12. Day dividers ---------------------------------------------------- */
+/* --- 11. Day dividers ---------------------------------------------------- */
 /* A week across six competitions is a long list. These are the cheapest
    possible way to make it scannable: a hairline and a small-caps label. */
 .day {
@@ -600,7 +557,7 @@ b, strong { font-weight: 500; }
   background: var(--line);
 }
 
-/* --- 13. Fixtures with no prediction ------------------------------------- */
+/* --- 12. Fixtures with no prediction ------------------------------------- */
 /* A fixture the model refuses to price still gets a card. Hiding it would
    misrepresent what is actually on this week. */
 .match.is-blank { border-style: dashed; }
@@ -636,7 +593,7 @@ b, strong { font-weight: 500; }
   animation: pulse 1.4s ease-in-out infinite;
 }
 
-/* --- 14. Notices --------------------------------------------------------- */
+/* --- 13. Notices --------------------------------------------------------- */
 .notice {
   padding: 1.35rem 1.5rem;
   background: var(--panel);
@@ -658,7 +615,7 @@ b, strong { font-weight: 500; }
   text-wrap: pretty;
 }
 
-/* --- 15. Loading skeleton ------------------------------------------------ */
+/* --- 14. Loading skeleton ------------------------------------------------ */
 /* Shown only during the first load, so the page never sits blank looking
    broken. aria-hidden, because there is nothing here to read. */
 .match.is-skeleton { animation: none; }
@@ -680,7 +637,7 @@ b, strong { font-weight: 500; }
   50%      { opacity: 0.22; }
 }
 
-/* --- 16. Method page ----------------------------------------------------- */
+/* --- 15. Method page ----------------------------------------------------- */
 /* Prose in the same voice as the cards: one narrow column, small-caps section
    labels, and dense two-column rows for anything numeric. No diagrams — a
    labelled row says the same thing in a tenth of the height. */
@@ -802,7 +759,7 @@ b, strong { font-weight: 500; }
 }
 .limits b { color: var(--text); }
 
-/* --- 17. Ratings table --------------------------------------------------- */
+/* --- 16. Ratings table --------------------------------------------------- */
 /* A real table, because this is real tabular data. Every width is fixed, so
    the league tables stacked down the page share one grid rather than each
    finding its own and making the eye re-learn the layout six times. Everything
@@ -1010,7 +967,7 @@ b, strong { font-weight: 500; }
 .daytab.is-today .daytab-wd { color: var(--dim); font-weight: 500; }
 .daytab.is-on.is-today .daytab-wd { color: var(--text); }
 
-/* --- 18. The fixture pager -----------------------------------------------
+/* --- 17. The fixture pager -----------------------------------------------
    Under the last card of the page: a back chevron, a count, a forward chevron.
 
    The frame is the scale switch's, grouped with it in section 16 rather than
@@ -1096,7 +1053,7 @@ b, strong { font-weight: 500; }
   font-variant-numeric: tabular-nums;
 }
 
-/* --- 19. The record ------------------------------------------------------
+/* --- 18. The record ------------------------------------------------------
    One row per match: what was claimed on the left, what happened on the right.
    Built as a grid rather than a table because the cells stack two deep and a
    table cell holding its own two-line block fights the row's baseline.
@@ -1284,7 +1241,7 @@ b, strong { font-weight: 500; }
 .lg-row.is-skeleton { pointer-events: none; }
 .lg-row.is-skeleton:hover { background: none; }
 
-/* --- 20. Footer --------------------------------------------------------- */
+/* --- 19. Footer --------------------------------------------------------- */
 .foot {
   margin-top: 3.5rem;
   padding-top: 1.5rem;
@@ -1414,7 +1371,7 @@ b, strong { font-weight: 500; }
   color: var(--dim);
 }
 
-/* --- 21. Responsive ----------------------------------------------------- */
+/* --- 20. Responsive ----------------------------------------------------- */
 @media (max-width: 34rem) {
   .shell { padding: calc(var(--bar-h) + 1.5rem) 1.15rem 3rem; }
   .topbar-in { padding: 0 1.15rem; }
@@ -1519,7 +1476,7 @@ b, strong { font-weight: 500; }
   .lg-said { font-size: 11px; }
 }
 
-/* --- 22. Reduced motion ------------------------------------------------- */
+/* --- 21. Reduced motion ------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   /* This list is explicit rather than a blanket `* { animation: none }`, so
      every new animation has to be added here by hand. Adding one and forgetting
