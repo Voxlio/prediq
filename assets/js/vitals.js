@@ -52,6 +52,9 @@
    THE SEAM: every function takes its `fetch`, its clock and its storage from
    arguments, so tests/a1.mjs drives the whole thing with fakes and never touches
    the network or a browser.
+
+   IF THE FOOTER IS EMPTY: run `prediq.vitals()` in the browser console. Section 8
+   is why that exists and what each answer means.
    ========================================================================== */
 
 import { FIREBASE, FIRESTORE_VIEWS, FIRESTORE_VIEWS_TOTAL } from './firebase-config.js';
@@ -72,6 +75,10 @@ const docPath = () =>
 const collection = () => docPath() + '/' + FIRESTORE_VIEWS;
 
 export const endpoint = op => REST + '/' + docPath() + ':' + op + '?key=' + FIREBASE.apiKey;
+
+/* One document by name, used only by section 8. The counter itself never reads —
+   every figure it prints comes back from its own write. */
+export const docEndpoint = id => REST + '/' + collection() + '/' + id + '?key=' + FIREBASE.apiKey;
 
 /* =============================================================================
    1. DAYS
@@ -215,13 +222,32 @@ export function readCommit(body) {
   };
 }
 
+/* Firestore explains its refusals, and the first version of this file threw that
+   explanation away and kept the status code. The difference matters more than it
+   looks: `403` alone could be a dozen things, while the body says
+   `PERMISSION_DENIED: Missing or insufficient permissions` — which names the
+   cause and can be searched for. Section 8 is the whole argument for why a
+   counter that fails silently is worse than one that fails loudly.
+
+   Reading the body cannot itself throw: a refusal arriving as HTML from a proxy,
+   or as nothing at all, just leaves the detail empty. */
+export async function failure(res) {
+  let detail = '';
+  try {
+    const body = await res.json();
+    const e = (Array.isArray(body) ? body[0]?.error : body?.error) || {};
+    detail = [e.status, e.message].filter(Boolean).join(': ');
+  } catch { /* not JSON, so the status code is all there is */ }
+  return res.status + (detail ? ' ' + detail : '');
+}
+
 export async function count({ fetchImpl = fetch, now = new Date(), storage } = {}) {
   const res = await fetchImpl(endpoint('commit'), {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(commitBody(now, firstOfVisit(now, storage))),
   });
-  if (!res.ok) throw new Error('counter HTTP ' + res.status);
+  if (!res.ok) throw new Error('counter HTTP ' + await failure(res));
   return readCommit(await res.json());
 }
 
@@ -260,7 +286,7 @@ export async function week({ fetchImpl = fetch, now = new Date() } = {}) {
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(batchGetBody(days)),
   });
-  if (!res.ok) throw new Error('day series HTTP ' + res.status);
+  if (!res.ok) throw new Error('day series HTTP ' + await failure(res));
   return readBatch(await res.json());
 }
 
@@ -354,6 +380,9 @@ export function days(node, series, now = new Date()) {
    awaited in sequence, every failure is swallowed, and the worst outcome is a
    footer with fewer numbers in it or none.
 
+   Swallowed is not the same as silent, though, and for a while this was both —
+   see section 8. A failed count now leaves one line in the console saying so.
+
    One paint at the end, so the footer does not reflow three times.
    ========================================================================== */
 export async function mountVitals({
@@ -363,6 +392,14 @@ export async function mountVitals({
   now = new Date(),
   storage,
 } = {}) {
+  /* Registered on every page that has a footer, not just the fixtures page, because
+     the counter is in all three footers and a diagnosis you can only run from one
+     of them is a diagnosis you will run from the wrong page first. Assigned rather
+     than replaced so main.js's rebuild() and this can coexist in either order. */
+  if (typeof window !== 'undefined') {
+    window.prediq = Object.assign(window.prediq || {}, { vitals: report });
+  }
+
   if (!node && !dayNode) return null;
 
   const [c, w, s] = await Promise.allSettled([
@@ -370,6 +407,11 @@ export async function mountVitals({
     week({ fetchImpl, now }),
     scored({ fetchImpl }),
   ]);
+
+  /* `complain` is declared in section 8 and used here, which reads backwards but
+     is the right way round: the counter is the feature and the diagnosis is the
+     footnote. Function declarations hoist, so the order costs nothing. */
+  if (c.status === 'rejected') complain(c.reason);
 
   const got = c.status === 'fulfilled' ? c.value : { views: null, visits: null, today: null };
   const vals = {
@@ -387,4 +429,175 @@ export async function mountVitals({
   if (dayNode) days(dayNode, series, now);
 
   return { ...vals, today: got.today, series };
+}
+
+/* =============================================================================
+   8. WHY IT ISN'T COUNTING
+
+   Section 7 swallows every failure and section 6 shows nothing rather than a
+   zero, and both of those are right: a footer counter must never cost a reader a
+   prediction, and filling a gap with an invented figure would be the smallest
+   possible version of the dishonesty this whole site is arranged to avoid.
+
+   But the two of them together produced a feature with the worst property code
+   can have. The counter could be refused on every single page load, by every
+   visitor, for weeks, and the only symptom anywhere was a footer two lines
+   shorter than it should be. No error. No status code. Nothing to search for.
+   A working counter on a quiet site and a completely broken one looked exactly
+   alike, and there was no observation that could tell them apart.
+
+   So this section exists to make the failure state legible, and it does it
+   without changing what a visitor sees. A failed count leaves one console line.
+   `prediq.vitals()` runs the thing on demand and names the cause.
+
+   THE COMMIT AND A READ, BOTH, BECAUSE WHICH ONE FAILS *IS* THE DIAGNOSIS
+
+   firestore.rules grants `allow read: if true` on the counter and constrains the
+   write. So:
+
+     write refused, read refused   the rules in force are not the ones in this
+                                   repository — a database in production mode
+                                   denies everything until they are published
+     write refused, read allowed   the rules are live, but the `views` block is
+                                   missing or was edited
+     neither one answers at all    the request never left the browser: a blocker
+                                   extension, no network, or a file:// page
+
+   That is three distinct fixes behind one identical empty footer, which is why
+   guessing was never going to work and this had to be measured instead.
+   ========================================================================== */
+
+/* Never throws. A rejected fetch and a refused response are both outcomes here,
+   because "the request did not arrive" is one of the answers being tested for and
+   an exception would discard it. status 0 means it never completed. */
+export async function probe(fetchImpl, url, init) {
+  try {
+    const res = await fetchImpl(url, init);
+    if (res.ok) return { ok: true, status: res.status, detail: '' };
+    return { ok: false, status: res.status, detail: await failure(res) };
+  } catch (err) {
+    return { ok: false, status: 0, detail: String((err && err.message) || err) };
+  }
+}
+
+/* Pure, so a test can drive every branch without a network. Each verdict is a
+   sentence about what was observed and a sentence about what to do next — never
+   a bare error name, because the reader of this is whoever is trying to get the
+   counter working, not whoever wrote it. */
+export function verdictFor(write, read, protocol = '') {
+  if (write.ok) {
+    return { ok: true, says: 'The counter is working. This page load was counted.', fix: null };
+  }
+  if (write.status === 0) {
+    return {
+      ok: false,
+      says: 'The request never left the browser, so Firestore never saw it.',
+      fix: protocol === 'file:'
+        ? 'This page is open as a file:// URL, and browsers refuse cross-origin '
+          + 'requests from those. Serve the folder over http instead — run '
+          + '`python3 -m http.server` in the project folder and open '
+          + 'http://localhost:8000 — or just check it on the live site.'
+        : 'Almost always an ad blocker or privacy extension blocking '
+          + 'firestore.googleapis.com. Try again in a private window with '
+          + 'extensions off. If it works there, that was it.',
+    };
+  }
+  if (write.status === 403 || /PERMISSION_DENIED/.test(write.detail)) {
+    return read.ok
+      ? {
+          ok: false,
+          says: 'Firestore is reachable and the counter is readable, but it refused the write.',
+          fix: 'So rules are published, but their `views` block is missing or altered. '
+            + 'Copy firestore.rules over the whole box rather than editing it by hand, '
+            + 'then Publish.',
+        }
+      : {
+          ok: false,
+          says: 'Firestore refused the write AND the read, so the rules in force are not the '
+            + 'ones in this repository.',
+          fix: 'firestore.rules has not been published since the counter was added. '
+            + 'Firebase console → prediq-b5690 → Firestore Database → Rules → select all → '
+            + 'paste firestore.rules over it → Publish. SETUP.md step 1 has the screenshots.',
+        };
+  }
+  if (write.status === 404) {
+    return {
+      ok: false,
+      says: 'Firestore answered NOT_FOUND, so nothing is listening at this path.',
+      fix: 'Either the database was never created, or it exists in Datastore mode, which this '
+        + 'API cannot address. Firebase console → Firestore Database → Create database → '
+        + 'production mode.',
+    };
+  }
+  if (write.status === 400) {
+    return {
+      ok: false,
+      says: 'Firestore rejected the request as malformed. That is a bug in this file, not a '
+        + 'setting in the console.',
+      fix: 'Send the detail line above — it names the field it objected to.',
+    };
+  }
+  if (write.status === 429) {
+    return {
+      ok: false,
+      says: "The project's free daily quota is spent.",
+      fix: 'It resets at midnight Pacific, and nothing here needs changing. If it happens '
+        + 'often the counter is being hit harder than a footer figure is worth.',
+    };
+  }
+  return {
+    ok: false,
+    says: 'Firestore refused the write for a reason this has not seen before.',
+    fix: 'Send the detail line above.',
+  };
+}
+
+/* Deliberately attempts a real write, because the only honest test of "can this
+   browser write" is to write. That costs one page view, which is the cheapest
+   possible price for an answer and is why the figures were never presented as
+   audited anyway.
+
+   `storage: null` is not laziness: firstOfVisit answers false without storage, so
+   the visit transform increments by zero and running this never inflates the
+   number that is supposed to mean people. */
+export async function diagnose({
+  fetchImpl = fetch,
+  now = new Date(),
+  protocol = globalThis.location?.protocol || '',
+} = {}) {
+  const write = await probe(fetchImpl, endpoint('commit'), {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(commitBody(now, false)),
+  });
+  const read = await probe(fetchImpl, docEndpoint(FIRESTORE_VIEWS_TOTAL));
+  return { write, read, ...verdictFor(write, read, protocol) };
+}
+
+export function lines(r) {
+  const out = [
+    'Prediq counter check',
+    '  project   ' + FIREBASE.projectId,
+    '  write     ' + (r.write.ok ? 'accepted' : 'refused — ' + (r.write.detail || 'no response')),
+    '  read      ' + (r.read.ok ? 'allowed' : 'refused — ' + (r.read.detail || 'no response')),
+    '',
+    r.says,
+  ];
+  if (r.fix) out.push('', 'What to do: ' + r.fix);
+  return out;
+}
+
+/* Printed rather than returned as an object, because the person running this
+   wants to read it, and a collapsed object in a console is one more click before
+   an answer. The object comes back too, for anything scripted. */
+export async function report(opts) {
+  const r = await diagnose(opts);
+  console.log(lines(r).join('\n'));
+  return r;
+}
+
+function complain(reason) {
+  console.warn('Prediq: the footer counter did not count this page load — '
+    + String((reason && reason.message) || reason)
+    + '\nRun prediq.vitals() in this console for the cause and the fix.');
 }

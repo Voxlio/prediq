@@ -292,13 +292,18 @@ async function boot() {
 }
 
 /* A cache this aggressive needs an escape hatch. From the browser console:
-   prediq.rebuild()  — drop everything cached and refit from fresh requests. */
-window.prediq = {
+   prediq.rebuild()  — drop everything cached and refit from fresh requests.
+   prediq.vitals()   — check the footer counter and say why it isn't counting.
+
+   Assigned onto whatever is already there rather than replacing it: vitals.js
+   registers its own entry when it mounts, and neither file should have to know
+   which of them ran first. */
+window.prediq = Object.assign(window.prediq || {}, {
   rebuild() {
     const n = clearCache();
     console.log(`Cleared ${n} cached entries. Reloading.`);
     location.reload();
   },
-};
+});
 
 boot();
