@@ -250,11 +250,24 @@ section('a prediction can only ever be created, never overwritten');
     w.write.currentDocument?.exists === false, w.write.currentDocument);
   ok('it has no updateMask, so it writes the whole document',
     !w.write.updateMask, w.write.updateMask);
-  ok('the document path is under the predictions collection',
-    w.write.update.name.includes('/documents/predictions/2026-08-24__704311'),
+  /* Exact equality, not `includes`. The first version of this suite asserted
+     `name.includes('/projects/prediq-b5690/')`, which is equally true of
+     `projects/p/databases/(default)/documents/...` (correct), of
+     `/projects/p/...` (leading slash, INVALID_ARGUMENT) and of
+     `https://firestore.googleapis.com/v1/projects/p/...` (a URL where a resource
+     name belongs, also INVALID_ARGUMENT). All three passed, so 103 green
+     assertions sat on top of a mirror that could not write a single document.
+     A substring is not the invariant; the whole string is. */
+  ok('the document name is the exact Firestore resource name',
+    w.write.update.name ===
+      'projects/prediq-b5690/databases/(default)/documents/predictions/2026-08-24__704311',
     w.write.update.name);
-  ok('the path names the project from the service account',
-    w.write.update.name.includes('/projects/prediq-b5690/'), w.write.update.name);
+  ok('the name is a resource name, not a URL — no scheme or host',
+    !/https?:|firestore\.googleapis\.com/.test(w.write.update.name), w.write.update.name);
+  ok('the name has no leading slash',
+    !w.write.update.name.startsWith('/'), w.write.update.name);
+  ok('the name has no empty path segment',
+    !w.write.update.name.includes('//'), w.write.update.name);
   ok('the day is stored as a field as well as in the id',
     w.write.update.fields.day.stringValue === '2026-08-24', w.write.update.fields.day);
   ok('the probabilities are in the document',
@@ -312,8 +325,14 @@ section('what the batch does with each answer Firestore can give');
   ok('nothing counted as pre-existing', res.existed === 0, res);
   ok('no failures', res.failures.length === 0, res.failures);
   ok('a token was fetched before the write', calls[0].url.includes('oauth2'), calls[0].url);
-  ok('the write went to :batchWrite, not :commit',
-    calls[1].url.endsWith(':batchWrite'), calls[1].url);
+  /* Exact, for the same reason the document name is. `endsWith(':batchWrite')`
+     was the original assertion and it is just as true of
+     `.../v1//projects/...:batchWrite`, which is a 404. */
+  ok('the write went to the exact :batchWrite endpoint, not :commit',
+    calls[1].url === 'https://firestore.googleapis.com/v1/projects/prediq-b5690' +
+      '/databases/(default)/documents:batchWrite', calls[1].url);
+  ok('the endpoint has no empty path segment',
+    !calls[1].url.slice('https://'.length).includes('//'), calls[1].url);
   ok('the bearer token was attached',
     calls[1].headers.authorization === 'Bearer tok-123', calls[1].headers);
   ok('the token is fetched once, not per batch',

@@ -198,8 +198,14 @@ Run the test suite first — it needs no credentials and no network:
 node tests/run.mjs
 ```
 
-778 assertions across 15 suites. If those pass, the code is fine and the problem
+781 assertions across 15 suites. If those pass, the code is fine and the problem
 is configuration: permissions, a secret, or ESPN.
+
+One caveat learned the hard way: a green suite proved the mirror worked when it
+could not write a single document, because the assertion checking the Firestore
+document path was a substring match rather than the exact string. If the mirror
+misbehaves, read the **Mirror the archive into Firestore** step's own log before
+trusting the test totals.
 
 To see what the writers would do without touching anything:
 

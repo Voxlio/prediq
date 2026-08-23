@@ -157,7 +157,23 @@ export function docId(day, id) {
 export function firestore({ credentials, fetch: doFetch = globalThis.fetch, now = () => new Date() }) {
   const sa = credentials;
   const project = sa.project_id;
-  const docPath = '/projects/' + project + '/databases/(default)/documents';
+
+  /* A Firestore *resource name*, not a URL, and the distinction is the whole
+     reason this is one constant used in two different ways below.
+
+       docPath                      projects/p/databases/(default)/documents
+       the endpoint      API + '/' + docPath + ':batchWrite'
+       a document name             docPath + '/predictions/2026-08-23__704311'
+
+     No leading slash and no scheme. `Document.name` is the identity of the
+     document inside the database, so Firestore rejects anything with a host on
+     the front or a slash before `projects` with INVALID_ARGUMENT — and it does so
+     per write inside the batch, which surfaces as a code 3 against every record
+     while the request itself returns 200. Both mistakes have already been made
+     here once: the first version put the full https:// URL in `name`, and the
+     fix for that left a leading slash, which also produced `v1//projects` in the
+     endpoint. f1 now pins both strings exactly rather than by substring. */
+  const docPath = 'projects/' + project + '/databases/(default)/documents';
   let token = null;
 
   async function bearer() {

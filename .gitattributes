@@ -1,0 +1,30 @@
+# Every text file is stored in the repository with LF endings, whatever the
+# editor that saved it did locally.
+#
+# This is not housekeeping. Two concrete things go wrong without it:
+#
+#   1. A Windows editor that rewrites a file with CRLF makes git report every
+#      single line as changed. `.github/workflows/predictions.yml` and
+#      `.gitignore` were sitting in exactly that state when this file was added —
+#      195 lines "modified" with byte-identical content, staged for the next
+#      commit. Nothing had been committed that way yet, and this is what keeps it
+#      that way: the archive's whole claim rests on its diffs being readable, and
+#      a real one-line change is invisible inside a whole-file rewrite.
+#
+#   2. The workflow's `run:` blocks are bash executed on Ubuntu. A CRLF line
+#      ending inside a shell script leaves a stray carriage return on the end of
+#      every command, which produces errors like `$'\r': command not found` —
+#      genuinely broken, not cosmetic, and mystifying to read.
+#
+# If a file ever does need its endings preserved, give it its own line here
+# rather than removing this one.
+* text=auto eol=lf
+
+# Nothing in Prediq is binary today — team crests are fetched from ESPN at run
+# time rather than committed. These are here so that if an image or font is ever
+# added, git does not try to normalise line endings inside it and corrupt it.
+*.png  binary
+*.jpg  binary
+*.ico  binary
+*.woff binary
+*.woff2 binary
