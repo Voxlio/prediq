@@ -94,6 +94,26 @@ export const USERS = [
 export const CHECK_CHECK = ['M18 6 7 17l-5-5', 'm22 10-7.5 7.5L13 16'];
 export const ACTIVITY = ['M22 12h-6l-2 3h-4l-2-3H2'];
 
+/* Lucide check, flame, history and arrow-right, for the front-page scorecard in
+   scorecard.js.
+
+   `check` rather than `check-check`: the footer already uses the double tick for
+   "matches scored", and the scorecard's first figure is a different claim — calls
+   that were *right*, not calls that have been settled. One tick beside two, both
+   drawn the same way, is the useful version of that distinction; the same drawing
+   twice meaning two things would be the useless one.
+
+   These four are the smallest silhouettes Lucide has for what each figure means,
+   which matters more here than anywhere else on the site: at 13px the difference
+   between two icons is a couple of strokes. `target` and `crosshair` were the
+   obvious choices for accuracy and both lose their concentric rings at this size. */
+export const CHECK = ['M20 6 9 17l-5-5'];
+export const FLAME = [
+  'M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z',
+];
+export const HISTORY = ['M3 3v5h5', 'M3.05 13A9 9 0 1 0 6 5.3L3 8', 'M12 7v5l4 2'];
+export const ARROW_RIGHT = ['M5 12h14', 'm12 5 7 7-7 7'];
+
 /* A label→value pair, the densest honest way to publish a figure. Used by the
    card readout and by both ratings tables. */
 export function field(dl, term, value, title) {

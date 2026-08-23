@@ -264,14 +264,52 @@ b, strong { font-weight: 500; }
   border-bottom: 0;
 }
 .scorecard:empty { display: none; }
+
+/* Each figure is an icon, a number and a label on one baseline, so every part is
+   its own inline flex row. Without this the SVG sits on the text baseline and
+   hangs a couple of pixels low against 11px mono. */
+.scorecard span,
+.scorecard a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+/* fill: none is load-bearing rather than tidiness — an SVG path fills black by
+   default, so without it the flame and the clock are solid blobs on a dark panel.
+   Same trick, same reason, as .foot-i and .pager-i.
+
+   13px matches the footer's icons rather than the 11px type they sit beside: an
+   icon scaled to the cap height of the text reads as smaller than the text, and
+   these have to survive being drawn at a third of their design size. */
+.sc-i {
+  width: 13px;
+  height: 13px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* The arrow is a hair smaller and set in the muted colour: it marks a direction,
+   not a quantity, and at full weight it competed with the figures for attention. */
+.sc-go {
+  width: 12px;
+  height: 12px;
+  color: var(--mute);
+}
+
 .scorecard a {
   color: var(--warm);
   text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.15s;
 }
+/* The underline goes on the text alone, not on the flex row, so it stops at the
+   words instead of running out under the arrow. */
 .scorecard a:hover,
-.scorecard a:focus-visible { border-bottom-color: var(--warm); }
+.scorecard a:focus-visible { text-decoration: underline; text-underline-offset: 3px; }
+.scorecard a:hover .sc-go,
+.scorecard a:focus-visible .sc-go { color: var(--warm); }
 
 /* --- 6. Match card ------------------------------------------------------ */
 .fixtures {

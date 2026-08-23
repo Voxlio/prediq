@@ -35,7 +35,10 @@
    clock as arguments, so the whole thing is testable without a browser.
    ========================================================================== */
 
-import { el, stat, setStatus, dayLabel, daysFromToday } from './dom.js';
+import {
+  el, icon, setStatus, dayLabel, daysFromToday,
+  CHECK, FLAME, HISTORY, ARROW_RIGHT,
+} from './dom.js';
 
 /* The same path vitals.js uses, and store.js's paths.summary() before that. */
 export const SUMMARY = 'data/summary.json';
@@ -58,6 +61,23 @@ export function whenLabel(key, now = new Date()) {
   return 'on ' + dayLabel(key, now);
 }
 
+/* Not dom.js's stat(), for the same reason vitals.js's vital() isn't: stat()
+   serves three status strips whose figures carry no artwork, and bolting an
+   optional icon onto it would grow an options bag on a helper used in a dozen
+   places to suit one. Six lines here is the cheaper answer.
+
+   The icon comes first and the number second on purpose — the eye lands on the
+   glyph, which is the fastest way to tell three figures apart at 11px, and then
+   reads the figure it labels. */
+function figure(paths, value, label) {
+  const s = el('span');
+  s.append(
+    icon(paths, 'sc-i'),
+    el('b', null, String(value)),
+    document.createTextNode(' ' + label));
+  return s;
+}
+
 /* Returns the parts for setStatus(), or an empty array meaning "print nothing".
 
    Nothing is the right answer more often than it looks: a fresh archive, a
@@ -71,13 +91,15 @@ export function scoreParts(recent, now = new Date()) {
   const latest = days[0];
   if (!latest || !Number.isInteger(latest.n) || latest.n < 1) return [];
 
-  const out = [stat(latest.hits + ' of ' + latest.n, 'called ' + whenLabel(latest.day, now))];
+  const out = [
+    figure(CHECK, latest.hits + ' of ' + latest.n, 'called ' + whenLabel(latest.day, now)),
+  ];
 
   /* Two, not one. "1 in a row" is not a run, it is a match, and printing it
      would make the phrase meaningless on the days it appears. Zero is a live
      miss and says so by staying quiet. */
   if (Number.isInteger(recent.streak) && recent.streak >= 2) {
-    out.push(stat(recent.streak, 'in a row'));
+    out.push(figure(FLAME, recent.streak, 'in a row'));
   }
 
   /* Only once there is more than one day in the archive, and only when it adds
@@ -85,11 +107,16 @@ export function scoreParts(recent, now = new Date()) {
      the same two numbers again, and repeating them reads as padding. */
   const w = recent.window;
   if (w && w.days > 1 && w.n > latest.n) {
-    out.push(stat(w.hits + ' of ' + w.n, 'over ' + w.days + ' days'));
+    out.push(figure(HISTORY, w.hits + ' of ' + w.n, 'over ' + w.days + ' days'));
   }
 
+  /* The arrow trails the text here rather than leading it, which is the one
+     inconsistency with the figures above and is deliberate: on the figures the
+     glyph is a label for what follows, and on a link it is the direction the
+     link goes. Putting it in front would point back at the sentence. */
   const link = el('a', null, 'see the record');
   link.href = 'record.html';
+  link.append(icon(ARROW_RIGHT, 'sc-i sc-go'));
   out.push(link);
   return out;
 }
