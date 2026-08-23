@@ -19,3 +19,10 @@ desktop.ini
 # outsider can check.
 /tmp-archive/
 /scratch/
+
+# The 1254px icon artwork the three favicons in assets/ were cut from. Those three
+# are committed; this is not. It is 818 kB — over three times the whole site's CSS
+# and JavaScript put together — and nothing at runtime reads it, so committing it
+# would put a permanent weight in the history to no benefit. Keep it locally if you
+# want to recut the icons; the site does not need it.
+/prediq.png

@@ -6,6 +6,28 @@
 <title>Method — how Prediq builds a prediction</title>
 <meta name="description" content="The full method behind Prediq's football predictions: the data, the Poisson goals model, every parameter, how each prediction is frozen before kickoff and scored afterwards, and the things the model cannot know.">
 
+<!-- Favicon, kept as local copies rather than hotlinked to the image host.
+     A remote icon makes every visitor's browser fetch a file from a third party on
+     every page load, handing that third party an IP address and a user agent --
+     which is precisely the cross-site request method.html promises this site does
+     not make. It is also the one asset whose disappearance nobody would notice:
+     free image hosts expire, and a 404 favicon fails silently.
+
+     Three files rather than one, because at these sizes each is a different
+     picture and not merely a smaller one. The source is over half margin, which
+     downscaled to 16px leaves the "p" about seven pixels tall and unreadable, so
+     the 16px is cropped in close and given its own corner radius. Both tab icons
+     have transparent corners so the rounded square reads on a light tab bar as
+     well as a dark one. The Apple one is the opposite on purpose -- opaque and
+     full bleed -- because iOS applies its own rounded mask, and an icon that
+     arrives already rounded gets its corners clipped twice. -->
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
+<!-- Tints the browser chrome on mobile. Must match --ink in style.css. -->
+<meta name="theme-color" content="#0C0D10">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
