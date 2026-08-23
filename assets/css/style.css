@@ -36,13 +36,23 @@
   --measure: 42rem;    /* single-column max width */
   --radius: 3px;       /* barely-there rounding */
 
+  /* The fixed bar's height, named because two other rules depend on knowing it:
+     the shell reserves space below it, and scroll-padding-top keeps an #anchor
+     from landing underneath it. A literal in three places would drift. */
+  --bar-h: 3.25rem;
+
   color-scheme: dark;
 }
 
 /* --- 2. Reset ------------------------------------------------------------ */
 *, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; }
+html {
+  -webkit-text-size-adjust: 100%;
+  /* Every in-page jump — the skip link, a footnote, a heading link — would
+     otherwise land with its target hidden behind the fixed bar. */
+  scroll-padding-top: calc(var(--bar-h) + 1rem);
+}
 
 body {
   margin: 0;
@@ -76,11 +86,13 @@ b, strong { font-weight: 500; }
   border-radius: 2px;
 }
 
+/* Above the fixed bar, or focusing it would reveal a link hidden behind the
+   bar — which is the one thing this link exists to avoid. */
 .skip {
-  position: absolute;
+  position: fixed;
   left: -9999px;
   top: 0;
-  z-index: 10;
+  z-index: 30;
   padding: 0.6rem 1rem;
   background: var(--warm);
   color: var(--ink);
@@ -100,15 +112,39 @@ b, strong { font-weight: 500; }
 .shell {
   max-width: var(--measure);
   margin: 0 auto;
-  padding: 5.5rem 1.5rem 4rem;
+  /* The bar is fixed, so it occupies no space in the flow and the first thing
+     on the page would sit underneath it. This reserves exactly the bar plus the
+     breathing room the page had before. */
+  padding: calc(var(--bar-h) + 2.25rem) 1.5rem 4rem;
 }
 
-/* --- 4. Masthead -------------------------------------------------------- */
-.masthead-row {
+/* --- 4. The bar --------------------------------------------------------- */
+/* Fixed rather than sticky. Sticky would need an ancestor tall enough to stick
+   within and would stop working the moment any ancestor gained an overflow
+   value; fixed is answerable to nothing but the viewport. The cost is that it
+   reserves no space, which .shell does above. */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  height: var(--bar-h);
+  background: var(--ink);
+  border-bottom: 1px solid var(--line);
+}
+
+/* Same measure and side padding as .shell, so the wordmark sits directly above
+   the page content rather than a few pixels off it. */
+.topbar-in {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  height: 100%;
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 0 1.5rem;
 }
 
 .wordmark {
@@ -122,12 +158,18 @@ b, strong { font-weight: 500; }
 
 .nav {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 1.25rem;
+  align-items: center;
+  /* No wrapping. The bar has a fixed height that .shell reserves space for, so
+     a wrapped second row would be clipped rather than pushing the bar taller. */
+  flex-wrap: nowrap;
+  gap: 1.25rem;
   font: 400 13px/1 var(--mono);
   color: var(--mute);
 }
 .nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   padding-bottom: 2px;
   border-bottom: 1px solid transparent;
   transition: color 0.15s ease, border-color 0.15s ease;
@@ -136,17 +178,40 @@ b, strong { font-weight: 500; }
   color: var(--text);
   border-bottom-color: var(--warm);
 }
-/* The page you are on. There is no build step to share this header, so the
-   marker is written into each page's markup and a test asserts the three nav
-   blocks stay identical apart from it. */
+/* The page you are on. There is no build step to share this bar, so the marker
+   is written into each page's markup — and h1 asserts all four pages carry a
+   byte-identical bar apart from it. */
 .nav a.is-here {
   color: var(--text);
   border-bottom-color: var(--line);
 }
 
+/* Icons are Lucide (ISC), hand-inlined rather than loaded. The library is a
+   JavaScript dependency that rewrites the DOM on load, and method.html
+   deliberately loads no JavaScript at all — an icon set that only appears on
+   three pages out of four is worse than none. Inline SVG also costs no request
+   and inherits currentColor, so the hover and is-here states above need no
+   separate icon rule.
+
+   Stroke and fill are set here rather than as attributes on all sixteen copies
+   of the markup. fill:none is the load-bearing one: SVG fills black by default,
+   so a stroke-drawn icon that loses this rule renders as a solid blob rather
+   than as nothing, which is the kind of failure that looks deliberate. */
+.nav-i {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  /* The glyph's optical centre sits slightly above the text baseline box. */
+  margin-top: -1px;
+}
+
 .thesis {
   max-width: 32rem;
-  margin-top: 1.5rem;
   color: var(--dim);
   font-size: 15px;
   line-height: 1.65;
@@ -1112,7 +1177,29 @@ b, strong { font-weight: 500; }
 
 /* --- 19. Responsive ----------------------------------------------------- */
 @media (max-width: 34rem) {
-  .shell { padding: 3.5rem 1.15rem 3rem; }
+  .shell { padding: calc(var(--bar-h) + 1.5rem) 1.15rem 3rem; }
+  .topbar-in { padding: 0 1.15rem; }
+
+  /* Wordmark plus four icon-and-label pairs needs about 26rem of the 20rem a
+     320px phone has. The labels go and the icons carry the nav on their own —
+     which is the whole reason the nav has icons rather than only words.
+     Hidden by clipping rather than display:none, deliberately: the icon is
+     aria-hidden, so the label IS the link's accessible name, and removing it
+     from the accessibility tree would leave four links that announce as
+     nothing but their href. h1 asserts this rule never becomes display:none. */
+  .nav { gap: 1.15rem; }
+  .nav-t {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .nav-i { width: 17px; height: 17px; }
+
   .match { padding: 1.15rem; }
   .notice { padding: 1.15rem; }
 

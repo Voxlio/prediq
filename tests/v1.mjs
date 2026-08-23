@@ -697,17 +697,13 @@ console.log('=== record.html and verdicts.js agree about the page ===');
       String(resolve(path)) === text.trim(), [path, text.trim(), resolve(path)]);
   }
 
-  /* Every page carries the same nav, and a page missing from it is unreachable
-     however well it works. */
-  for (const page of ['index.html', 'record.html', 'ratings.html', 'method.html']) {
-    const src = readFileSync(new URL('../' + page, import.meta.url), 'utf8');
-    const nav = src.match(/<nav class="nav">([\s\S]*?)<\/nav>/);
-    const hrefs = nav ? [...nav[1].matchAll(/href="([^"]+)"/g)].map(m => m[1]) : [];
-    ok(page + ' links to all four pages in the same order',
-      hrefs.join() === 'index.html,record.html,ratings.html,method.html', hrefs);
-    ok(page + ' marks exactly one nav item as the current page',
-      (nav ? nav[1].match(/aria-current="page"/g) || [] : []).length === 1);
-  }
+  /* The nav used to be checked here, and it belongs in h1 instead: this suite is
+     about the record page, and the bar is on all four. h1 now holds the four
+     copies byte-identical rather than merely agreeing on link order, which is
+     what this version could see. Do not re-add it — two regexes over the same
+     markup means the weaker one drifts and starts passing for the wrong reason,
+     and that is precisely what happened: this one matched `<nav class="nav">`
+     exactly, so adding an aria-label to the element broke it. */
 }
 
 console.log('');

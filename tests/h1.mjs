@@ -221,11 +221,160 @@ ok('the method page loads no JavaScript at all', !/<script/.test(html));
 
 const used = new Set();
 for (const mm of html.matchAll(/class="([^"]+)"/g)) mm[1].split(/\s+/).forEach(c => used.add(c));
-const orphans = [...used].filter(c => !new RegExp('\\.' + c.replace('.', '\\.') + '\\b').test(cssBare));
+/* The boundary here is a negative lookahead rather than \b, and that is not
+   pedantry: \b sits happily between a word character and a hyphen, so an
+   entirely unstyled class `foo` would pass on the strength of a `.foo-bar` rule
+   somewhere else in the file. That bug was live — `masthead` passed by matching
+   `.masthead-row`, and went on passing after `.masthead` itself was deleted. */
+const styledIn = (c, s) => new RegExp('\\.' + c.replace(/\./g, '\\.') + '(?![\\w-])').test(s);
+const styled = c => styledIn(c, cssBare);
+const orphans = [...used].filter(c => !styled(c));
 console.log('    ' + used.size + ' classes used on the method page');
 ok('no class without styling', orphans.length === 0, orphans);
+/* Asserted against a fixed sample, not against real class names: the point is
+   that the audit can still say no, and real names drift out from under a test
+   that leans on them. */
+const sample = '.foo-bar { color: red } .baz { color: red }';
+ok('the audit rejects a class that is only a prefix of a real rule',
+  !styledIn('foo', sample) && styledIn('foo-bar', sample) && styledIn('baz', sample));
+
+/* ---------- the fixed bar ----------
+   There is no build step and no template, so the bar is four hand-written
+   copies of the same markup. Nothing but this section stops them drifting: a
+   link added to one page and forgotten on the other three would look completely
+   normal on whichever page you happened to be reading.
+
+   The geometry checks matter for a different reason. A fixed bar occupies no
+   space in the flow, so the first screenful of every page sits underneath it
+   unless .shell reserves room — and the reservation is only correct as long as
+   it stays derived from --bar-h instead of being typed out as a number. */
+console.log('');
+console.log('=== the fixed bar, on all four pages ===');
+const PAGES = ['index.html', 'record.html', 'ratings.html', 'method.html'];
+const MARK = ' class="is-here" aria-current="page"';
+const bars = new Map();
+for (const p of PAGES) {
+  const src = file(p);
+  const all = [...src.matchAll(/<header class="topbar">[\s\S]*?<\/header>/g)];
+  ok(p + ' has exactly one bar', all.length === 1, all.length);
+  if (all.length === 1) bars.set(p, all[0][0]);
+}
+
+if (bars.size === PAGES.length) {
+  const stripped = [...bars].map(([p, b]) => [p, b.split(MARK).join('')]);
+  const [, first] = stripped[0];
+  const differ = stripped.filter(([, b]) => b !== first).map(([p]) => p);
+  ok('all four bars are byte-identical once the current-page marker is removed',
+    differ.length === 0, differ);
+
+  for (const [p, bar] of bars) {
+    const marked = [...bar.matchAll(/<a href="([^"]+)"\s+class="is-here"/g)].map(mm => mm[1]);
+    ok(p + ' marks exactly itself as the current page',
+      marked.length === 1 && marked[0] === p, marked);
+    /* Four links, four icons, four labels. A copy that lost its <span> would
+       still look right — the label is only hidden on a narrow screen — while
+       announcing as nothing to a screen reader there. */
+    ok(p + ' carries four links, each with an icon and a label',
+      (bar.match(/<a href=/g) || []).length === 4 &&
+      (bar.match(/class="nav-i"/g) || []).length === 4 &&
+      (bar.match(/class="nav-t"/g) || []).length === 4);
+    ok(p + '\u2019s icons are decorative and sized by a viewBox',
+      (bar.match(/viewBox="0 0 24 24"/g) || []).length === 4 &&
+      (bar.match(/aria-hidden="true"/g) || []).length === 4);
+    ok(p + '\u2019s nav is labelled, since a page may hold more than one',
+      /<nav class="nav" aria-label="Primary">/.test(bar));
+    /* The bar is the first thing in the body, so it is also the first thing
+       tabbed into. The skip link has to come before it or it skips nothing. */
+    const src = file(p);
+    ok(p + ' puts the skip link ahead of the bar',
+      src.indexOf('class="skip"') > 0 && src.indexOf('class="skip"') < src.indexOf('<header class="topbar">'));
+  }
+}
+
+/* Every page the bar links to must exist, and every page must be linked. A bar
+   pointing at a page that was renamed is a 404 on all four pages at once.
+   Order is pinned deliberately — fixtures first, method last — because
+   byte-identical bars would otherwise keep all four pages consistently wrong. */
+const navEl = /<nav class="nav"[^>]*>([\s\S]*?)<\/nav>/.exec(bars.get('index.html') || '');
+const navTargets = navEl ? [...navEl[1].matchAll(/href="([^"]+)"/g)].map(mm => mm[1]) : [];
+ok('the nav links to all four pages, in order, and nothing else',
+  navTargets.join() === PAGES.join(), navTargets);
+const navMissing = navTargets.filter(p => !fs.existsSync(new URL(p, root)));
+ok('every page the nav links to exists', navMissing.length === 0, navMissing);
+/* The wordmark sits outside the nav and is the fifth way home. If it ever stops
+   being a link the logo silently becomes decoration. */
+ok('the wordmark links home',
+  /<a class="wordmark" href="index\.html">/.test(bars.get('index.html') || ''));
+
+/* ---------- geometry ---------- */
+/* Two sections need to know where an @media block ends, and a positional
+   comparison is no substitute: a rule sitting after a media query's opening
+   brace may still be outside the query. That mistake made the first version of
+   the check below pass while the labels were hidden at every width. */
+function blockAt(s, at) {
+  if (at < 0) return '';
+  let depth = 0;
+  for (let i = s.indexOf('{', at); i >= 0 && i < s.length; i++) {
+    if (s[i] === '{') depth++;
+    else if (s[i] === '}' && --depth === 0) return s.slice(at, i + 1);
+  }
+  return '';
+}
+
+const barH = /--bar-h:\s*([\d.]+)rem/.exec(cssBare);
+ok('--bar-h is declared as a token', !!barH, barH && barH[1]);
+ok('the bar is fixed rather than sticky, and its height is the token',
+  /\.topbar\s*\{[^}]*position:\s*fixed[^}]*\}/.test(cssBare) &&
+  /\.topbar\s*\{[^}]*height:\s*var\(--bar-h\)[^}]*\}/.test(cssBare));
+/* A fixed bar plus an in-page #anchor is a classic pairing that goes wrong:
+   the browser scrolls the target to y=0, which is behind the bar. */
+ok('in-page jumps clear the bar via scroll-padding-top',
+  /scroll-padding-top:\s*calc\(var\(--bar-h\)/.test(cssBare));
+/* Focusing the skip link must not reveal it underneath the bar, which is the
+   one thing the link exists to avoid. */
+ok('the skip link sits above the bar',
+  /\.skip\s*\{[^}]*position:\s*fixed[^}]*\}/.test(cssBare));
+
+const shellPads = [...cssBare.matchAll(/\.shell\s*\{[^}]*padding:\s*calc\(var\(--bar-h\)\s*\+\s*([\d.]+)rem\)/g)]
+  .map(mm => +mm[1]);
+ok('every .shell padding reserves the bar height plus clearance, derived not typed',
+  shellPads.length === 2 && shellPads.every(v => v > 0), shellPads);
+ok('no .shell padding hardcodes a length where --bar-h belongs',
+  ![...cssBare.matchAll(/\.shell\s*\{([^}]*)\}/g)].some(mm => /padding:\s*[\d.]/.test(mm[1])));
+
+/* fill:none is the load-bearing declaration. SVG fills black by default, so a
+   stroke-drawn icon that loses it renders as a solid blob — a failure that
+   looks deliberate rather than broken. The markup carries no fill attribute of
+   its own, so there is nothing to fall back on. */
+const navI = /\.nav-i\s*\{([^}]*)\}/.exec(cssBare);
+ok('.nav-i exists and sets fill:none, without which the icons fill black',
+  !!navI && /fill:\s*none/.test(navI[1]));
+ok('.nav-i strokes in the current colour, so the nav inherits its own hover',
+  !!navI && /stroke:\s*currentColor/.test(navI[1]) && /stroke-width:/.test(navI[1]));
+ok('the icon markup carries no presentation attributes, only geometry',
+  ![...bars.values()].some(b => /<svg[^>]*\s(?:fill|stroke)=/.test(b)));
+
+/* The narrow-screen rule hides the labels. It must hide them from the eye only:
+   the icon is aria-hidden, so the label is the link's entire accessible name,
+   and display:none would take it out of the accessibility tree and leave four
+   links that announce as nothing but a URL. style.css says h1 checks this. */
+const narrowAt = cssBare.indexOf('@media (max-width: 34rem)');
+const narrow = blockAt(cssBare, narrowAt);
+ok('there is a narrow-screen block at all', narrow.length > 0);
+const navT = /\.nav-t\s*\{([^}]*)\}/.exec(narrow);
+ok('.nav-t is hidden by clipping, never by display:none',
+  !!navT && /clip-path:\s*inset\(50%\)/.test(navT[1]) && !/display:\s*none/.test(navT[1]));
+/* And nowhere else — hiding the labels at every width would make the nav
+   icon-only for everyone, which is not what the icons are for. */
+ok('the labels are hidden only on a narrow screen',
+  !!navT && !/\.nav-t\s*\{/.test(cssBare.slice(0, narrowAt) + cssBare.slice(narrowAt + narrow.length)));
+/* Wrapping would be invisible: the bar's height is fixed and .shell reserves
+   exactly that, so a second row is clipped rather than pushing anything down. */
+ok('the nav cannot wrap into a row that would be clipped',
+  /\.nav\s*\{[^}]*flex-wrap:\s*nowrap/.test(cssBare));
 
 /* ---------- animations ----------
+
    Two silent failures live here, and neither is visible to the class audit. A
    rule can name an animation with no @keyframes block, in which case nothing
    moves and nothing complains. And the reduced-motion block is an explicit list
@@ -237,13 +386,8 @@ console.log('');
 console.log('=== animations ===');
 const rmAt = cssBare.indexOf('@media (prefers-reduced-motion');
 ok('there is a reduced-motion block at all', rmAt >= 0);
-let rmEnd = rmAt, depth = 0;
-for (let i = cssBare.indexOf('{', rmAt); i < cssBare.length && i >= 0; i++) {
-  if (cssBare[i] === '{') depth++;
-  else if (cssBare[i] === '}' && --depth === 0) { rmEnd = i; break; }
-}
-const rmBlock = cssBare.slice(rmAt, rmEnd + 1);
-const outsideRm = cssBare.slice(0, rmAt) + cssBare.slice(rmEnd + 1);
+const rmBlock = blockAt(cssBare, rmAt);
+const outsideRm = cssBare.slice(0, rmAt) + cssBare.slice(rmAt + rmBlock.length);
 const flatRule = /([^{}]+)\{([^{}]*)\}/g;
 
 const animated = [];
