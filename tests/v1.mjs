@@ -69,6 +69,7 @@ const ok = (l, c, g) => {
 const M = await import(base + 'model.js');
 const R = await import(base + 'record.js');
 const C = await import(base + 'config.js');
+const D = await import(base + 'dom.js');
 const L = await import(base + 'ledger.js');
 const { MIN_FOR_RATE, LEAGUES } = C;
 
@@ -354,9 +355,14 @@ console.log('=== counts always, a percentage only past MIN_FOR_RATE ===');
 console.log('');
 console.log('=== the day strip ===');
 {
+  /* Every call here pins `now`. The strip labels a day relative to today, so a
+     suite that let it read the wall clock would test a different code path in
+     October than it did in August — and the "Today" branch would go untested on
+     every day but one. */
+  const FAR = { now: new Date('2026-09-10T12:00:00.000Z') };
   const days = ['2026-08-23', '2026-08-22', '2026-08-20'];
   const picked = [];
-  const strip = L.dayStrip(days, '2026-08-22', d => picked.push(d));
+  const strip = L.dayStrip(days, '2026-08-22', d => picked.push(d), FAR);
   const btns = strip.childNodes;
 
   ok('one button per day offered', btns.length === days.length, btns.length);
@@ -393,6 +399,52 @@ console.log('=== the day strip ===');
   ok('it reuses the existing toggle styling rather than inventing a second switch',
     strip.className === 'toggle' && btns.every(b => b.className.includes('toggle-b')),
     strip.className);
+
+  /* Weekday and day number are separate spans so the stylesheet can drop the
+     weekday under 34rem. If they were ever merged into one the CSS would still
+     parse and the strip would silently stop fitting a phone. */
+  ok('an ordinary day renders weekday and number as separate spans',
+    els(btns[0], 'daytab-wd').length === 1 && els(btns[0], 'daytab-d').length === 1,
+    btns[0].childNodes.map(c => c.className));
+  ok('and the number span holds a bare day of the month',
+    /^\d{1,2}$/.test(one(btns[0], 'daytab-d').textContent),
+    one(btns[0], 'daytab-d').textContent);
+  ok('no day is marked today when today is outside the strip',
+    btns.every(b => !b.className.includes('is-today')),
+    btns.map(b => b.className));
+
+  /* --- the same three days, read on the 23rd --- */
+  const NOW23 = { now: new Date('2026-08-23T12:00:00.000Z') };
+  const t = L.dayStrip(days, '2026-08-23', () => {}, NOW23).childNodes;
+
+  ok('today is marked is-today, so the strip says which tab is now',
+    t[0].className.includes('is-today') &&
+    t.slice(1).every(b => !b.className.includes('is-today')),
+    t.map(b => b.className));
+  ok("today's tab reads Today rather than a date",
+    t[0].textContent === 'Today', t[0].textContent);
+  ok('and drops the number span, since "Today" needs no date beside it',
+    els(t[0], 'daytab-d').length === 0 && els(t[0], 'daytab-wd').length === 1,
+    t[0].childNodes.map(c => c.className));
+  ok('but keeps the real date on its title, which is the only place it survives',
+    /23/.test(t[0].title) && /Today/.test(t[0].title), t[0].title);
+
+  /* Yesterday and tomorrow are worth naming too — the record page is mostly read
+     the morning after, and the fixtures page mostly the evening before. */
+  ok('the day before today is named, not dated',
+    D.dayLabel('2026-08-22', NOW23.now) === 'Yesterday', D.dayLabel('2026-08-22', NOW23.now));
+  ok('and the day after',
+    D.dayLabel('2026-08-24', NOW23.now) === 'Tomorrow', D.dayLabel('2026-08-24', NOW23.now));
+  ok('two days out gets a real date rather than a vaguer word',
+    !/day$/.test(D.dayLabel('2026-08-25', NOW23.now)) &&
+    D.dayLabel('2026-08-25', NOW23.now).includes('25'),
+    D.dayLabel('2026-08-25', NOW23.now));
+
+  /* The heading above the list, the tab above that and the record page's own
+     strip all come from dom.js, which is the only reason they cannot disagree
+     about which day a 22:00 kickoff belongs to. */
+  ok('ledger re-exports the shared strip rather than keeping a second copy',
+    L.dayStrip === D.dayStrip, typeof L.dayStrip);
 }
 
 /* ---------- 8. the day label survives a hostile timezone ---------- */
@@ -403,7 +455,16 @@ console.log('=== a day key is a calendar date, not an instant ===');
      Greenwich; midday UTC fixes that and then labels it a day late at UTC+13 and
      UTC+14, which are real zones with real readers. Only a local calendar date
      is right in both. Intl reads the zone once at process start, so the only way
-     to test this is a child process per zone. */
+     to test this is a child process per zone.
+
+     The same child also reports the four labels either side of a daylight-saving
+     change, because two local midnights are 23 or 25 hours apart across one and
+     an unrounded division puts "Tomorrow" a day out twice a year. That branch is
+     unreachable from a zone without DST, so it has to be tested from inside one.
+
+     dom.js is imported directly rather than through ledger.js: this is where the
+     code lives, and the parent process separately asserts the re-export is the
+     same function. */
   const src = `
 class T { constructor(d){ this.nodeType=3; this.data=String(d); this.childNodes=[]; } get textContent(){ return this.data; } }
 class E {
@@ -416,23 +477,80 @@ class E {
   get textContent(){ return this.childNodes.map(c=>c.textContent).join(''); }
 }
 globalThis.document = { createElement: t=>new E(t), createTextNode: t=>new T(t) };
-const L = await import(${JSON.stringify(base + 'ledger.js')});
-const strip = L.dayStrip(['2026-08-23'], 'not-today', () => {});
-const b = strip.childNodes[0];
-process.stdout.write(b.childNodes.map(c => c.textContent).join('|'));
+const D = await import(${JSON.stringify(base + 'dom.js')});
+
+const far = new Date('2026-09-10T12:00:00.000Z');
+const b = D.dayStrip(['2026-08-23'], 'not-today', () => {}, { now: far }).childNodes[0];
+const dst = (from, to) => D.dayLabel(to, D.dayKeyToDate(from));
+
+/* Hours between the two local midnights. 24 in most zones; 23 or 25 where the
+   date spans a daylight-saving change, which is the only case the rounding in
+   daysFromToday exists for. Reported so the parent can prove some zone in its
+   list actually hit it, rather than assuming. */
+const gap = (from, to) => (D.dayKeyToDate(to) - D.dayKeyToDate(from)) / 36e5;
+
+process.stdout.write(JSON.stringify({
+  spans: b.childNodes.map(c => c.textContent),
+  springFwd: dst('2026-03-29', '2026-03-30'),
+  springBack: dst('2026-03-29', '2026-03-28'),
+  fallFwd: dst('2026-10-25', '2026-10-26'),
+  fallBack: dst('2026-10-25', '2026-10-24'),
+  springGap: gap('2026-03-29', '2026-03-30'),
+  fallGap: gap('2026-10-25', '2026-10-26'),
+}));
 `;
-  const label = tz => {
+  const read = tz => {
     const r = spawnSync(process.execPath, ['--input-type=module', '-e', src],
       { encoding: 'utf8', env: { ...process.env, TZ: tz } });
-    return (r.stdout || '') + (r.status ? ' EXIT' + r.status + (r.stderr || '') : '');
+    try { return JSON.parse(r.stdout); }
+    catch { return { error: 'EXIT' + r.status + ' ' + (r.stderr || '').slice(0, 300) }; }
   };
 
-  for (const [tz, offset] of [['UTC', '+0'], ['America/Los_Angeles', '-7'],
-                              ['Pacific/Kiritimati', '+14'], ['Africa/Lagos', '+1']]) {
-    const out = label(tz);
-    ok('2026-08-23 is labelled the 23rd in ' + tz + ' (UTC' + offset + ')',
-      out.split('|')[1] === '23', out);
+  /* Chatham is UTC+12:45 and observes DST, so it is hostile on both counts at
+     once — and a 45-minute offset breaks any arithmetic that assumes whole
+     hours. London is here for the DST branch from a zone we can reason about. */
+  const ZONES = [['UTC', '+0'], ['America/Los_Angeles', '-7'], ['Pacific/Kiritimati', '+14'],
+                 ['Africa/Lagos', '+1'], ['Europe/London', '+0/+1'], ['Pacific/Chatham', '+12:45']];
+
+  const weekdays = new Set();
+  const gaps = new Set();
+  for (const [tz, offset] of ZONES) {
+    const out = read(tz);
+    const where = ' in ' + tz + ' (UTC' + offset + ')';
+
+    ok('2026-08-23 is labelled the 23rd' + where,
+      out.spans && out.spans[1] === '23', out);
+    if (out.spans) weekdays.add(out.spans[0]);
+
+    /* These four dates straddle the EU changeover; in a zone that switches on
+       other dates, or not at all, the same assertion is checking ordinary
+       arithmetic. Both are worth having, and the two assertions after the loop
+       are what prove the hard case was reached at all. */
+    ok('2026-03-30 is "Tomorrow" seen from the 29th' + where,
+      out.springFwd === 'Tomorrow', out.springFwd);
+    ok('and 2026-03-28 "Yesterday"' + where,
+      out.springBack === 'Yesterday', out.springBack);
+    ok('2026-10-26 is "Tomorrow" seen from the 25th' + where,
+      out.fallFwd === 'Tomorrow', out.fallFwd);
+    ok('and 2026-10-24 "Yesterday"' + where,
+      out.fallBack === 'Yesterday', out.fallBack);
+
+    gaps.add(out.springGap); gaps.add(out.fallGap);
   }
+
+  /* A calendar date has one weekday, so every zone must agree on it. This catches
+     a one-day shift without hard-coding an English weekday name into the suite. */
+  ok('every zone agrees which weekday 2026-08-23 was',
+    weekdays.size === 1, [...weekdays]);
+
+  /* The meta-assertions. Without these the four labels above could all be
+     passing on 24-hour days, and Math.round could be Math.floor with nothing to
+     show it. A 23-hour day is where floor rounds down to 0 and "Tomorrow" turns
+     into "Today". */
+  ok('some zone in the list really has a 23-hour day, so the rounding was tested',
+    gaps.has(23), [...gaps].sort((a, b) => a - b));
+  ok('and some zone a 25-hour one',
+    gaps.has(25), [...gaps].sort((a, b) => a - b));
 }
 
 /* ---------- 9. the states ---------- */
@@ -523,17 +641,26 @@ console.log('=== nothing renders under a class the stylesheet has never heard of
   const [m, s] = [new Element('div'), new Element('div')];
   L.showDay(m, s, { day: '2026-08-23', records: RECORDS }, MIN_FOR_RATE);
   collect(m); collect(s);
-  collect(L.dayStrip(['2026-08-23', '2026-08-22'], '2026-08-23', () => {}));
+  /* `now` pinned to one of the two days, so both branches of the strip emit —
+     today's single-span tab and an ordinary two-span one. Left to the wall clock
+     the is-today rule would go unchecked on 364 days out of 365. */
+  collect(L.dayStrip(['2026-08-23', '2026-08-22'], '2026-08-23', () => {},
+    { now: new Date('2026-08-23T12:00:00.000Z') }));
   const skel = new Element('div');
   L.showLoading(skel, new Element('div'));
   collect(skel);
 
-  /* Scoped to this page's own classes. dom.js's furniture — notice, status,
-     sk — is styled and asserted by r1, and re-checking it here would mean two
-     suites failing for one cause. */
-  const mine = [...seen].filter(c => c.startsWith('lg-') || c.startsWith('is-')).sort();
+  /* Scoped to this page's own classes, plus the day strip's, which this page and
+     the fixtures page share. dom.js's furniture — notice, status, sk — is styled
+     and asserted by r1, and re-checking it here would mean two suites failing
+     for one cause. */
+  const mine = [...seen]
+    .filter(c => c.startsWith('lg-') || c.startsWith('is-') || c.startsWith('daytab'))
+    .sort();
   console.log('    ' + mine.length + ' classes: ' + mine.join(' '));
   ok('the page emits a non-trivial number of its own classes', mine.length >= 20, mine.length);
+  ok('the day strip really was collected, so its classes are among them',
+    mine.includes('daytab') && mine.includes('is-today'), mine.filter(c => c.startsWith('daytab')));
   for (const c of mine) {
     ok('.' + c + ' is styled', new RegExp('\\.' + c + '(?![\\w-])').test(css));
   }

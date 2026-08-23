@@ -849,14 +849,43 @@ b, strong { font-weight: 500; }
 
 /* Seven day tabs have to fit a 42rem page, so they are narrower than the
    two-item scale switch: less horizontal padding, and the weekday drops out
-   under 34rem (see section 19). */
-.lg-tab {
+   under 34rem (see section 19).
+
+   Named for what they are rather than for the page they started on: the fixtures
+   list and the record share one strip, and a class called .lg-tab on the
+   fixtures page would send the next reader of this file to the wrong section. */
+.daytab {
   display: flex;
   align-items: baseline;
   gap: 0.35em;
   padding: 0.45rem 0.7rem;
 }
-.lg-tab-d { font-variant-numeric: tabular-nums; }
+.daytab-d { font-variant-numeric: tabular-nums; }
+
+/* The strip belongs to the status bar it sits under, not to the list below it.
+   .toggle's own 1.75rem was set for a switch under a page heading and leaves it
+   floating between the two here. :not(:empty) matters: with no JavaScript the
+   container stays empty, and an empty div with a margin would push the fixture
+   list down for exactly the readers who got no tabs. */
+#days:not(:empty) { margin-top: 1.15rem; }
+
+#days .toggle {
+  margin-top: 0;
+  /* Scroll rather than clip. .toggle hides its overflow to keep the rounded
+     corners clean, which is right for a two-item switch but wrong for eight days
+     on a 360px phone: the last day would be cut off with no way to reach it.
+     Overflowing sideways is visible and recoverable; being clipped is neither.
+     At any width where the strip fits, `auto` shows nothing. */
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Today is the default view on the fixtures page and the day most readers of the
+   record want first, so it is marked in the strip itself rather than left to be
+   inferred from the heading below. Weight, not colour — amber stays reserved for
+   data, and the selected tab already owns the raised background. */
+.daytab.is-today .daytab-wd { color: var(--dim); font-weight: 500; }
+.daytab.is-on.is-today .daytab-wd { color: var(--text); }
 
 /* --- 17. The record ------------------------------------------------------
    One row per match: what was claimed on the left, what happened on the right.
@@ -1134,8 +1163,13 @@ b, strong { font-weight: 500; }
      on screen and reachable — the alternative was a scrolling strip with two
      days hidden off the right edge and nothing to say they were there. The full
      date is still on each button's title. */
-  .lg-tab-wd { display: none; }
-  .lg-tab { padding: 0.45rem 0.55rem; }
+  .daytab-wd { display: none; }
+  .daytab { padding: 0.45rem 0.55rem; }
+
+  /* Except on today's tab, where the weekday span holds the word "Today" and
+     there is no day number beside it — hiding it would leave an empty button.
+     This rule has to follow the one above to win, since both are one class. */
+  .daytab.is-today .daytab-wd { display: inline; }
 
   /* The verdict column is the first to go. "gave it 24%" is the one figure on
      this page that has nowhere else to live, so the row keeps three columns and

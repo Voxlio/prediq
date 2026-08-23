@@ -27,78 +27,25 @@
    reach the document as text nodes only.
    ========================================================================== */
 
-import { el, clear, setStatus, stat, notice, leagueName } from './dom.js';
+import { el, clear, setStatus, stat, notice, leagueName, dayLabel } from './dom.js';
 import { score } from './record.js';
 import { MIN_FOR_RATE } from './config.js';
 
 export { showProgress, showFatal } from './dom.js';
+/* The day strip is shared with the fixtures page, so it lives in dom.js — see
+   the DAYS section there for why a day key must be rebuilt as a local date. */
+export { dayStrip } from './dom.js';
 
 /* Kickoff time in the reader's own zone. A 22:00 UTC kickoff is "23:00" in
    Lagos and the archive's day key says 2026-08-23 either way — the key is the
    writer's business, the clock is the reader's. */
 const fmtTime = new Intl.DateTimeFormat(undefined, { hour: '2-digit', minute: '2-digit' });
-const fmtDay = new Intl.DateTimeFormat(undefined, { weekday: 'short', day: 'numeric', month: 'short' });
-/* The tab label is split in two so the stylesheet can drop the weekday on a
-   narrow screen. Seven tabs carrying "Sat 23 Aug" need about 49rem and the page
-   is 42rem wide, so something has to give: the alternative was a horizontally
-   scrolling strip, which at 320px would leave two days off-screen with nothing
-   to indicate they were there. A day number is still a day, and the full date is
-   on the button's title either way. */
-const fmtWeekday = new Intl.DateTimeFormat(undefined, { weekday: 'short' });
-const fmtDayNum = new Intl.DateTimeFormat(undefined, { day: 'numeric' });
-
-/* A day key is a calendar label, not an instant, so it is turned into a local
-   calendar date rather than a moment on the UTC timeline. Formatting
-   `new Date('2026-08-23T00:00:00Z')` gives the 22nd for every reader west of
-   Greenwich; midday UTC fixes that but then reads as the 24th at UTC+13 and
-   UTC+14, which are real zones. Local midnight is the same calendar date
-   everywhere, because it never crosses a boundary at all. */
-const asLocalDate = day => {
-  const [y, m, d] = day.split('-').map(Number);
-  return new Date(y, m - 1, d);
-};
 
 const pct = p => Math.round(p * 100) + '%';
 const OUTCOME_WORD = { home: 'home win', draw: 'draw', away: 'away win' };
 
 /* =============================================================================
-   1. THE DAY STRIP
-
-   Buttons, not links, and one per day the archive actually holds. A day with no
-   file is not offered at all: an empty tab that turns out to have nothing in it
-   wastes a click and reads as breakage rather than as "no football that day".
-   ========================================================================== */
-export function dayStrip(days, current, onPick) {
-  const box = el('div', 'toggle');
-  box.setAttribute('role', 'group');
-  box.setAttribute('aria-label', 'Pick a day');
-
-  for (const day of days) {
-    const on = day === current;
-    const d = asLocalDate(day);
-    const b = el('button', 'toggle-b lg-tab' + (on ? ' is-on' : ''));
-    b.type = 'button';
-    b.append(
-      el('span', 'lg-tab-wd', fmtWeekday.format(d)),
-      el('span', 'lg-tab-d', fmtDayNum.format(d)));
-    b.title = fmtDay.format(d);
-    /* The machine-readable key rides along, so a test — and anyone reading the
-       DOM — can tell which button means which day without parsing a label that
-       changes with the reader's locale. */
-    b.dataset.day = day;
-    if (on) {
-      b.setAttribute('aria-current', 'date');
-      b.disabled = true;
-    } else {
-      b.addEventListener('click', () => onPick(day));
-    }
-    box.append(b);
-  }
-  return box;
-}
-
-/* =============================================================================
-   2. ONE MATCH
+   1. ONE MATCH
 
    Four cells: the fixture, what we picked and at what probability, what
    happened, and the verdict. A record with no result yet gets the same row with
@@ -171,7 +118,7 @@ export function ledgerRow(record) {
 }
 
 /* =============================================================================
-   3. THE DAY'S TALLY
+   2. THE DAY'S TALLY
 
    Counts always; a rate only past MIN_FOR_RATE. The denominator is settled
    matches, never all of them — dividing hits by everything recorded would make
@@ -214,7 +161,7 @@ export function tally(records, totalSettled) {
 }
 
 /* =============================================================================
-   4. STATES
+   3. STATES
    ========================================================================== */
 export function showLoading(mount, statusNode) {
   setStatus(statusNode, ['reading the archive']);
@@ -265,14 +212,14 @@ export function showEmptyDay(mount, statusNode, day) {
   setStatus(statusNode, ['no matches recorded']);
   clear(mount);
   mount.append(notice(
-    'No predictions for ' + fmtDay.format(asLocalDate(day)),
+    'No predictions for ' + dayLabel(day),
     'Nothing in the leagues Prediq tracks kicked off that day, so nothing was recorded. ' +
     'Days with no matches are left out of the strip above rather than shown as empty.',
     null));
 }
 
 /* =============================================================================
-   5. THE DAY
+   4. THE DAY
    ========================================================================== */
 export function showDay(mount, statusNode, { day, records }, totalSettled) {
   clear(mount);

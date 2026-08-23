@@ -6,7 +6,11 @@
    names arriving from ESPN can only ever land in a text node.
    ========================================================================== */
 
-import { el, clear, field, stat, setStatus, notice, errorNotice, leagueName } from './dom.js';
+import {
+  el, clear, field, stat, setStatus, notice, errorNotice, leagueName,
+  dayLabel, localDayKey,
+} from './dom.js';
+import { FIXTURE_DAYS } from './config.js';
 
 export { showProgress, showFatal } from './dom.js';
 
@@ -15,18 +19,28 @@ export { showProgress, showFatal } from './dom.js';
 
    Intl formats in the reader's own time zone, so a kickoff shows in local time
    wherever the page is opened — no configuration and no server needed.
+
+   Day keys and the "Today"/"Tomorrow" wording come from dom.js, because the day
+   tabs above the list and the day headings inside it have to agree, and because
+   the record page navigates by the same keys.
    ========================================================================== */
 
-const fmtDay  = new Intl.DateTimeFormat(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
 const fmtTime = new Intl.DateTimeFormat(undefined, { hour: '2-digit', minute: '2-digit', hour12: false });
 
-const midnight = d => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+/* The fixtures a given day holds. `day` of null means the whole window, which is
+   what the page showed before the tabs existed and what it falls back to if the
+   strip is missing. */
+function onDay(items, dateOf, day) {
+  if (!day) return items;
+  return items.filter(item => localDayKey(new Date(dateOf(item))) === day);
+}
 
-function dayLabel(date) {
-  const days = Math.round((midnight(date) - midnight(new Date())) / 864e5);
-  if (days === 0) return 'Today';
-  if (days === 1) return 'Tomorrow';
-  return fmtDay.format(date);
+/* The days the window actually contains, in order, derived from the fixtures
+   rather than from a calendar: a day with no football is not offered, so no tab
+   can turn out to be empty. Exported because main.js owns the selection and
+   render.js owns the display. */
+export function fixtureDays(items, dateOf = f => f.date) {
+  return [...new Set(items.map(item => localDayKey(new Date(dateOf(item)))))].sort();
 }
 
 /* =============================================================================
@@ -342,34 +356,50 @@ export function showEmpty(mount, statusNode, days) {
 /* Cards in date order with a heading whenever the day changes. Both page states
    lay out through this, so the day dividers land in the same places in phase 1
    as in phase 2 and the list does not reorganise itself under the reader.
-   `card(item, i)` is the only difference between the two. */
+   `card(item, i)` is the only difference between the two.
+
+   With a day selected there is exactly one heading. It stays rather than being
+   dropped as redundant: the tab above says "Today" or "Sat 23", and this is the
+   only place the unabbreviated date appears. */
 function dayGroupedList(mount, items, dateOf, card) {
   let lastDay = null;
   items.forEach((item, i) => {
-    const date = new Date(dateOf(item));
-    const key = midnight(date);
+    const key = localDayKey(new Date(dateOf(item)));
     if (key !== lastDay) {
       lastDay = key;
       const h = el('h2', 'day');
-      h.append(el('span', null, dayLabel(date)));
+      h.append(el('span', null, dayLabel(key)));
       mount.append(h);
     }
     mount.append(card(item, i));
   });
 }
 
+/* Counts describing what is on screen, plus the window total when a day filter
+   is narrowing it. Showing only the day's count would make the page look emptier
+   than the week is; showing only the week's would not describe the list under
+   it. Both, in that order. */
+function dayCounts(shown, total, leagues, day) {
+  const parts = [
+    stat(shown, shown === 1 ? 'fixture' : 'fixtures'),
+    stat(leagues, leagues === 1 ? 'league' : 'leagues'),
+  ];
+  if (day && total !== shown) parts.push(stat(total, 'in ' + FIXTURE_DAYS + ' days'));
+  return parts;
+}
+
 /* Phase 1: every fixture, no predictions yet. The status strip carries the
    counts rather than a bare spinner, because "31 fixtures across 9 leagues" is
    already the answer to a question somebody came here with. */
-export function showFixtureList(mount, statusNode, fixtures) {
+export function showFixtureList(mount, statusNode, fixtures, day = null) {
   clear(mount);
-  const leagues = new Set(fixtures.map(f => f.leagueSlug));
+  const shown = onDay(fixtures, f => f.date, day);
+  const leagues = new Set(shown.map(f => f.leagueSlug));
   setStatus(statusNode, [
-    stat(fixtures.length, fixtures.length === 1 ? 'fixture' : 'fixtures'),
-    stat(leagues.size, leagues.size === 1 ? 'league' : 'leagues'),
+    ...dayCounts(shown.length, fixtures.length, leagues.size, day),
     'reading league tables',
   ]);
-  dayGroupedList(mount, fixtures, f => f.date,
+  dayGroupedList(mount, shown, f => f.date,
     (f, i) => pendingCard(f, leagueName(f.leagueSlug), i));
 }
 
@@ -377,10 +407,11 @@ export function showFixtureList(mount, statusNode, fixtures) {
    they stay: throwing away a correct fixture list because the predictions
    failed would take away information the reader already had. The notice sits
    above the list and says which half is missing. */
-export function showFixtureFallback(mount, statusNode, fixtures, message) {
+export function showFixtureFallback(mount, statusNode, fixtures, message, day = null) {
   clear(mount);
+  const shown = onDay(fixtures, f => f.date, day);
   setStatus(statusNode, [
-    stat(fixtures.length, fixtures.length === 1 ? 'fixture' : 'fixtures'),
+    stat(shown.length, shown.length === 1 ? 'fixture' : 'fixtures'),
     'no predictions',
   ]);
   mount.append(notice(
@@ -390,24 +421,28 @@ export function showFixtureFallback(mount, statusNode, fixtures, message) {
     'matches below are listed without predictions. Nothing here is guessed at in their ' +
     'place. A reload normally fixes it.',
     'warn'));
-  dayGroupedList(mount, fixtures, f => f.date,
+  dayGroupedList(mount, shown, f => f.date,
     (f, i) => pendingCard(f, leagueName(f.leagueSlug), i, 'No prediction — model data did not load.'));
 }
 
-export function showPredictions(mount, statusNode, predictions, index, data) {
+export function showPredictions(mount, statusNode, predictions, index, data, day = null) {
   clear(mount);
 
-  const priced = predictions.filter(p => p.ok);
-  const leagues = new Set(predictions.map(p => p.fixture.leagueSlug));
+  const shown = onDay(predictions, p => p.fixture.date, day);
+  const priced = shown.filter(p => p.ok);
+  const leagues = new Set(shown.map(p => p.fixture.leagueSlug));
+
+  /* Matches fitted is a property of the model, not of the day on screen: the
+     fit is done once over every league before any filtering, and a Saturday's
+     predictions rest on all of it. So this count does not move with the tabs. */
   const matchesUsed = [...index.fits.values()].reduce((n, f) => n + f.matches.length, 0);
 
   const parts = [
-    stat(predictions.length, predictions.length === 1 ? 'fixture' : 'fixtures'),
-    stat(leagues.size, leagues.size === 1 ? 'league' : 'leagues'),
+    ...dayCounts(shown.length, predictions.length, leagues.size, day),
     stat(matchesUsed, 'matches fitted'),
   ];
-  if (priced.length < predictions.length) {
-    parts.push(stat(predictions.length - priced.length, 'unpriced'));
+  if (priced.length < shown.length) {
+    parts.push(stat(shown.length - priced.length, 'unpriced'));
   }
   setStatus(statusNode, parts);
 
@@ -416,6 +451,5 @@ export function showPredictions(mount, statusNode, predictions, index, data) {
       'Predictions are still shown, but they rest on less evidence than usual.'));
   }
 
-  /* Grouped by day, because a week across fourteen competitions is a long list. */
-  dayGroupedList(mount, predictions, p => p.fixture.date, matchCard);
+  dayGroupedList(mount, shown, p => p.fixture.date, matchCard);
 }

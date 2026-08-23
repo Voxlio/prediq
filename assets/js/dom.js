@@ -106,3 +106,120 @@ export function errorNotice(errors, consequence) {
     `${n} request${n === 1 ? '' : 's'} failed, affecting ${failed.join(', ')}. ${consequence}`,
     'warn');
 }
+
+/* =============================================================================
+   4. DAYS
+
+   Two pages navigate by day — fixtures forward, the record back — so the key
+   format, the labelling and the strip of buttons all live here. Two copies would
+   eventually disagree about which day a 22:00 kickoff belongs to, and the two
+   pages would then be describing the same match differently.
+
+   A DAY KEY IS A CALENDAR LABEL, NOT AN INSTANT.
+
+   `YYYY-MM-DD` is turned back into a Date by rebuilding local midnight from its
+   three parts, never by parsing it as a moment. `new Date('2026-08-23')` is
+   midnight UTC, which renders as the 22nd for every reader west of Greenwich.
+   Shifting to midday UTC fixes that and then renders as the 24th at UTC+13 and
+   UTC+14 — Kiritimati and Tongatapu are real places with real readers, and the
+   bug survives review precisely because it passes at UTC, at −7 and at +1. Local
+   midnight is the same calendar date in every zone, because it never crosses a
+   boundary at all.
+
+   The two pages derive their keys from different places, which is correct rather
+   than inconsistent. The record page reads keys the archive wrote in UTC, so the
+   writer and the reader always agree which file a late kickoff was filed under.
+   The fixtures page derives keys from kickoff instants in the READER's zone, so
+   a 22:00 UTC match sits under Monday in Lagos and Sunday in Los Angeles — the
+   day each of them will actually watch it. For late kickoffs the two can
+   therefore differ by one, and each is right about its own question.
+   ========================================================================== */
+
+const fmtWeekday  = new Intl.DateTimeFormat(undefined, { weekday: 'short' });
+const fmtDayNum   = new Intl.DateTimeFormat(undefined, { day: 'numeric' });
+const fmtDayFull  = new Intl.DateTimeFormat(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
+const fmtDayShort = new Intl.DateTimeFormat(undefined, { weekday: 'short', day: 'numeric', month: 'short' });
+
+const pad = n => String(n).padStart(2, '0');
+
+/* An instant → the calendar date it falls on in the reader's own zone. */
+export const localDayKey = d =>
+  d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+
+export const dayKeyToDate = key => {
+  const [y, m, d] = key.split('-').map(Number);
+  return new Date(y, m - 1, d);
+};
+
+/* Whole days between two calendar dates, signed, future positive.
+   Rounded rather than floored because two local midnights are 23 or 25 hours
+   apart across a daylight-saving change, and an unrounded division would put
+   "Tomorrow" a day out twice a year. */
+export const daysFromToday = (key, now = new Date()) =>
+  Math.round((+dayKeyToDate(key) - +dayKeyToDate(localDayKey(now))) / 864e5);
+
+/* The unabbreviated label, and the only place "Today" is decided. A reader
+   choosing what to look at wants the relative word far more than the date, and
+   the fixtures page's day headings said "Today" long before the tabs existed —
+   heading and tab now come from the same function so they cannot disagree. */
+export function dayLabel(key, now = new Date()) {
+  const n = daysFromToday(key, now);
+  if (n === 0) return 'Today';
+  if (n === 1) return 'Tomorrow';
+  if (n === -1) return 'Yesterday';
+  return fmtDayFull.format(dayKeyToDate(key));
+}
+
+/* =============================================================================
+   THE DAY STRIP
+
+   Buttons, not links, and one per day there is actually something to show. A tab
+   that turns out to be empty costs a click and reads as breakage rather than as
+   "no football that day", so callers pass only the days they hold.
+   ========================================================================== */
+export function dayStrip(days, current, onPick, { now = new Date() } = {}) {
+  const box = el('div', 'toggle');
+  box.setAttribute('role', 'group');
+  box.setAttribute('aria-label', 'Pick a day');
+
+  for (const day of days) {
+    const on = day === current;
+    const today = daysFromToday(day, now) === 0;
+    const d = dayKeyToDate(day);
+
+    const b = el('button', 'toggle-b daytab' + (on ? ' is-on' : '') + (today ? ' is-today' : ''));
+    b.type = 'button';
+
+    /* Weekday and day number are separate spans so the stylesheet can drop the
+       weekday on a narrow screen: seven tabs carrying "Sat 23 Aug" need about
+       49rem and the page is 42rem, so something has to go. A horizontally
+       scrolling strip was the alternative, and at 320px it would leave two days
+       off-screen with nothing to indicate they were there.
+
+       "Today" replaces the pair outright — it is shorter than the date it stands
+       in for and needs no number to be unambiguous. It survives the narrow
+       breakpoint by its own rule, since a hidden weekday would leave an empty
+       button. */
+    if (today) b.append(el('span', 'daytab-wd', 'Today'));
+    else b.append(el('span', 'daytab-wd', fmtWeekday.format(d)),
+                  el('span', 'daytab-d', fmtDayNum.format(d)));
+
+    /* The full date, always, because every label above is an abbreviation and
+       "Today" hides the date completely. */
+    b.title = dayLabel(day, now) + ' · ' + fmtDayShort.format(d);
+
+    /* The machine-readable key rides along, so a test — and anyone reading the
+       DOM — can tell which button means which day without parsing a label that
+       changes with the reader's locale. */
+    b.dataset.day = day;
+
+    if (on) {
+      b.setAttribute('aria-current', 'date');
+      b.disabled = true;
+    } else {
+      b.addEventListener('click', () => onPick(day));
+    }
+    box.append(b);
+  }
+  return box;
+}

@@ -1,7 +1,19 @@
 /* End to end: a fake ESPN, the real api.js + model.js + render.js, booted by
    the real main.js. The point is the seams — URL construction, the cache, the
-   progress count, and the exact SHAPE of an error object as it travels from
-   api.js to the notice on the page. */
+   progress count, the day tabs, and the exact SHAPE of an error object as it
+   travels from api.js to the notice on the page.
+
+   This suite re-runs itself as a child process to test deep linking, since a
+   day already in the URL can only be read at boot and a module boots once. The
+   child sets E1_DAY, reports what it settled on and exits before the rest of
+   the suite — one extra boot rather than a whole second run.
+
+   Both share E1_NOW, so parent and child place their mock fixtures on the same
+   calendar days. Without that the two clocks are seconds apart and one of them
+   could land the other side of midnight. */
+
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
 /* Paths resolve from this file, not from wherever it happens to be run.
    These suites used to carry an absolute sandbox path, which broke the moment
@@ -9,13 +21,31 @@
 const base = new URL('../assets/js/', import.meta.url).href;
 const { LEAGUES, DOMESTIC, FIXTURE_DAYS, CACHE } = await import(base + 'config.js');
 
+const CHILD = process.env.E1_DAY || '';
+
+/* 09:00 local today, not the moment the suite runs. The mock places fixtures at
+   +3h, +6h and +27h, and the day-tab assertions need the first two on one
+   calendar day and the third on the next. Left as Date.now() that held for most
+   of the day and quietly stopped holding after 21:00 local, when +3h crosses
+   midnight and the two-day shape becomes a three-day one. Still today's date, so
+   the "Today"/"Tomorrow" wording is exercised rather than bypassed. */
+const NOW0 = Number(process.env.E1_NOW) || (() => {
+  const d = new Date();
+  d.setHours(9, 0, 0, 0);
+  return +d;
+})();
+
 let fails = 0;
 const ok = (l, c, g) => { console.log((c ? '  pass  ' : '  FAIL  ') + l + (c ? '' : '\n          got: ' + JSON.stringify(g))); if (!c) fails++; };
 
-/* ---------- DOM shim ---------- */
+/* ---------- DOM shim ----------
+   Past r1's copy by what the day strip needs: `dataset`, because the day key
+   rides on the button as data-day, and listeners recorded rather than ignored
+   so a tab can actually be clicked. */
 class TextNode { constructor(d) { this.nodeType = 3; this.data = String(d); this.childNodes = []; } get textContent() { return this.data; } }
 class Element {
   constructor(tag) { this.nodeType = 1; this.tagName = tag; this.className = ''; this.childNodes = []; this.attributes = {};
+    this.dataset = {}; this.listeners = {};
     this.style = { props: {}, setProperty(k, v) { this.props[k] = v; } }; }
   get firstChild() { return this.childNodes[0] ?? null; }
   append(...ns) { for (const n of ns) if (n != null) this.childNodes.push(n); }
@@ -23,18 +53,42 @@ class Element {
   removeChild(n) { const i = this.childNodes.indexOf(n); if (i >= 0) this.childNodes.splice(i, 1); return n; }
   setAttribute(k, v) { this.attributes[k] = String(v); }
   getAttribute(k) { return this.attributes[k] ?? null; }
+  addEventListener(type, fn) { (this.listeners[type] ||= []).push(fn); }
+  click() { (this.listeners.click || []).forEach(fn => fn()); }
   set textContent(v) { this.childNodes = v === '' ? [] : [new TextNode(v)]; }
   get textContent() { return this.childNodes.map(c => c.textContent).join(''); }
 }
-const mount = new Element('main'), statusNode = new Element('div');
+const mount = new Element('main'), statusNode = new Element('div'), stripNode = new Element('div');
 globalThis.document = {
   createElement: t => new Element(t),
   createTextNode: t => new TextNode(t),
-  getElementById: id => (id === 'fixtures' ? mount : id === 'status' ? statusNode : null),
+  getElementById: id => ({ fixtures: mount, status: statusNode, days: stripNode }[id] ?? null),
 };
 globalThis.window = globalThis;
 const walk = (n, out = []) => { out.push(n); n.childNodes.forEach(c => walk(c, out)); return out; };
 const els = (n, cls) => walk(n).filter(x => x.nodeType === 1 && x.className.split(/\s+/).includes(cls));
+
+/* ---------- location / history shim ----------
+   The selected day lives in the URL so it can be linked and survive a reload.
+   replaceState writes through to `location`, so dayFromURL() round-trips the
+   way it does in a browser. pushState is counted and must stay at zero: a tab
+   is a filter on one page, and pushing would make Back walk through six days
+   instead of leaving the site. */
+let pushes = 0, scrolls = 0;
+globalThis.location = { href: 'http://localhost:8000/index.html', search: '', reload() {} };
+if (CHILD) {
+  location.search = '?day=' + CHILD;
+  location.href += location.search;
+}
+globalThis.history = {
+  replaceState(_s, _t, url) {
+    const u = new URL(url, location.href);
+    location.href = String(u);
+    location.search = u.search;
+  },
+  pushState() { pushes++; },
+};
+globalThis.scrollTo = () => { scrolls++; };
 
 /* ---------- localStorage shim ---------- */
 const store = new Map();
@@ -49,6 +103,12 @@ globalThis.localStorage = {
 /* ---------- the fake ESPN ---------- */
 const SLUGS = LEAGUES.map(l => l.slug);
 const DOM_SLUGS = DOMESTIC.map(l => l.slug);
+
+/* The one division that plays nothing on the second day. Named here rather than
+   hard-coded in the scoreboard so the reason travels with it, and taken from the
+   end of the list so it is not also the league other sections break on purpose. */
+const DAY1_ONLY = DOM_SLUGS[DOM_SLUGS.length - 1];
+
 const TEAMS = {};             /* slug -> [{id,name,gf,ga}] */
 DOM_SLUGS.forEach((slug, li) => {
   TEAMS[slug] = Array.from({ length: 20 }, (_, i) => ({
@@ -86,8 +146,8 @@ const BOOK = { provider: { displayName: 'DraftKings' },
   homeTeamOdds: { moneyLine: -150 }, drawOdds: { moneyLine: 260 },
   awayTeamOdds: { moneyLine: 400 }, overUnder: 2.5 };
 
-const hrs = h => new Date(Date.now() + h * 3600e3).toISOString();
-const ago = d => new Date(Date.now() - d * 864e5).toISOString();
+const hrs = h => new Date(NOW0 + h * 3600e3).toISOString();
+const ago = d => new Date(NOW0 - d * 864e5).toISOString();
 
 function scoreboard(slug, span) {
   /* A short range is the fixtures request; a month-long one is results. */
@@ -106,12 +166,18 @@ function scoreboard(slug, span) {
        inventing fixtures that would not exist. */
     if (!TEAMS[slug]) return { events: [] };
     const T = TEAMS[slug];
+    /* One league plays both its remaining games on the opening day and nothing on
+       the second, so that no single day holds every division. Without this the
+       mock hid a real bug class: "matches fitted" could be computed over only the
+       leagues visible on screen and still read the same on every tab, because
+       every tab showed every league. See the note on that assertion below. */
+    const third = slug === DAY1_ONLY ? 4 : 27;
     return { events: [
-      ev(slug + 'f1', hrs(3),  'pre', T[0], T[19], 0, 0, BOOK),
-      ev(slug + 'f2', hrs(6),  'pre', T[9], T[10], 0, 0, null),
-      ev(slug + 'f3', hrs(27), 'pre', T[4], T[5],  0, 0, BOOK),
+      ev(slug + 'f1', hrs(3),     'pre', T[0], T[19], 0, 0, BOOK),
+      ev(slug + 'f2', hrs(6),     'pre', T[9], T[10], 0, 0, null),
+      ev(slug + 'f3', hrs(third), 'pre', T[4], T[5],  0, 0, BOOK),
       /* one already kicked off — must not be offered as a prediction */
-      ev(slug + 'f4', hrs(-2), 'in',  T[2], T[3],  1, 0, BOOK),
+      ev(slug + 'f4', hrs(-2),    'in',  T[2], T[3],  1, 0, BOOK),
     ] };
   }
   /* A month of finished results, plus a cup tie against a non-league side.
@@ -180,25 +246,55 @@ ok('cache keys are namespaced', [...store.keys()].every(k => k.startsWith(CACHE.
 /* ---------- what the page shows ---------- */
 console.log('');
 console.log('=== the rendered page ===');
+
+/* Three fixtures per division plus two Champions League ties. The fourth
+   fixture of each division has already kicked off and api.js drops it. */
+const TOTAL = DOM_SLUGS.length * 3 + 2;
+
+const pad = n => String(n).padStart(2, '0');
+const localKey = iso => { const d = new Date(iso);
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
+const tabs = () => els(stripNode, 'daytab');
+const current = () => tabs().find(b => b.getAttribute('aria-current') === 'date');
+const shownDays = () => [...new Set(els(mount, 'kick').map(t => localKey(t.dateTime)))];
+const leaguesOn = () => new Set(els(mount, 'comp').map(n => n.textContent));
+const plural = (n, w) => n + ' ' + w + (n === 1 ? '' : 's');
+
+/* ---------- child mode: a day already in the URL ----------
+   Reported and exited before the rest of the suite runs, so a deep link costs
+   one boot rather than a second full pass. */
+if (CHILD) {
+  process.stdout.write('\nDEEPLINK ' + (current() ? current().dataset.day : 'none') +
+                       ' ' + els(mount, 'match').length + ' ' + location.search + '\n');
+  process.exit(0);
+}
+
 const cards = els(mount, 'match');
-const blanks = els(mount, 'is-blank');
 ok('rendered cards', cards.length > 0, cards.length);
-ok('kicked-off matches are not shown as predictions',
-  cards.length === DOM_SLUGS.length * 3 + 2, [cards.length, DOM_SLUGS.length * 3 + 2]);
-ok('exactly one refusal, for the untracked side', blanks.length === 1, blanks.length);
-ok('the refusal names Ajax and does not blame the network',
-  /^Ajax plays outside/.test(els(mount, 'blank-note')[0].textContent), els(mount, 'blank-note')[0].textContent);
+ok('every card carries exactly one kickoff time',
+  els(mount, 'kick').length === cards.length, [els(mount, 'kick').length, cards.length]);
 ok('no error notice when everything loaded', els(mount, 'notice').length === 0);
-ok('day dividers present', els(mount, 'day').length >= 2, els(mount, 'day').length);
-/* The strip counts leagues that actually have a fixture, not every league
-   configured. The two idle European cups contribute nothing in August, so
-   saying "14 leagues" over a list drawn from twelve would be false. Assert the
-   strip agrees with the cards beside it, and that the total is what the data
-   implies: every domestic division plus the Champions League. */
-const onPage = new Set(els(mount, 'comp').map(n => n.textContent));
-ok('the status strip counts the leagues actually on the page',
-  statusNode.textContent.includes(onPage.size + ' leagues') && onPage.size === DOMESTIC.length + 1,
-  [statusNode.textContent, onPage.size, DOMESTIC.length + 1]);
+
+const firstDayCards = cards.length;
+ok('the page opens on a single day rather than the whole window',
+  shownDays().length === 1 && firstDayCards < TOTAL, [shownDays(), firstDayCards, TOTAL]);
+ok('and on the earliest day there is football, which is what a visitor wants first',
+  current() && current().dataset.day === tabs()[0].dataset.day,
+  [current() && current().dataset.day, tabs().map(b => b.dataset.day)]);
+ok('one day heading, since one day is shown', els(mount, 'day').length === 1, els(mount, 'day').length);
+
+/* The strip counts leagues that actually have a fixture on the day shown, not
+   every league configured. The two idle European cups contribute nothing in
+   August, so saying "14 leagues" over a list drawn from twelve would be false. */
+ok('the status strip counts the leagues on the day shown',
+  statusNode.textContent.includes(plural(leaguesOn().size, 'league')),
+  [statusNode.textContent, leaguesOn().size]);
+ok('and the fixtures actually on screen',
+  statusNode.textContent.includes(plural(firstDayCards, 'fixture')),
+  [statusNode.textContent, firstDayCards]);
+ok('while still saying how many the whole window holds, so the day looks like a filter',
+  statusNode.textContent.includes(TOTAL + ' in ' + FIXTURE_DAYS + ' days'),
+  statusNode.textContent);
 ok('status reports matches fitted', /[1-9]\d* matches fitted/.test(statusNode.textContent), statusNode.textContent);
 ok('cup ties and scoreless rows excluded from the fit',
   statusNode.textContent.includes(DOM_SLUGS.length * 8 + ' matches fitted'), statusNode.textContent);
@@ -209,6 +305,107 @@ console.log('    first card: ' + els(first, 'outcome-name').map(n => n.textConte
 ok('strongest home side is favoured on card one', els(first, 'is-pick').length === 1);
 ok('percentages still sum to 100 on live-shaped data',
   els(first, 'outcome-pct').map(n => parseInt(n.textContent, 10)).reduce((a, b) => a + b, 0) === 100);
+
+/* ---------- the day tabs ---------- */
+console.log('');
+console.log('=== the day tabs ===');
+{
+  const keys = tabs().map(b => b.dataset.day);
+  console.log('    tabs: ' + keys.join(' ') + '   (opened on ' + current().dataset.day + ')');
+
+  ok('more than one day is offered, or the strip would be a dead control',
+    keys.length > 1, keys);
+  ok('the tabs are in calendar order', keys.join() === [...keys].sort().join(), keys);
+  ok('no day is offered twice', new Set(keys).size === keys.length, keys);
+  ok('every tab is a real button', tabs().every(b => b.tagName === 'button'), tabs().map(b => b.tagName));
+
+  /* Walk every tab and add up what each shows. Disjoint groups that sum to the
+     window total is the whole correctness claim of the filter: nothing hidden,
+     nothing counted twice. */
+  let sum = 0;
+  const everyLeague = new Set();
+  const perDayLeagues = [];
+  const refusals = [];
+  for (const key of keys) {
+    const btn = tabs().find(b => b.dataset.day === key);
+    if (!btn.disabled) btn.click();
+
+    const n = els(mount, 'match').length;
+    sum += n;
+    leaguesOn().forEach(l => everyLeague.add(l));
+    perDayLeagues.push(leaguesOn().size);
+    els(mount, 'blank-note').forEach(x => refusals.push(x.textContent));
+
+    ok('the ' + key + ' tab shows something', n > 0, n);
+    ok('and only matches that kick off on ' + key,
+      shownDays().join() === key, shownDays());
+    ok('with one day heading above them', els(mount, 'day').length === 1, els(mount, 'day').length);
+    ok('and that tab marked current, alone',
+      current().dataset.day === key &&
+      tabs().filter(b => b.getAttribute('aria-current')).length === 1,
+      tabs().map(b => [b.dataset.day, b.getAttribute('aria-current')]));
+    ok('the day is written to the URL, so the view can be linked',
+      location.search === '?day=' + key, location.search);
+    /* The fit is done once over every league before any filtering, so a
+       Saturday's predictions rest on all of it and this count must not move. */
+    ok('matches fitted does not move with the day',
+      statusNode.textContent.includes(DOM_SLUGS.length * 8 + ' matches fitted'), statusNode.textContent);
+  }
+
+  /* The assertion above is only worth anything if some day is short of a league.
+     While every tab happened to show all of them, computing "matches fitted" from
+     the leagues on screen — the obvious wrong way to write it — read identically
+     on every tab and the assertion passed on broken code. Verified by making that
+     exact edit and watching this line fail. */
+  ok('and at least one day is missing a division, or that assertion proves nothing',
+    perDayLeagues.some(n => n < everyLeague.size), perDayLeagues);
+
+  ok('the tabs partition the window: ' + sum + ' across ' + keys.length + ' days',
+    sum === TOTAL, [sum, TOTAL]);
+  ok('and between them cover every division plus the Champions League',
+    everyLeague.size === DOMESTIC.length + 1, [everyLeague.size, DOMESTIC.length + 1]);
+
+  /* The refusal is a Champions League tie against a side outside the tracked
+     divisions, and it kicks off on a later day than the page opens on. Counted
+     across every tab rather than on one, which also proves the filter shows it
+     exactly once instead of on every day. */
+  ok('exactly one refusal in the whole window, for the untracked side',
+    refusals.length === 1, refusals);
+  ok('and it names Ajax rather than blaming the network',
+    /^Ajax plays outside/.test(refusals[0] || ''), refusals[0]);
+
+  ok('a tab click replaces the URL rather than pushing, so Back still leaves the page',
+    pushes === 0, pushes);
+  ok('and returns to the top of the list', scrolls === keys.length - 1, [scrolls, keys.length - 1]);
+
+  /* ---------- deep links ---------- */
+  const deeplink = day => {
+    const r = spawnSync(process.execPath, [fileURLToPath(import.meta.url)],
+      { encoding: 'utf8', env: { ...process.env, E1_DAY: day, E1_NOW: String(NOW0) } });
+    const m = (r.stdout || '').match(/^DEEPLINK (\S+) (\d+) (\S*)$/m);
+    return m ? { day: m[1], cards: +m[2], search: m[3] }
+             : { error: 'exit ' + r.status + ' ' + (r.stderr || '').slice(-400) };
+  };
+
+  const last = keys[keys.length - 1];
+  const linked = deeplink(last);
+  console.log('    ?day=' + last + ' → ' + JSON.stringify(linked));
+  ok('a page opened with ?day= in the URL starts on that day, not on the default',
+    linked.day === last && last !== keys[0], linked);
+  ok('and shows that day\'s matches', linked.cards > 0, linked);
+
+  const stale = deeplink('1999-01-01');
+  console.log('    ?day=1999-01-01 → ' + JSON.stringify(stale));
+  ok('a day with no football — a stale bookmark — falls back to the first real day',
+    stale.day === keys[0], stale);
+  ok('rather than to an empty page', stale.cards > 0, stale);
+  ok('and the URL is corrected to the day actually shown',
+    stale.search === '?day=' + keys[0], stale);
+
+  /* Back to the opening day, so the sections below start where they expect. */
+  const home = tabs().find(b => b.dataset.day === keys[0]);
+  if (!home.disabled) home.click();
+}
 
 /* ---------- the cache actually saves requests ---------- */
 console.log('');
