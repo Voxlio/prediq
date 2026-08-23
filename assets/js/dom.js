@@ -68,6 +68,32 @@ export function icon(paths, className = 'i') {
 export const CHEVRON_LEFT = ['m15 18-6-6 6-6'];
 export const CHEVRON_RIGHT = ['m9 18 6-6-6-6'];
 
+/* Lucide eye, users, check-check and activity, for the footer strip in vitals.js.
+
+   check-check is the same drawing as the `record` icon in the navigation bar, on
+   purpose: both mean "matches that have been scored", and the footer figure is
+   the count of exactly what that page lists. The bar's copy is hand-inlined in
+   the markup of all four pages, because method.html runs no JavaScript and could
+   not build one — so this is a fifth copy of the same two paths, and a1 asserts
+   it is byte-identical to those four rather than merely similar.
+
+   Lucide draws the eye's pupil and one of the heads in `users` as <circle>
+   elements, which icon() cannot emit. Both are written here as the equivalent arc
+   paths — a circle of radius r at (cx, cy) — which is what earlier releases of
+   the same icons used. */
+export const EYE = [
+  'M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7',
+  'M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0',
+];
+export const USERS = [
+  'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2',
+  'M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0',
+  'M23 21v-2a4 4 0 0 0-3-3.87',
+  'M16 3.13a4 4 0 0 1 0 7.75',
+];
+export const CHECK_CHECK = ['M18 6 7 17l-5-5', 'm22 10-7.5 7.5L13 16'];
+export const ACTIVITY = ['M22 12h-6l-2 3h-4l-2-3H2'];
+
 /* A label→value pair, the densest honest way to publish a figure. Used by the
    card readout and by both ratings tables. */
 export function field(dl, term, value, title) {

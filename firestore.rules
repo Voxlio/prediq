@@ -46,6 +46,84 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    /* --- the visitor counter -----------------------------------------------
+       The one place a browser is allowed to write, and the rules below are the
+       whole of what that permission is worth.
+
+       `views/total` is the running count shown in the footer. `views/2026-08-23`
+       is that day's share, which the footer also prints for the past week. Each
+       document holds two whole numbers, `views` and `visits`, and nothing else —
+       no address, no identifier, no user agent, nothing describing a visitor.
+       There is nothing here to leak, which is the point: the counter was designed
+       down to this size so the promise in the site's footer could be exact.
+
+       WHAT THESE RULES DO GUARANTEE
+
+       The shape of the write. `hasOnly` refuses any field beyond those two, so
+       nobody can turn a counter into free public storage. The arithmetic refuses
+       any change other than adding exactly one view and between zero and one
+       visit — Firestore applies the increment transforms BEFORE these rules run,
+       so `request.resource.data` is the state the write would leave behind and
+       each comparison is against what is already stored. A browser cannot set the
+       total to nine million, cannot decrement it, cannot reset it, and cannot
+       claim more visits than page views. Deletes are refused outright.
+
+       WHAT THEY CANNOT GUARANTEE
+
+       How often. Rules have no notion of rate, so the same one-more-view request
+       can be sent in a loop from a browser console, and the figures are therefore
+       inflatable by anyone who cares to. method.html says so in as many words
+       rather than presenting them as audited. Fixing it properly needs a server in
+       front of the database, and Prediq deliberately has none.
+
+       WHY THE DAY KEY IS ONLY CHECKED FOR SHAPE
+
+       An earlier draft also required the key to match `request.time` — the server
+       clock — so the collection could never hold more than one document per day.
+       It was dropped: the key comes from the visitor's own clock, and a visitor
+       whose clock is a day out would have the write refused. Because both
+       increments are sent as one atomic commit, that single refusal would throw
+       away the running total as well, so a wrong clock somewhere in the world
+       would silently stop counting a real person. Rejecting a wrong-looking date
+       matters less than counting a real visit, and the worst a forged key can do
+       is add a junk document to a collection that is only ever read by name.
+    --------------------------------------------------------------------------*/
+    function counterId(id) {
+      return id == 'total' || id.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$');
+    }
+
+    /* Both fields are read on every write, which is safe only because vitals.js
+       always sends both increment transforms — including a +0 on `visits` when
+       this is not the first page of a visit. A write carrying only `views` would
+       leave `visits` absent, reading it would be a rules evaluation error, and the
+       write would be denied. That is the correct failure direction, and it is why
+       the client sends a pointless-looking zero rather than omitting the field. */
+    function shaped() {
+      return request.resource.data.keys().hasOnly(['views', 'visits'])
+          && request.resource.data.views is int
+          && request.resource.data.visits is int
+          && request.resource.data.visits <= request.resource.data.views;
+    }
+
+    match /views/{docId} {
+      /* Readable, because a figure published in the footer that only we can check
+         is not published at all. Anyone may fetch these and confirm the site is
+         not printing a bigger number than it stores. */
+      allow read: if true;
+
+      allow create: if counterId(docId) && shaped()
+                    && request.resource.data.views == 1
+                    && request.resource.data.visits >= 0
+                    && request.resource.data.visits <= 1;
+
+      allow update: if counterId(docId) && shaped()
+                    && request.resource.data.views == resource.data.views + 1
+                    && request.resource.data.visits >= resource.data.visits
+                    && request.resource.data.visits <= resource.data.visits + 1;
+
+      allow delete: if false;
+    }
+
     /* --- everything else ---------------------------------------------------
        Closed. Firestore grants access if ANY matching rule allows it, so this
        does not weaken the two blocks above — it means a collection nobody

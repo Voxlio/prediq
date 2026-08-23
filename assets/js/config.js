@@ -156,6 +156,17 @@ export const MIN_FOR_RATE = 50;
    the site covers a fortnight centred on today. */
 export const RECORD_DAYS = 7;
 
+/* How many days of traffic the footer prints, today included.
+
+   A week, because traffic has a weekly shape — football is played at weekends —
+   and six days would compare a Saturday against no Saturday. It is also the most
+   that fits on one line of an 11px mono row at the page's 42rem measure before it
+   wraps, and it costs six document reads: today's figure comes back from the
+   write itself. Days with no document are omitted rather than shown as zero, so
+   raising this does not invent history from before the counter existed.
+-------------------------------------------------------------------------------*/
+export const VITALS_DAYS = 7;
+
 /* --- Model tunables --------------------------------------------------------*/
 export const MODEL = {
   /* Scoreline matrix runs 0..MAX_GOALS for each side, then gets normalized.

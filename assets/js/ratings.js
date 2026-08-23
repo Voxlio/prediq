@@ -11,6 +11,7 @@
 
 import { loadAll } from './api.js';
 import { buildIndex } from './model.js';
+import { mountVitals } from './vitals.js';
 import {
   showRatings, showLoading, showProgress, showFatal, nextSort, DEFAULT_SORT,
 } from './table.js';
@@ -30,6 +31,12 @@ const readScope = () =>
 const state = { scope: readScope(), sort: { ...DEFAULT_SORT } };
 
 async function boot() {
+  /* Not awaited, and first rather than last: the footer strip has nothing to do
+     with the ratings, and a cold visit here costs a dozen ESPN requests. Awaiting
+     it would delay the page for a number in the footer, and putting it after the
+     fit would leave the count hostage to ESPN being up. It cannot throw. */
+  void mountVitals();
+
   showLoading(nodes);
 
   let data;

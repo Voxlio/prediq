@@ -58,9 +58,14 @@
 
       <p class="copy">
         Everything is computed in your browser the moment you open the page.
-        There is no Prediq server, no database, no account, and nothing recorded
-        about you. Close the tab and nothing of yours persists except a cache
-        you can clear.
+        There is no Prediq server, no account, and nothing describing you is
+        recorded anywhere. Two things qualify that rather than contradict it, and
+        both have a section of their own: the settled record is kept in a
+        database, because a prediction nobody wrote down before kickoff is not a
+        prediction (<a href="#record">section 6</a>), and the footer counts visits
+        and page loads (<a href="#counted">section 9</a>). Close the tab and
+        nothing of yours persists except a cache you can clear and one date this
+        browser keeps so that it is not counted twice in a day.
       </p>
       <p class="copy">
         Match data comes from ESPN's public football endpoints. For each of the
@@ -546,6 +551,80 @@
       </p>
     </section>
 
+    <!-- ================= 9. WHAT IS COUNTED ================= -->
+    <section class="sec" id="counted">
+      <h2 class="sec-h">9 &middot; What is counted</h2>
+
+      <p class="copy">
+        Two figures, both in the footer. <b>Page views</b> counts loads of the
+        fixtures, record and ratings pages. <b>Visits</b> counts one per browser
+        per day, however many of those pages that browser opens. When one of them
+        finishes loading it sends a single request that adds <b>1</b> to a running
+        total and <b>1</b> to that day's total; on a second load the same day it
+        adds a view but not a visit. Each of the two documents that request
+        touches holds those two whole numbers and nothing else &mdash; no page
+        name, no referrer, no country, no device, no session.
+      </p>
+      <p class="copy">
+        Telling a second page load apart from a second reader needs something
+        remembered on your machine, so one thing is: <b>today's date</b>, stored
+        under the key <code>prediq:visit</code> in this browser's local storage.
+        That is the whole of it. A date, and the same date every other reader who
+        came today has, so it identifies nobody, cannot recognise you tomorrow,
+        and means nothing on any other site. It is never sent to Firestore or
+        anywhere else &mdash; it is read locally to decide whether the visit
+        counter goes up by 1 or by 0. Being local storage rather than a cookie, it
+        never rides along with a request, and clearing this site's data removes
+        it. Past that one date: <b>no cookies, no accounts, no personal data, no
+        cross-site tracking</b>.
+      </p>
+      <p class="copy">
+        There is no analytics company involved. The request goes to the same
+        Google Cloud project that mirrors the prediction archive, and the rules
+        governing it are in <code>firestore.rules</code> in the repository, where
+        anyone can read them: they permit those two fields and no others, refuse
+        any write that is not exactly one more view and at most one more visit,
+        and refuse deletes outright. Every request carries the sender's IP address
+        because that is how the internet works; none is recorded here.
+      </p>
+      <p class="copy">
+        Underneath the totals the footer prints the last
+        <b data-cfg="VITALS_DAYS">7</b> days of page views, a figure per day, and
+        those daily documents are readable by anyone &mdash; a number only we can
+        check is not published in any useful sense. A day from before the counter
+        existed is left out rather than drawn as zero, so the row never asserts
+        traffic it has no record of.
+      </p>
+      <p class="copy">
+        <b>Treat these as indications, not measurements.</b> The database rules
+        can check the <em>shape</em> of that write &mdash; they refuse anything
+        that is not one more view &mdash; but they cannot limit how often it
+        arrives, so anyone willing to open a browser console can inflate the
+        totals. Preventing that needs a server in front of the database, and
+        Prediq deliberately has no server at all. The alternative was to publish
+        nothing, and a soft number labelled as soft seemed better than a silent
+        one.
+      </p>
+      <p class="copy">
+        They undercount as well, in three ways worth naming because they are
+        knowable and this page is the only place they could be admitted. First,
+        <b>this page is not counted</b>: the method page runs no JavaScript
+        whatsoever &mdash; a deliberate property, checked by the test suite, and
+        the reason it can be read with scripts switched off entirely &mdash; so
+        the code that increments the counter never runs here, and reading this
+        adds nothing to either figure. Second, a browser that refuses local
+        storage is counted as a page view every time and as a visit never. Third,
+        one person on a phone and a laptop is two visits, because nothing joins
+        the two and nothing here is trying to.
+      </p>
+      <p class="copy">
+        The last figure, <b>matches scored</b>, is not analytics at all. It is the
+        number of frozen predictions that have had a final score attached, read
+        from the same <code>summary.json</code> the
+        <a href="record.html">record page</a> uses, so the two can never disagree.
+      </p>
+    </section>
+
   </main>
 
   <footer class="foot">
@@ -558,6 +637,20 @@
       <span>Built with a Poisson goals model.</span>
       <a href="index.html">Back to fixtures</a>
     </p>
+
+    <!-- Both filled in by vitals.js: visits, page views and matches scored on
+         the first line, the last week of daily traffic on the second. Either
+         stays empty if its request fails, and both stay empty wherever no script
+         runs -- the stylesheet hides an empty row, so the footer closes up
+         rather than leaving a band of whitespace. That is also what method.html
+         does permanently, since it loads no script and so counts nothing,
+         including itself.
+
+         Leave the tags empty exactly as written: CSS `:empty` treats
+         whitespace as content, so a newline between them would defeat the rule
+         that hides them. -->
+    <p class="foot-vitals" id="vitals"></p>
+    <p class="foot-days" id="vitals-days"></p>
   </footer>
 
 </div>

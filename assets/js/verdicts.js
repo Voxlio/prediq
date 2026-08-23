@@ -25,6 +25,7 @@
 
 import { httpSource, loadIndex, loadDay, loadSummary, recentDays } from './store.js';
 import { RECORD_DAYS } from './config.js';
+import { mountVitals } from './vitals.js';
 import {
   dayStrip, showDay, showLoading, showNoArchive, showNotServed, showFatal,
 } from './ledger.js';
@@ -71,6 +72,12 @@ async function boot() {
   /* Before any fetch, because the failure this catches produces a TypeError with
      no useful message and would otherwise read as "the archive is unreachable". */
   if (location.protocol === 'file:') return showNotServed(nodes.mount, nodes.status);
+
+  /* After that guard rather than before it, unlike the other two pages: from a
+     file:// origin the counter cannot work either, and firing a doomed cross
+     origin request behind a notice that says the page is not being served would
+     put a red line in the console for a reader we have already told why. */
+  void mountVitals();
 
   const read = httpSource();
   showLoading(nodes.mount, nodes.status);

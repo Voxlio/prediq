@@ -31,6 +31,32 @@ posture Prediq wants permanently, not just for now.
 > every visitor has it, and that is how Firebase is designed. It identifies the
 > project; it doesn't authorise anything. These rules are the actual security.
 
+> **Already done this once? Do it again.** `firestore.rules` gained a `views`
+> block when the footer counter was added, and rules only take effect when they
+> are published. Until you re-paste and publish, the counter is refused on every
+> page load and the footer shows nothing at all — which is exactly what it is
+> designed to do when it cannot reach the database, so nothing looks broken.
+
+### Checking the counter is writing
+
+Open the site, then look in two places.
+
+1. **Firebase console → Firestore Database → Data.** There should be a `views`
+   collection holding a `total` document and one named for today's date in UTC,
+   e.g. `2026-08-23`. Each holds two whole numbers, `views` and `visits`, and
+   nothing else. If the collection is missing entirely, the rules were not
+   published.
+2. **The footer.** It should read something like `1 visit · 1 page view`, with a
+   second line underneath once there is more than one day of history.
+
+If the collection exists but the footer stays empty, open the browser console
+(F12) and reload. A `PERMISSION_DENIED` there means the rules did not publish; a
+CORS or network error means the request never arrived.
+
+Reload the page and the page-view figure should rise while the visit figure
+holds — the visit only counts once per browser per UTC day, which is the whole
+difference between the two numbers.
+
 ---
 
 ## Step 2 — Put the code on GitHub

@@ -34,6 +34,7 @@ import { clearCache, estimateModelJobs, loadFixtures, loadModel } from './api.js
 import { predictAll } from './model.js';
 import { FIXTURE_DAYS, LEAGUES, PAGE_SIZE } from './config.js';
 import { clear, dayStrip } from './dom.js';
+import { mountVitals } from './vitals.js';
 import * as view from './render.js';
 
 const nodes = {
@@ -208,6 +209,12 @@ function paint() {
 async function boot() {
   state.day = dayFromURL();
   paint();
+
+  /* Not awaited, and before the two loading phases rather than after them: this
+     page can cost thirty ESPN requests on a cold visit, and a footer count is not
+     worth delaying a prediction for — nor worth losing because ESPN was down.
+     mountVitals() swallows every failure, so there is nothing to catch. */
+  void mountVitals();
 
   /* Phase 2's size is known before it starts, which is what lets one bar span
      both phases instead of restarting at the halfway point. */

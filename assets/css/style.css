@@ -1276,6 +1276,101 @@ b, strong { font-weight: 500; }
   border-bottom-color: var(--warm);
 }
 
+/* The visitor strip, centred on its own line under the meta row.
+
+   It cannot live inside .foot-meta: that row is justify-content: space-between,
+   which pins its first child left and its last child right, so a third item
+   would be centred only by the accident of the other two being equally wide.
+
+   :empty is doing real work. vitals.js appends nothing when none of the figures
+   could be fetched, and on method.html — which runs no JavaScript at all — nothing
+   ever fills it in. Without this rule those pages would carry a 1.25rem margin and an
+   11px line box of empty space above the fold of the footer. The markup has to
+   stay written as <p …></p> with nothing between the tags for it to match, since
+   :empty counts whitespace as content; that is why all four pages carry the
+   element on one line and why a1 asserts they do. */
+.foot-vitals {
+  display: flex;
+  justify-content: center;
+  gap: 1.4rem;
+  flex-wrap: wrap;
+  margin-top: 1.25rem;
+  font: 400 11px/1 var(--mono);
+  /* After the shorthand, never before it: `font` resets font-variant-numeric to
+     normal, so a tabular-nums declaration above this line would be discarded and
+     the page-view count would jitter its digit widths as it grew. */
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.05em;
+  color: var(--mute);
+}
+.foot-vitals:empty { display: none; }
+
+.foot-vitals span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.foot-vitals b {
+  font-weight: 500;
+  color: var(--dim);
+}
+
+/* fill: none is load-bearing, not tidiness — an SVG path fills black by default,
+   so without it these are two solid blobs on a dark panel. */
+.foot-i {
+  width: 13px;
+  height: 13px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The daily traffic row, directly under the strip.
+
+   Why a second element rather than more spans inside .foot-vitals: the two lines
+   have independent failure modes. The totals come back from the counter write;
+   the series comes from a separate read that can fail on its own, and legitimately
+   returns nothing on the first day the counter exists. Two elements means :empty
+   can hide one while the other still prints, which one flex row could not.
+
+   The gap is smaller because there are eight items rather than three. Seven days
+   plus the icon is the most that holds one line at the 42rem measure — that is
+   what sets VITALS_DAYS, and raising it wraps this into a ragged second row. */
+.foot-days {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  margin-top: 0.55rem;
+  font: 400 11px/1 var(--mono);
+  font-variant-numeric: tabular-nums;   /* after the shorthand — see above */
+  letter-spacing: 0.05em;
+  color: var(--mute);
+}
+.foot-days:empty { display: none; }
+
+.foot-days span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* <i> is the shortest tag that keeps the weekday and the figure as two
+   addressable children of the span. It is a label, not emphasis, so the italic
+   the tag would otherwise bring is turned back off. */
+.foot-days i {
+  font-style: normal;
+  color: var(--mute);
+}
+.foot-days b {
+  font-weight: 500;
+  color: var(--dim);
+}
+
 /* --- 20. Responsive ----------------------------------------------------- */
 @media (max-width: 34rem) {
   .shell { padding: calc(var(--bar-h) + 1.5rem) 1.15rem 3rem; }

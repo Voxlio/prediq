@@ -63,7 +63,11 @@
       <p class="notice-body">
         Prediq builds every prediction in your browser from live match data,
         which means it needs JavaScript enabled. Nothing is precomputed on a
-        server, and nothing is tracked.
+        server. With the script blocked nothing leaves this page at all; with it
+        running, the only things recorded anywhere are a count of visits and page
+        loads, and today's date kept in this browser so one reader is not counted
+        twice in a day &mdash; no cookies, no accounts, no personal data, no
+        cross-site tracking. <a href="method.html#counted">What is counted</a>.
       </p>
     </div>
   </noscript>
@@ -81,6 +85,20 @@
       <span>Built with a Poisson goals model.</span>
       <a href="method.html">How it works</a>
     </p>
+
+    <!-- Both filled in by vitals.js: visits, page views and matches scored on
+         the first line, the last week of daily traffic on the second. Either
+         stays empty if its request fails, and both stay empty wherever no script
+         runs -- the stylesheet hides an empty row, so the footer closes up
+         rather than leaving a band of whitespace. That is also what method.html
+         does permanently, since it loads no script and so counts nothing,
+         including itself.
+
+         Leave the tags empty exactly as written: CSS `:empty` treats
+         whitespace as content, so a newline between them would defeat the rule
+         that hides them. -->
+    <p class="foot-vitals" id="vitals"></p>
+    <p class="foot-days" id="vitals-days"></p>
   </footer>
 
 </div>
