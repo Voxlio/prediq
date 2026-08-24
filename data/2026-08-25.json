@@ -1,0 +1,54 @@
+{
+  "day": "2026-08-25",
+  "updatedAt": "2026-08-24T21:27:00.986Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401882917",
+      "kickoff": "2026-08-25T19:00:00.000Z",
+      "league": "esp.1",
+      "home": {
+        "id": "94",
+        "name": "Valencia"
+      },
+      "away": {
+        "id": "244",
+        "name": "Real Betis"
+      },
+      "predicted": {
+        "at": "2026-08-24T21:27:00.986Z",
+        "lambda": [
+          0.923,
+          1.235
+        ],
+        "probs": [
+          0.2684,
+          0.3057,
+          0.4259
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1396
+        ],
+        "over25": 0.3662,
+        "btts": 0.4355,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          1,
+          1
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
