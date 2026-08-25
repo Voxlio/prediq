@@ -1,0 +1,54 @@
+{
+  "day": "2026-08-26",
+  "updatedAt": "2026-08-25T21:26:14.375Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401882919",
+      "kickoff": "2026-08-26T19:00:00.000Z",
+      "league": "esp.1",
+      "home": {
+        "id": "86",
+        "name": "Real Madrid"
+      },
+      "away": {
+        "id": "89",
+        "name": "Real Sociedad"
+      },
+      "predicted": {
+        "at": "2026-08-25T21:26:14.375Z",
+        "lambda": [
+          2.443,
+          0.864
+        ],
+        "probs": [
+          0.7163,
+          0.175,
+          0.1087
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          0,
+          0.1093
+        ],
+        "over25": 0.6419,
+        "btts": 0.5329,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          1,
+          1
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
