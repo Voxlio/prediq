@@ -1,0 +1,102 @@
+{
+  "day": "2026-08-27",
+  "updatedAt": "2026-08-26T19:46:34.135Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401882924",
+      "kickoff": "2026-08-27T18:30:00.000Z",
+      "league": "esp.1",
+      "home": {
+        "id": "85",
+        "name": "Celta Vigo"
+      },
+      "away": {
+        "id": "97",
+        "name": "Osasuna"
+      },
+      "predicted": {
+        "at": "2026-08-26T19:46:34.135Z",
+        "lambda": [
+          1.157,
+          0.723
+        ],
+        "probs": [
+          0.4529,
+          0.3249,
+          0.2222
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          0,
+          0.1689
+        ],
+        "over25": 0.2908,
+        "btts": 0.3605,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          1,
+          1
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401882921",
+      "kickoff": "2026-08-27T19:00:00.000Z",
+      "league": "esp.1",
+      "home": {
+        "id": "83",
+        "name": "Barcelona"
+      },
+      "away": {
+        "id": "93",
+        "name": "Athletic Club"
+      },
+      "predicted": {
+        "at": "2026-08-26T19:46:34.135Z",
+        "lambda": [
+          3.871,
+          0.601
+        ],
+        "probs": [
+          0.9161,
+          0.0617,
+          0.0222
+        ],
+        "pick": "home",
+        "score": [
+          3,
+          0,
+          0.1112
+        ],
+        "over25": 0.822,
+        "btts": 0.4437,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          1,
+          1
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
