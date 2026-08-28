@@ -1,0 +1,534 @@
+{
+  "day": "2026-08-28",
+  "updatedAt": "2026-08-28T00:14:13.935Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401882900",
+      "kickoff": "2026-08-28T17:00:00.000Z",
+      "league": "esp.1",
+      "home": {
+        "id": "87",
+        "name": "Racing Santander"
+      },
+      "away": {
+        "id": "3751",
+        "name": "Elche"
+      },
+      "predicted": {
+        "at": "2026-08-28T00:14:13.935Z",
+        "lambda": [
+          1.576,
+          1.204
+        ],
+        "probs": [
+          0.4528,
+          0.263,
+          0.2842
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1248
+        ],
+        "over25": 0.5258,
+        "btts": 0.5623,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          2,
+          2
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401875630",
+      "kickoff": "2026-08-28T18:00:00.000Z",
+      "league": "ned.1",
+      "home": {
+        "id": "145",
+        "name": "FC Groningen"
+      },
+      "away": {
+        "id": "143",
+        "name": "Fortuna Sittard"
+      },
+      "predicted": {
+        "at": "2026-08-28T00:14:13.935Z",
+        "lambda": [
+          1.92,
+          1.283
+        ],
+        "probs": [
+          0.5169,
+          0.2342,
+          0.2489
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1061
+        ],
+        "over25": 0.6205,
+        "btts": 0.6227,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          3,
+          3
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401884817",
+      "kickoff": "2026-08-28T18:30:00.000Z",
+      "league": "ger.1",
+      "home": {
+        "id": "132",
+        "name": "Bayern Munich"
+      },
+      "away": {
+        "id": "134",
+        "name": "VfB Stuttgart"
+      },
+      "predicted": {
+        "at": "2026-08-28T00:14:13.935Z",
+        "lambda": [
+          3.473,
+          1.249
+        ],
+        "probs": [
+          0.7858,
+          0.1211,
+          0.0932
+        ],
+        "pick": "home",
+        "score": [
+          3,
+          1,
+          0.0778
+        ],
+        "over25": 0.8494,
+        "btts": 0.6933,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          0,
+          0
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401888309",
+      "kickoff": "2026-08-28T18:30:00.000Z",
+      "league": "tur.1",
+      "home": {
+        "id": "996",
+        "name": "Genclerbirligi"
+      },
+      "away": {
+        "id": "19267",
+        "name": "Erzurum BB"
+      },
+      "predicted": {
+        "at": "2026-08-28T00:14:13.935Z",
+        "lambda": [
+          1.804,
+          0.646
+        ],
+        "probs": [
+          0.6464,
+          0.2323,
+          0.1213
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          0,
+          0.1497
+        ],
+        "over25": 0.4432,
+        "btts": 0.4035,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          2,
+          2
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401874758",
+      "kickoff": "2026-08-28T18:45:00.000Z",
+      "league": "ita.1",
+      "home": {
+        "id": "103",
+        "name": "AC Milan"
+      },
+      "away": {
+        "id": "17530",
+        "name": "Venezia"
+      },
+      "predicted": {
+        "at": "2026-08-28T00:14:13.935Z",
+        "lambda": [
+          1.983,
+          0.613
+        ],
+        "probs": [
+          0.693,
+          0.2076,
+          0.0994
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          0,
+          0.1466
+        ],
+        "over25": 0.4807,
+        "btts": 0.4007,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          1,
+          1
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401876476",
+      "kickoff": "2026-08-28T18:45:00.000Z",
+      "league": "fra.1",
+      "home": {
+        "id": "166",
+        "name": "Lille"
+      },
+      "away": {
+        "id": "160",
+        "name": "Paris Saint-Germain"
+      },
+      "predicted": {
+        "at": "2026-08-28T00:14:13.935Z",
+        "lambda": [
+          1.182,
+          1.387
+        ],
+        "probs": [
+          0.3123,
+          0.2791,
+          0.4086
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1331
+        ],
+        "over25": 0.4739,
+        "btts": 0.5278,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          1,
+          1
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401879015",
+      "kickoff": "2026-08-28T18:45:00.000Z",
+      "league": "bel.1",
+      "home": {
+        "id": "938",
+        "name": "Racing Genk"
+      },
+      "away": {
+        "id": "13450",
+        "name": "Waasland-Beveren"
+      },
+      "predicted": {
+        "at": "2026-08-28T00:14:13.935Z",
+        "lambda": [
+          2.339,
+          1.15
+        ],
+        "probs": [
+          0.6337,
+          0.1974,
+          0.1689
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          1,
+          0.0961
+        ],
+        "over25": 0.677,
+        "btts": 0.6223,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          3,
+          3
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401879294",
+      "kickoff": "2026-08-28T19:00:00.000Z",
+      "league": "eng.1",
+      "home": {
+        "id": "384",
+        "name": "Crystal Palace"
+      },
+      "away": {
+        "id": "382",
+        "name": "Manchester City"
+      },
+      "predicted": {
+        "at": "2026-08-28T00:14:13.935Z",
+        "lambda": [
+          0.702,
+          1.895
+        ],
+        "probs": [
+          0.1248,
+          0.2238,
+          0.6515
+        ],
+        "pick": "away",
+        "score": [
+          0,
+          1,
+          0.1353
+        ],
+        "over25": 0.4806,
+        "btts": 0.4343,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          1,
+          1
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401880305",
+      "kickoff": "2026-08-28T19:00:00.000Z",
+      "league": "eng.2",
+      "home": {
+        "id": "352",
+        "name": "Wrexham"
+      },
+      "away": {
+        "id": "392",
+        "name": "Birmingham City"
+      },
+      "predicted": {
+        "at": "2026-08-28T00:14:13.935Z",
+        "lambda": [
+          1.369,
+          1.123
+        ],
+        "probs": [
+          0.417,
+          0.2833,
+          0.2998
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1348
+        ],
+        "over25": 0.4543,
+        "btts": 0.5108,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          2,
+          2
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401885458",
+      "kickoff": "2026-08-28T19:15:00.000Z",
+      "league": "por.1",
+      "home": {
+        "id": "3822",
+        "name": "Rio Ave"
+      },
+      "away": {
+        "id": "2250",
+        "name": "Sporting CP"
+      },
+      "predicted": {
+        "at": "2026-08-28T00:14:13.935Z",
+        "lambda": [
+          0.861,
+          2.445
+        ],
+        "probs": [
+          0.1081,
+          0.1746,
+          0.7173
+        ],
+        "pick": "away",
+        "score": [
+          0,
+          2,
+          0.1096
+        ],
+        "over25": 0.6416,
+        "btts": 0.5317,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          3,
+          3
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401882906",
+      "kickoff": "2026-08-28T19:30:00.000Z",
+      "league": "esp.1",
+      "home": {
+        "id": "96",
+        "name": "Alavés"
+      },
+      "away": {
+        "id": "102",
+        "name": "Villarreal"
+      },
+      "predicted": {
+        "at": "2026-08-28T00:14:13.935Z",
+        "lambda": [
+          1.53,
+          1.792
+        ],
+        "probs": [
+          0.3255,
+          0.2393,
+          0.4353
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1048
+        ],
+        "over25": 0.6451,
+        "btts": 0.6589,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          2,
+          2
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
