@@ -1,18 +1,18 @@
 {
-  "at": "2026-08-28T00:14:15.221Z",
-  "n": 48,
-  "days": 6,
+  "at": "2026-08-28T14:54:06.490Z",
+  "n": 74,
+  "days": 7,
   "currentRev": "1.0",
   "coverage": 1,
   "overall": {
     "rev": "1.0",
     "revs": {
-      "1.0": 48
+      "1.0": 74
     },
     "revConsistent": true,
-    "n": 48,
+    "n": 74,
     "scored": 37,
-    "pending": 11,
+    "pending": 37,
     "hitRate": 0.5675675675675675,
     "exactRate": 0.10810810810810811,
     "logLoss": 0.8644843763065854,
@@ -170,12 +170,12 @@
     "1.0": {
       "rev": "1.0",
       "revs": {
-        "1.0": 48
+        "1.0": 74
       },
       "revConsistent": true,
-      "n": 48,
+      "n": 74,
       "scored": 37,
-      "pending": 11,
+      "pending": 37,
       "hitRate": 0.5675675675675675,
       "exactRate": 0.10810810810810811,
       "logLoss": 0.8644843763065854,
