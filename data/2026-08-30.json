@@ -1,0 +1,150 @@
+{
+  "day": "2026-08-30",
+  "updatedAt": "2026-08-29T12:18:52.678Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401875626",
+      "kickoff": "2026-08-30T10:15:00.000Z",
+      "league": "ned.1",
+      "home": {
+        "id": "153",
+        "name": "FC Utrecht"
+      },
+      "away": {
+        "id": "148",
+        "name": "PSV Eindhoven"
+      },
+      "predicted": {
+        "at": "2026-08-29T12:18:52.678Z",
+        "lambda": [
+          1.552,
+          3.025
+        ],
+        "probs": [
+          0.1687,
+          0.1613,
+          0.67
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          3,
+          0.0737
+        ],
+        "over25": 0.8347,
+        "btts": 0.7527,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          3,
+          3
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401878398",
+      "kickoff": "2026-08-30T11:00:00.000Z",
+      "league": "sco.1",
+      "home": {
+        "id": "263",
+        "name": "Aberdeen"
+      },
+      "away": {
+        "id": "257",
+        "name": "Rangers"
+      },
+      "predicted": {
+        "at": "2026-08-29T12:18:52.678Z",
+        "lambda": [
+          1.06,
+          1.781
+        ],
+        "probs": [
+          0.2179,
+          0.2461,
+          0.536
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1168
+        ],
+        "over25": 0.5402,
+        "btts": 0.55,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          2,
+          1
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401879010",
+      "kickoff": "2026-08-30T11:30:00.000Z",
+      "league": "bel.1",
+      "home": {
+        "id": "3611",
+        "name": "KAA Gent"
+      },
+      "away": {
+        "id": "570",
+        "name": "Club Brugge"
+      },
+      "predicted": {
+        "at": "2026-08-29T12:18:52.678Z",
+        "lambda": [
+          0.941,
+          1.853
+        ],
+        "probs": [
+          0.1814,
+          0.2372,
+          0.5814
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1131
+        ],
+        "over25": 0.5292,
+        "btts": 0.5207,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          2,
+          3
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
