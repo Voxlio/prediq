@@ -1,0 +1,246 @@
+{
+  "day": "2026-09-03",
+  "updatedAt": "2026-09-02T22:58:32.572Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401879018",
+      "kickoff": "2026-09-03T18:30:00.000Z",
+      "league": "bel.1",
+      "home": {
+        "id": "441",
+        "name": "Anderlecht"
+      },
+      "away": {
+        "id": "5786",
+        "name": "KV Kortrijk"
+      },
+      "predicted": {
+        "at": "2026-09-02T22:58:32.572Z",
+        "lambda": [
+          1.889,
+          1.025
+        ],
+        "probs": [
+          0.5693,
+          0.2352,
+          0.1955
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1114
+        ],
+        "over25": 0.5572,
+        "btts": 0.5505,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          3,
+          3
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401879020",
+      "kickoff": "2026-09-03T18:30:00.000Z",
+      "league": "bel.1",
+      "home": {
+        "id": "3611",
+        "name": "KAA Gent"
+      },
+      "away": {
+        "id": "5579",
+        "name": "Oud-Heverlee Leuven"
+      },
+      "predicted": {
+        "at": "2026-09-02T22:58:32.572Z",
+        "lambda": [
+          2.14,
+          0.795
+        ],
+        "probs": [
+          0.678,
+          0.2009,
+          0.1212
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          0,
+          0.1217
+        ],
+        "over25": 0.5621,
+        "btts": 0.4892,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          3,
+          3
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401876468",
+      "kickoff": "2026-09-03T18:45:00.000Z",
+      "league": "fra.1",
+      "home": {
+        "id": "179",
+        "name": "Toulouse"
+      },
+      "away": {
+        "id": "166",
+        "name": "Lille"
+      },
+      "predicted": {
+        "at": "2026-09-02T22:58:32.572Z",
+        "lambda": [
+          1.067,
+          1.697
+        ],
+        "probs": [
+          0.2314,
+          0.2542,
+          0.5144
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.121
+        ],
+        "over25": 0.5219,
+        "btts": 0.5426,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          2,
+          2
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401878389",
+      "kickoff": "2026-09-03T18:45:00.000Z",
+      "league": "sco.1",
+      "home": {
+        "id": "258",
+        "name": "Hibernian"
+      },
+      "away": {
+        "id": "262",
+        "name": "Heart of Midlothian"
+      },
+      "predicted": {
+        "at": "2026-09-02T22:58:32.572Z",
+        "lambda": [
+          1.293,
+          1.407
+        ],
+        "probs": [
+          0.3376,
+          0.2724,
+          0.39
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1296
+        ],
+        "over25": 0.5064,
+        "btts": 0.5552,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          3,
+          3
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401882867",
+      "kickoff": "2026-09-03T19:00:00.000Z",
+      "league": "esp.1",
+      "home": {
+        "id": "89",
+        "name": "Real Sociedad"
+      },
+      "away": {
+        "id": "85",
+        "name": "Celta Vigo"
+      },
+      "predicted": {
+        "at": "2026-09-02T22:58:32.572Z",
+        "lambda": [
+          1.643,
+          1.158
+        ],
+        "probs": [
+          0.4799,
+          0.2583,
+          0.2619
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1225
+        ],
+        "over25": 0.5309,
+        "btts": 0.5602,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          3,
+          3
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
