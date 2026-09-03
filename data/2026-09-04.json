@@ -1,0 +1,486 @@
+{
+  "day": "2026-09-04",
+  "updatedAt": "2026-09-03T20:31:29.365Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401876472",
+      "kickoff": "2026-09-04T17:00:00.000Z",
+      "league": "fra.1",
+      "home": {
+        "id": "167",
+        "name": "Lyon"
+      },
+      "away": {
+        "id": "172",
+        "name": "AJ Auxerre"
+      },
+      "predicted": {
+        "at": "2026-09-03T20:31:29.365Z",
+        "lambda": [
+          2.253,
+          0.789
+        ],
+        "probs": [
+          0.7004,
+          0.1889,
+          0.1107
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          0,
+          0.1212
+        ],
+        "over25": 0.586,
+        "btts": 0.4933,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          2,
+          2
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401888304",
+      "kickoff": "2026-09-04T17:00:00.000Z",
+      "league": "tur.1",
+      "home": {
+        "id": "7914",
+        "name": "Istanbul Basaksehir"
+      },
+      "away": {
+        "id": "432",
+        "name": "Galatasaray"
+      },
+      "predicted": {
+        "at": "2026-09-03T20:31:29.365Z",
+        "lambda": [
+          1.428,
+          1.723
+        ],
+        "probs": [
+          0.3136,
+          0.2463,
+          0.4402
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1116
+        ],
+        "over25": 0.6099,
+        "btts": 0.6309,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          3,
+          3
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401875621",
+      "kickoff": "2026-09-04T18:00:00.000Z",
+      "league": "ned.1",
+      "home": {
+        "id": "151",
+        "name": "Sparta Rotterdam"
+      },
+      "away": {
+        "id": "2565",
+        "name": "PEC Zwolle"
+      },
+      "predicted": {
+        "at": "2026-09-03T20:31:29.365Z",
+        "lambda": [
+          1.812,
+          1.355
+        ],
+        "probs": [
+          0.4766,
+          0.2417,
+          0.2817
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1096
+        ],
+        "over25": 0.6132,
+        "btts": 0.6271,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          4,
+          4
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401884808",
+      "kickoff": "2026-09-04T18:30:00.000Z",
+      "league": "ger.1",
+      "home": {
+        "id": "134",
+        "name": "VfB Stuttgart"
+      },
+      "away": {
+        "id": "122",
+        "name": "FC Cologne"
+      },
+      "predicted": {
+        "at": "2026-09-03T20:31:29.365Z",
+        "lambda": [
+          2.545,
+          1.496
+        ],
+        "probs": [
+          0.5991,
+          0.1907,
+          0.2101
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          1,
+          0.0852
+        ],
+        "over25": 0.7678,
+        "btts": 0.7191,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          1,
+          1
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401874744",
+      "kickoff": "2026-09-04T18:45:00.000Z",
+      "league": "ita.1",
+      "home": {
+        "id": "3263",
+        "name": "Genoa"
+      },
+      "away": {
+        "id": "2572",
+        "name": "Como"
+      },
+      "predicted": {
+        "at": "2026-09-03T20:31:29.365Z",
+        "lambda": [
+          0.59,
+          1.785
+        ],
+        "probs": [
+          0.111,
+          0.2318,
+          0.6573
+        ],
+        "pick": "away",
+        "score": [
+          0,
+          1,
+          0.1601
+        ],
+        "over25": 0.4239,
+        "btts": 0.377,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          2,
+          2
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401879005",
+      "kickoff": "2026-09-04T18:45:00.000Z",
+      "league": "bel.1",
+      "home": {
+        "id": "22269",
+        "name": "Lommel SK"
+      },
+      "away": {
+        "id": "570",
+        "name": "Club Brugge"
+      },
+      "predicted": {
+        "at": "2026-09-03T20:31:29.365Z",
+        "lambda": [
+          0.969,
+          1.559
+        ],
+        "probs": [
+          0.2277,
+          0.2688,
+          0.5035
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1278
+        ],
+        "over25": 0.4633,
+        "btts": 0.4972,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          4,
+          4
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401879288",
+      "kickoff": "2026-09-04T19:00:00.000Z",
+      "league": "eng.1",
+      "home": {
+        "id": "373",
+        "name": "Ipswich Town"
+      },
+      "away": {
+        "id": "364",
+        "name": "Liverpool"
+      },
+      "predicted": {
+        "at": "2026-09-03T20:31:29.365Z",
+        "lambda": [
+          1.677,
+          2.223
+        ],
+        "probs": [
+          0.2885,
+          0.2122,
+          0.4993
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          2,
+          0.0839
+        ],
+        "over25": 0.7468,
+        "btts": 0.7295,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          2,
+          2
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401882894",
+      "kickoff": "2026-09-04T19:00:00.000Z",
+      "league": "esp.1",
+      "home": {
+        "id": "244",
+        "name": "Real Betis"
+      },
+      "away": {
+        "id": "86",
+        "name": "Real Madrid"
+      },
+      "predicted": {
+        "at": "2026-09-03T20:31:29.365Z",
+        "lambda": [
+          0.998,
+          2.325
+        ],
+        "probs": [
+          0.1421,
+          0.1928,
+          0.6651
+        ],
+        "pick": "away",
+        "score": [
+          0,
+          2,
+          0.0974
+        ],
+        "over25": 0.6451,
+        "btts": 0.5747,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          3,
+          3
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401876469",
+      "kickoff": "2026-09-04T19:05:00.000Z",
+      "league": "fra.1",
+      "home": {
+        "id": "160",
+        "name": "Paris Saint-Germain"
+      },
+      "away": {
+        "id": "174",
+        "name": "AS Monaco"
+      },
+      "predicted": {
+        "at": "2026-09-03T20:31:29.365Z",
+        "lambda": [
+          2.062,
+          1.203
+        ],
+        "probs": [
+          0.5659,
+          0.2221,
+          0.212
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1004
+        ],
+        "over25": 0.6336,
+        "btts": 0.6165,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          2,
+          2
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401885451",
+      "kickoff": "2026-09-04T19:15:00.000Z",
+      "league": "por.1",
+      "home": {
+        "id": "437",
+        "name": "FC Porto"
+      },
+      "away": {
+        "id": "3696",
+        "name": "Moreirense"
+      },
+      "predicted": {
+        "at": "2026-09-03T20:31:29.365Z",
+        "lambda": [
+          2.578,
+          0.33
+        ],
+        "probs": [
+          0.8541,
+          0.1175,
+          0.0284
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          0,
+          0.1815
+        ],
+        "over25": 0.5557,
+        "btts": 0.2624,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          4,
+          3
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
