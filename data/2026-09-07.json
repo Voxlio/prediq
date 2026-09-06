@@ -1,0 +1,198 @@
+{
+  "day": "2026-09-07",
+  "updatedAt": "2026-09-06T17:33:43.395Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401874943",
+      "kickoff": "2026-09-07T16:30:00.000Z",
+      "league": "ita.1",
+      "home": {
+        "id": "2925",
+        "name": "Cagliari"
+      },
+      "away": {
+        "id": "113",
+        "name": "Lecce"
+      },
+      "predicted": {
+        "at": "2026-09-06T17:33:43.395Z",
+        "lambda": [
+          1.174,
+          0.701
+        ],
+        "probs": [
+          0.4641,
+          0.3232,
+          0.2127
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          0,
+          0.1725
+        ],
+        "over25": 0.2895,
+        "btts": 0.3557,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          2,
+          2
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401882891",
+      "kickoff": "2026-09-07T17:00:00.000Z",
+      "league": "esp.1",
+      "home": {
+        "id": "2922",
+        "name": "Getafe"
+      },
+      "away": {
+        "id": "85",
+        "name": "Celta Vigo"
+      },
+      "predicted": {
+        "at": "2026-09-06T17:33:43.395Z",
+        "lambda": [
+          0.659,
+          0.753
+        ],
+        "probs": [
+          0.2745,
+          0.395,
+          0.3306
+        ],
+        "pick": "draw",
+        "score": [
+          0,
+          0,
+          0.251
+        ],
+        "over25": 0.1693,
+        "btts": 0.2625,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          3,
+          4
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401888302",
+      "kickoff": "2026-09-07T17:00:00.000Z",
+      "league": "tur.1",
+      "home": {
+        "id": "789",
+        "name": "Goztepe"
+      },
+      "away": {
+        "id": "20070",
+        "name": "Gaziantep FK"
+      },
+      "predicted": {
+        "at": "2026-09-06T17:33:43.395Z",
+        "lambda": [
+          1.83,
+          1.044
+        ],
+        "probs": [
+          0.5514,
+          0.2412,
+          0.2074
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1144
+        ],
+        "over25": 0.5479,
+        "btts": 0.5504,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          3,
+          3
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401888303",
+      "kickoff": "2026-09-07T17:00:00.000Z",
+      "league": "tur.1",
+      "home": {
+        "id": "7656",
+        "name": "Caykur Rizespor"
+      },
+      "away": {
+        "id": "9078",
+        "name": "Alanyaspor"
+      },
+      "predicted": {
+        "at": "2026-09-06T17:33:43.395Z",
+        "lambda": [
+          1.117,
+          1.137
+        ],
+        "probs": [
+          0.3435,
+          0.3031,
+          0.3534
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1413
+        ],
+        "over25": 0.3917,
+        "btts": 0.4649,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          3,
+          3
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
