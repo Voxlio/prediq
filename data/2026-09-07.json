@@ -1,6 +1,6 @@
 {
   "day": "2026-09-07",
-  "updatedAt": "2026-09-06T17:33:43.395Z",
+  "updatedAt": "2026-09-06T20:00:47.796Z",
   "records": [
     {
       "v": 1,
@@ -185,6 +185,150 @@
         "seen": [
           3,
           3
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401874962",
+      "kickoff": "2026-09-07T18:45:00.000Z",
+      "league": "ita.1",
+      "home": {
+        "id": "118",
+        "name": "Udinese"
+      },
+      "away": {
+        "id": "112",
+        "name": "Lazio"
+      },
+      "predicted": {
+        "at": "2026-09-06T20:00:47.796Z",
+        "lambda": [
+          1.016,
+          0.99
+        ],
+        "probs": [
+          0.3447,
+          0.3242,
+          0.3311
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1434
+        ],
+        "over25": 0.3248,
+        "btts": 0.4089,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          2,
+          2
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401885454",
+      "kickoff": "2026-09-07T19:15:00.000Z",
+      "league": "por.1",
+      "home": {
+        "id": "12216",
+        "name": "Estoril"
+      },
+      "away": {
+        "id": "15784",
+        "name": "Arouca"
+      },
+      "predicted": {
+        "at": "2026-09-06T20:00:47.796Z",
+        "lambda": [
+          1.454,
+          1.808
+        ],
+        "probs": [
+          0.3053,
+          0.2402,
+          0.4545
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1068
+        ],
+        "over25": 0.6328,
+        "btts": 0.6467,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          4,
+          4
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401882893",
+      "kickoff": "2026-09-07T19:30:00.000Z",
+      "league": "esp.1",
+      "home": {
+        "id": "3751",
+        "name": "Elche"
+      },
+      "away": {
+        "id": "89",
+        "name": "Real Sociedad"
+      },
+      "predicted": {
+        "at": "2026-09-06T20:00:47.796Z",
+        "lambda": [
+          1.444,
+          1.612
+        ],
+        "probs": [
+          0.3372,
+          0.2527,
+          0.4101
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1162
+        ],
+        "over25": 0.5892,
+        "btts": 0.6182,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          3,
+          4
         ]
       },
       "market": null,
