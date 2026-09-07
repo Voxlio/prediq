@@ -1,6 +1,6 @@
 {
   "day": "2026-09-08",
-  "updatedAt": "2026-09-07T18:59:34.780Z",
+  "updatedAt": "2026-09-07T23:16:46.798Z",
   "records": [
     {
       "v": 1,
@@ -329,6 +329,246 @@
         "seen": [
           5,
           5
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401880275",
+      "kickoff": "2026-09-08T19:00:00.000Z",
+      "league": "eng.2",
+      "home": {
+        "id": "358",
+        "name": "Bolton Wanderers"
+      },
+      "away": {
+        "id": "371",
+        "name": "West Ham United"
+      },
+      "predicted": {
+        "at": "2026-09-07T23:16:46.798Z",
+        "lambda": [
+          1.132,
+          1.788
+        ],
+        "probs": [
+          0.2336,
+          0.2455,
+          0.5209
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1157
+        ],
+        "over25": 0.5587,
+        "btts": 0.5708,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          5,
+          5
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915425",
+      "kickoff": "2026-09-08T19:00:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "437",
+        "name": "FC Porto"
+      },
+      "away": {
+        "id": "382",
+        "name": "Manchester City"
+      },
+      "predicted": {
+        "at": "2026-09-07T23:16:46.798Z",
+        "lambda": [
+          1.119,
+          0.766
+        ],
+        "probs": [
+          0.4298,
+          0.3283,
+          0.2418
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          0,
+          0.1621
+        ],
+        "over25": 0.2921,
+        "btts": 0.3681,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          5,
+          3
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915449",
+      "kickoff": "2026-09-08T19:00:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "124",
+        "name": "Borussia Dortmund"
+      },
+      "away": {
+        "id": "102",
+        "name": "Villarreal"
+      },
+      "predicted": {
+        "at": "2026-09-07T23:16:46.798Z",
+        "lambda": [
+          2.109,
+          1.144
+        ],
+        "probs": [
+          0.5892,
+          0.217,
+          0.1938
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.0989
+        ],
+        "over25": 0.6309,
+        "btts": 0.6043,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          2,
+          4
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915450",
+      "kickoff": "2026-09-08T19:00:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "166",
+        "name": "Lille"
+      },
+      "away": {
+        "id": "244",
+        "name": "Real Betis"
+      },
+      "predicted": {
+        "at": "2026-09-07T23:16:46.798Z",
+        "lambda": [
+          1.445,
+          0.994
+        ],
+        "probs": [
+          0.4675,
+          0.2805,
+          0.252
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1328
+        ],
+        "over25": 0.4405,
+        "btts": 0.4889,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          3,
+          4
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915451",
+      "kickoff": "2026-09-08T19:00:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "86",
+        "name": "Real Madrid"
+      },
+      "away": {
+        "id": "110",
+        "name": "Internazionale"
+      },
+      "predicted": {
+        "at": "2026-09-07T23:16:46.798Z",
+        "lambda": [
+          1.736,
+          1.531
+        ],
+        "probs": [
+          0.4222,
+          0.2425,
+          0.3354
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1074
+        ],
+        "over25": 0.634,
+        "btts": 0.6517,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          4,
+          3
         ]
       },
       "market": null,
