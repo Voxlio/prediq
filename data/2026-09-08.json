@@ -1,0 +1,342 @@
+{
+  "day": "2026-09-08",
+  "updatedAt": "2026-09-07T18:59:34.780Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401875636",
+      "kickoff": "2026-09-08T16:45:00.000Z",
+      "league": "ned.1",
+      "home": {
+        "id": "147",
+        "name": "NEC Nijmegen"
+      },
+      "away": {
+        "id": "2566",
+        "name": "Excelsior"
+      },
+      "predicted": {
+        "at": "2026-09-07T18:59:34.780Z",
+        "lambda": [
+          1.838,
+          1.597
+        ],
+        "probs": [
+          0.4323,
+          0.2349,
+          0.3328
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1003
+        ],
+        "over25": 0.6669,
+        "btts": 0.6763,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          4,
+          4
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915426",
+      "kickoff": "2026-09-08T16:45:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "570",
+        "name": "Club Brugge"
+      },
+      "away": {
+        "id": "362",
+        "name": "Aston Villa"
+      },
+      "predicted": {
+        "at": "2026-09-07T18:59:34.780Z",
+        "lambda": [
+          1.669,
+          0.855
+        ],
+        "probs": [
+          0.5598,
+          0.2561,
+          0.1841
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          0,
+          0.1269
+        ],
+        "over25": 0.4624,
+        "btts": 0.4733,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          5,
+          3
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401880269",
+      "kickoff": "2026-09-08T18:45:00.000Z",
+      "league": "eng.2",
+      "home": {
+        "id": "352",
+        "name": "Wrexham"
+      },
+      "away": {
+        "id": "379",
+        "name": "Burnley"
+      },
+      "predicted": {
+        "at": "2026-09-07T18:59:34.780Z",
+        "lambda": [
+          2.105,
+          0.939
+        ],
+        "probs": [
+          0.6362,
+          0.2113,
+          0.1526
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          0,
+          0.1055
+        ],
+        "over25": 0.5867,
+        "btts": 0.5405,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          5,
+          5
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401880273",
+      "kickoff": "2026-09-08T18:45:00.000Z",
+      "league": "eng.2",
+      "home": {
+        "id": "347",
+        "name": "Cardiff City"
+      },
+      "away": {
+        "id": "336",
+        "name": "Stoke City"
+      },
+      "predicted": {
+        "at": "2026-09-07T18:59:34.780Z",
+        "lambda": [
+          1.197,
+          1.601
+        ],
+        "probs": [
+          0.2784,
+          0.2612,
+          0.4605
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1238
+        ],
+        "over25": 0.5299,
+        "btts": 0.564,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          5,
+          5
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401880276",
+      "kickoff": "2026-09-08T18:45:00.000Z",
+      "league": "eng.2",
+      "home": {
+        "id": "365",
+        "name": "Blackburn Rovers"
+      },
+      "away": {
+        "id": "398",
+        "name": "Sheffield United"
+      },
+      "predicted": {
+        "at": "2026-09-07T18:59:34.780Z",
+        "lambda": [
+          1.223,
+          1.26
+        ],
+        "probs": [
+          0.348,
+          0.2865,
+          0.3656
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1364
+        ],
+        "over25": 0.452,
+        "btts": 0.5134,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          5,
+          5
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401880278",
+      "kickoff": "2026-09-08T18:45:00.000Z",
+      "league": "eng.2",
+      "home": {
+        "id": "395",
+        "name": "Watford"
+      },
+      "away": {
+        "id": "394",
+        "name": "Preston North End"
+      },
+      "predicted": {
+        "at": "2026-09-07T18:59:34.780Z",
+        "lambda": [
+          1.386,
+          0.985
+        ],
+        "probs": [
+          0.4536,
+          0.2869,
+          0.2596
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1351
+        ],
+        "over25": 0.4229,
+        "btts": 0.4777,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          5,
+          5
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401880279",
+      "kickoff": "2026-09-08T18:45:00.000Z",
+      "league": "eng.2",
+      "home": {
+        "id": "376",
+        "name": "Southampton"
+      },
+      "away": {
+        "id": "318",
+        "name": "Swansea City"
+      },
+      "predicted": {
+        "at": "2026-09-07T18:59:34.780Z",
+        "lambda": [
+          1.348,
+          1.11
+        ],
+        "probs": [
+          0.414,
+          0.2858,
+          0.3002
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1358
+        ],
+        "over25": 0.4453,
+        "btts": 0.504,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          5,
+          5
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
