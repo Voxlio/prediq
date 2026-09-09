@@ -1,0 +1,150 @@
+{
+  "day": "2026-09-10",
+  "updatedAt": "2026-09-09T20:26:35.850Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401915444",
+      "kickoff": "2026-09-10T16:45:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "436",
+        "name": "Fenerbahce"
+      },
+      "away": {
+        "id": "104",
+        "name": "AS Roma"
+      },
+      "predicted": {
+        "at": "2026-09-09T20:26:35.850Z",
+        "lambda": [
+          1.074,
+          2.214
+        ],
+        "probs": [
+          0.1676,
+          0.2057,
+          0.6266
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          2,
+          0.0983
+        ],
+        "over25": 0.6381,
+        "btts": 0.5917,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          4,
+          3
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915441",
+      "kickoff": "2026-09-10T19:00:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "2572",
+        "name": "Como"
+      },
+      "away": {
+        "id": "11420",
+        "name": "RB Leipzig"
+      },
+      "predicted": {
+        "at": "2026-09-09T20:26:35.850Z",
+        "lambda": [
+          2.183,
+          1.009
+        ],
+        "probs": [
+          0.6355,
+          0.2063,
+          0.1582
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          1,
+          0.0988
+        ],
+        "over25": 0.6184,
+        "btts": 0.5692,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          3,
+          2
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401885474",
+      "kickoff": "2026-09-10T19:15:00.000Z",
+      "league": "por.1",
+      "home": {
+        "id": "21610",
+        "name": "Estrela"
+      },
+      "away": {
+        "id": "2994",
+        "name": "Braga"
+      },
+      "predicted": {
+        "at": "2026-09-09T20:26:35.850Z",
+        "lambda": [
+          1.297,
+          2.054
+        ],
+        "probs": [
+          0.233,
+          0.2237,
+          0.5433
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.099
+        ],
+        "over25": 0.6505,
+        "btts": 0.6389,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          4,
+          4
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
