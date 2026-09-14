@@ -1,0 +1,54 @@
+{
+  "day": "2026-09-15",
+  "updatedAt": "2026-09-14T17:44:05.388Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401882868",
+      "kickoff": "2026-09-15T17:00:00.000Z",
+      "league": "esp.1",
+      "home": {
+        "id": "101",
+        "name": "Rayo Vallecano"
+      },
+      "away": {
+        "id": "88",
+        "name": "Espanyol"
+      },
+      "predicted": {
+        "at": "2026-09-14T17:44:05.388Z",
+        "lambda": [
+          1.302,
+          1.398
+        ],
+        "probs": [
+          0.3416,
+          0.2725,
+          0.3859
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1297
+        ],
+        "over25": 0.5063,
+        "btts": 0.5554,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          5,
+          5
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
