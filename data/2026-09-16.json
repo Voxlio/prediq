@@ -1,0 +1,342 @@
+{
+  "day": "2026-09-16",
+  "updatedAt": "2026-09-15T20:52:49.823Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401882873",
+      "kickoff": "2026-09-16T17:00:00.000Z",
+      "league": "esp.1",
+      "home": {
+        "id": "90",
+        "name": "Deportivo"
+      },
+      "away": {
+        "id": "243",
+        "name": "Sevilla"
+      },
+      "predicted": {
+        "at": "2026-09-15T20:52:49.823Z",
+        "lambda": [
+          1.627,
+          1.403
+        ],
+        "probs": [
+          0.4224,
+          0.2532,
+          0.3244
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1169
+        ],
+        "over25": 0.5836,
+        "btts": 0.6126,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          5,
+          5
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401882875",
+      "kickoff": "2026-09-16T17:00:00.000Z",
+      "league": "esp.1",
+      "home": {
+        "id": "1068",
+        "name": "Atlético Madrid"
+      },
+      "away": {
+        "id": "97",
+        "name": "Osasuna"
+      },
+      "predicted": {
+        "at": "2026-09-15T20:52:49.823Z",
+        "lambda": [
+          2.214,
+          0.898
+        ],
+        "probs": [
+          0.6673,
+          0.1987,
+          0.134
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          0,
+          0.1091
+        ],
+        "over25": 0.6014,
+        "btts": 0.5332,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          5,
+          5
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915586",
+      "kickoff": "2026-09-16T19:00:00.000Z",
+      "league": "uefa.europa",
+      "home": {
+        "id": "103",
+        "name": "AC Milan"
+      },
+      "away": {
+        "id": "1929",
+        "name": "Benfica"
+      },
+      "predicted": {
+        "at": "2026-09-15T20:52:49.823Z",
+        "lambda": [
+          0.902,
+          1.526
+        ],
+        "probs": [
+          0.2156,
+          0.273,
+          0.5114
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1287
+        ],
+        "over25": 0.4377,
+        "btts": 0.4724,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          4,
+          3
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915590",
+      "kickoff": "2026-09-16T19:00:00.000Z",
+      "league": "uefa.europa",
+      "home": {
+        "id": "441",
+        "name": "Anderlecht"
+      },
+      "away": {
+        "id": "167",
+        "name": "Lyon"
+      },
+      "predicted": {
+        "at": "2026-09-15T20:52:49.823Z",
+        "lambda": [
+          0.998,
+          1.782
+        ],
+        "probs": [
+          0.2032,
+          0.2455,
+          0.5513
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1169
+        ],
+        "over25": 0.5257,
+        "btts": 0.5316,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          0,
+          4
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915592",
+      "kickoff": "2026-09-16T19:00:00.000Z",
+      "league": "uefa.europa",
+      "home": {
+        "id": "366",
+        "name": "Sunderland"
+      },
+      "away": {
+        "id": "140",
+        "name": "AZ Alkmaar"
+      },
+      "predicted": {
+        "at": "2026-09-15T20:52:49.823Z",
+        "lambda": [
+          1.34,
+          1.127
+        ],
+        "probs": [
+          0.408,
+          0.2857,
+          0.3064
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1358
+        ],
+        "over25": 0.4476,
+        "btts": 0.5066,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          4,
+          2
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401882870",
+      "kickoff": "2026-09-16T19:30:00.000Z",
+      "league": "esp.1",
+      "home": {
+        "id": "1538",
+        "name": "Levante"
+      },
+      "away": {
+        "id": "93",
+        "name": "Athletic Club"
+      },
+      "predicted": {
+        "at": "2026-09-15T20:52:49.823Z",
+        "lambda": [
+          1.377,
+          1.363
+        ],
+        "probs": [
+          0.3679,
+          0.2705,
+          0.3615
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1285
+        ],
+        "over25": 0.5161,
+        "btts": 0.5636,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          5,
+          5
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401882871",
+      "kickoff": "2026-09-16T19:30:00.000Z",
+      "league": "esp.1",
+      "home": {
+        "id": "83",
+        "name": "Barcelona"
+      },
+      "away": {
+        "id": "87",
+        "name": "Racing Santander"
+      },
+      "predicted": {
+        "at": "2026-09-15T20:52:49.823Z",
+        "lambda": [
+          4.163,
+          0.898
+        ],
+        "probs": [
+          0.8982,
+          0.0675,
+          0.0343
+        ],
+        "pick": "home",
+        "score": [
+          4,
+          0,
+          0.0802
+        ],
+        "over25": 0.8791,
+        "btts": 0.5848,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          5,
+          5
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
