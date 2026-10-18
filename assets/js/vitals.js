@@ -340,10 +340,9 @@ function vital(paths, value, one, many) {
    `.foot-vitals:empty` and `.foot-days:empty` key on, so the footer closes up
    rather than leaving a band of whitespace. That is also how both lines behave on
    method.html, where nothing ever fills them in. */
-export function strip(node, { views = null, visits = null, matches = null } = {}) {
+export function strip(node, { visits = null, matches = null } = {}) {
   clear(node);
   if (visits != null) node.append(vital(USERS, visits, 'visit', 'visits'));
-  if (views != null) node.append(vital(EYE, views, 'page view', 'page views'));
   if (matches != null) node.append(vital(CHECK_CHECK, matches, 'match scored', 'matches scored'));
   return node;
 }
