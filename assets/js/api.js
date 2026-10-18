@@ -82,11 +82,66 @@ export function clearCache() {
 /* --- Fetching ----------------------------------------------------------- */
 
 async function getJSON(url, timeout = 12000) {
+  const m = url.match(/^(.*[?&]dates=)(\d{8})-(\d{8})(.*)$/);
+  if (!m) return getOne(url, timeout);
+  const [, head, a, b, tail] = m;
+  const toDate = s => new Date(Date.UTC(+s.slice(0, 4), +s.slice(4, 6) - 1, +s.slice(6, 8)));
+  const days = [];
+  for (let d = toDate(a), end = toDate(b); d <= end && days.length < 40; d = new Date(d.getTime() + 864e5)) {
+    days.push(d.toISOString().slice(0, 10).replace(/-/g, ''));
+  }
+  const res = await Promise.allSettled(days.map(day => getOne(head + day + tail, timeout)));
+  const ok = res.filter(r => r.status === 'fulfilled').map(r => r.value);
+  if (!ok.length) throw res[0].reason;
+  const seen = new Set();
+  const events = [];
+  for (const j of ok) {
+    for (const e of (j.events || [])) {
+      if (e.id && seen.has(e.id)) continue;
+      if (e.id) seen.add(e.id);
+      events.push(e);
+    }
+  }
+  return { ...ok[0], events };
+}
+
+let active = 0;
+const waiting = [];
+async function slot() {
+  if (active >= 6) await new Promise(r => waiting.push(r));
+  else active++;
+}
+function release() {
+  const next = waiting.shift();
+  if (next) next();
+  else active--;
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+async function getOne(url, timeout = 12000) {
+  await slot();
+  try {
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await getOnce(url, timeout);
+      } catch (e) {
+        const m = /HTTP (\d+)/.exec(e.message);
+        const retry = m && (m[1] === '403' || m[1] === '429' || +m[1] >= 500);
+        if (!retry || attempt >= 2) throw e;
+        await sleep(1500 * (attempt + 1));
+      }
+    }
+  } finally {
+    release();
+  }
+}
+
+async function getOnce(url, timeout = 12000) {
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), timeout);
   try {
     const r = await fetch(url, { signal: ctl.signal });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
+    if (!r.ok) throw new Error('HTTP ' + r.status + ' ' + url);
     return await r.json();
   } finally {
     clearTimeout(timer);
