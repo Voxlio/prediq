@@ -1,0 +1,246 @@
+{
+  "day": "2026-10-20",
+  "updatedAt": "2026-10-19T20:21:54.015Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401880277",
+      "kickoff": "2026-10-20T18:45:00.000Z",
+      "league": "eng.2",
+      "home": {
+        "id": "380",
+        "name": "Wolverhampton Wanderers"
+      },
+      "away": {
+        "id": "385",
+        "name": "Portsmouth"
+      },
+      "predicted": {
+        "at": "2026-10-19T20:21:54.015Z",
+        "lambda": [
+          1.496,
+          1.14
+        ],
+        "probs": [
+          0.4466,
+          0.2716,
+          0.2818
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1295
+        ],
+        "over25": 0.4907,
+        "btts": 0.5352,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          10,
+          10
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915392",
+      "kickoff": "2026-10-20T19:00:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "134",
+        "name": "VfB Stuttgart"
+      },
+      "away": {
+        "id": "1068",
+        "name": "Atlético Madrid"
+      },
+      "predicted": {
+        "at": "2026-10-19T20:21:54.015Z",
+        "lambda": [
+          1.248,
+          1.637
+        ],
+        "probs": [
+          0.2849,
+          0.257,
+          0.4581
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.121
+        ],
+        "over25": 0.5505,
+        "btts": 0.581,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          6,
+          9
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915397",
+      "kickoff": "2026-10-20T19:00:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "364",
+        "name": "Liverpool"
+      },
+      "away": {
+        "id": "102",
+        "name": "Villarreal"
+      },
+      "predicted": {
+        "at": "2026-10-19T20:21:54.015Z",
+        "lambda": [
+          1.433,
+          1.258
+        ],
+        "probs": [
+          0.404,
+          0.2722,
+          0.3238
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1296
+        ],
+        "over25": 0.5042,
+        "btts": 0.5524,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          7,
+          9
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915398",
+      "kickoff": "2026-10-20T19:00:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "437",
+        "name": "FC Porto"
+      },
+      "away": {
+        "id": "148",
+        "name": "PSV Eindhoven"
+      },
+      "predicted": {
+        "at": "2026-10-19T20:21:54.015Z",
+        "lambda": [
+          2.122,
+          1.008
+        ],
+        "probs": [
+          0.6232,
+          0.2121,
+          0.1647
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          1,
+          0.0992
+        ],
+        "over25": 0.6053,
+        "btts": 0.5647,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          8,
+          9
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915399",
+      "kickoff": "2026-10-20T19:00:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "160",
+        "name": "Paris Saint-Germain"
+      },
+      "away": {
+        "id": "83",
+        "name": "Barcelona"
+      },
+      "predicted": {
+        "at": "2026-10-19T20:21:54.015Z",
+        "lambda": [
+          1.668,
+          2.204
+        ],
+        "probs": [
+          0.2895,
+          0.2133,
+          0.4972
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          2,
+          0.0844
+        ],
+        "over25": 0.7424,
+        "btts": 0.7263,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          7,
+          9
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
