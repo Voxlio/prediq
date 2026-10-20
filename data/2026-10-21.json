@@ -1,6 +1,6 @@
 {
   "day": "2026-10-21",
-  "updatedAt": "2026-10-20T18:54:36.055Z",
+  "updatedAt": "2026-10-20T23:37:30.343Z",
   "records": [
     {
       "v": 1,
@@ -137,6 +137,198 @@
         "seen": [
           8,
           8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915312",
+      "kickoff": "2026-10-21T19:00:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "132",
+        "name": "Bayern Munich"
+      },
+      "away": {
+        "id": "359",
+        "name": "Arsenal"
+      },
+      "predicted": {
+        "at": "2026-10-20T23:37:30.343Z",
+        "lambda": [
+          1.828,
+          1.081
+        ],
+        "probs": [
+          0.5419,
+          0.2417,
+          0.2164
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1142
+        ],
+        "over25": 0.5561,
+        "btts": 0.5611,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          6,
+          7
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915313",
+      "kickoff": "2026-10-21T19:00:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "86",
+        "name": "Real Madrid"
+      },
+      "away": {
+        "id": "11420",
+        "name": "RB Leipzig"
+      },
+      "predicted": {
+        "at": "2026-10-20T23:37:30.343Z",
+        "lambda": [
+          2.448,
+          1.264
+        ],
+        "probs": [
+          0.6296,
+          0.1921,
+          0.1783
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          1,
+          0.0925
+        ],
+        "over25": 0.7165,
+        "btts": 0.6599,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          9,
+          6
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915388",
+      "kickoff": "2026-10-21T19:00:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "570",
+        "name": "Club Brugge"
+      },
+      "away": {
+        "id": "175",
+        "name": "Lens"
+      },
+      "predicted": {
+        "at": "2026-10-20T23:37:30.343Z",
+        "lambda": [
+          1.956,
+          1.307
+        ],
+        "probs": [
+          0.5196,
+          0.2313,
+          0.249
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1037
+        ],
+        "over25": 0.6329,
+        "btts": 0.632,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          8,
+          7
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915389",
+      "kickoff": "2026-10-21T19:00:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "244",
+        "name": "Real Betis"
+      },
+      "away": {
+        "id": "142",
+        "name": "Feyenoord Rotterdam"
+      },
+      "predicted": {
+        "at": "2026-10-20T23:37:30.343Z",
+        "lambda": [
+          1.83,
+          2.047
+        ],
+        "probs": [
+          0.3481,
+          0.2188,
+          0.4331
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.0822
+        ],
+        "over25": 0.7433,
+        "btts": 0.7359,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          9,
+          9
         ]
       },
       "market": null,
