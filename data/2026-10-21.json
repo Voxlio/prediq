@@ -1,0 +1,150 @@
+{
+  "day": "2026-10-21",
+  "updatedAt": "2026-10-20T18:54:36.055Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401915395",
+      "kickoff": "2026-10-21T16:45:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "2572",
+        "name": "Como"
+      },
+      "away": {
+        "id": "360",
+        "name": "Manchester United"
+      },
+      "predicted": {
+        "at": "2026-10-20T18:54:36.055Z",
+        "lambda": [
+          1.867,
+          1.041
+        ],
+        "probs": [
+          0.5604,
+          0.2376,
+          0.202
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1125
+        ],
+        "over25": 0.5559,
+        "btts": 0.5533,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          7,
+          7
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915396",
+      "kickoff": "2026-10-21T16:45:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "166",
+        "name": "Lille"
+      },
+      "away": {
+        "id": "432",
+        "name": "Galatasaray"
+      },
+      "predicted": {
+        "at": "2026-10-20T18:54:36.055Z",
+        "lambda": [
+          1.391,
+          1.229
+        ],
+        "probs": [
+          0.3993,
+          0.2767,
+          0.324
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1319
+        ],
+        "over25": 0.4866,
+        "btts": 0.5389,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          7,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401882870",
+      "kickoff": "2026-10-21T18:00:00.000Z",
+      "league": "esp.1",
+      "home": {
+        "id": "1538",
+        "name": "Levante"
+      },
+      "away": {
+        "id": "93",
+        "name": "Athletic Club"
+      },
+      "predicted": {
+        "at": "2026-10-20T18:54:36.055Z",
+        "lambda": [
+          1.125,
+          1.13
+        ],
+        "probs": [
+          0.3473,
+          0.3031,
+          0.3496
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1413
+        ],
+        "over25": 0.3919,
+        "btts": 0.4651,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          8,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
