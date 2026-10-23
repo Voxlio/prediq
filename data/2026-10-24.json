@@ -1,0 +1,54 @@
+{
+  "day": "2026-10-24",
+  "updatedAt": "2026-10-23T11:02:34.991Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401888269",
+      "kickoff": "2026-10-24T10:30:00.000Z",
+      "league": "tur.1",
+      "home": {
+        "id": "20729",
+        "name": "Eyupspor"
+      },
+      "away": {
+        "id": "6870",
+        "name": "Kasimpasa"
+      },
+      "predicted": {
+        "at": "2026-10-23T11:02:34.991Z",
+        "lambda": [
+          0.604,
+          1.827
+        ],
+        "probs": [
+          0.1103,
+          0.227,
+          0.6627
+        ],
+        "pick": "away",
+        "score": [
+          0,
+          1,
+          0.1548
+        ],
+        "over25": 0.4384,
+        "btts": 0.3864,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          8,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
