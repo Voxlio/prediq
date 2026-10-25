@@ -1,0 +1,294 @@
+{
+  "day": "2026-10-26",
+  "updatedAt": "2026-10-25T20:23:56.437Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401888264",
+      "kickoff": "2026-10-26T16:00:00.000Z",
+      "league": "tur.1",
+      "home": {
+        "id": "1895",
+        "name": "Besiktas"
+      },
+      "away": {
+        "id": "7914",
+        "name": "Istanbul Basaksehir"
+      },
+      "predicted": {
+        "at": "2026-10-25T20:23:56.437Z",
+        "lambda": [
+          1.937,
+          1.316
+        ],
+        "probs": [
+          0.5133,
+          0.2328,
+          0.2539
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1045
+        ],
+        "over25": 0.6311,
+        "btts": 0.6323,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          8,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401888267",
+      "kickoff": "2026-10-26T16:00:00.000Z",
+      "league": "tur.1",
+      "home": {
+        "id": "7656",
+        "name": "Caykur Rizespor"
+      },
+      "away": {
+        "id": "997",
+        "name": "Trabzonspor"
+      },
+      "predicted": {
+        "at": "2026-10-25T20:23:56.437Z",
+        "lambda": [
+          0.759,
+          2.134
+        ],
+        "probs": [
+          0.1151,
+          0.1996,
+          0.6853
+        ],
+        "pick": "away",
+        "score": [
+          0,
+          2,
+          0.1261
+        ],
+        "over25": 0.5524,
+        "btts": 0.4744,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          8,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401888265",
+      "kickoff": "2026-10-26T18:30:00.000Z",
+      "league": "tur.1",
+      "home": {
+        "id": "432",
+        "name": "Galatasaray"
+      },
+      "away": {
+        "id": "436",
+        "name": "Fenerbahce"
+      },
+      "predicted": {
+        "at": "2026-10-25T20:23:56.437Z",
+        "lambda": [
+          1.698,
+          1.831
+        ],
+        "probs": [
+          0.3568,
+          0.2322,
+          0.411
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.0967
+        ],
+        "over25": 0.6846,
+        "btts": 0.6916,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          8,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401885414",
+      "kickoff": "2026-10-26T18:45:00.000Z",
+      "league": "por.1",
+      "home": {
+        "id": "12215",
+        "name": "Santa Clara"
+      },
+      "away": {
+        "id": "1929",
+        "name": "Benfica"
+      },
+      "predicted": {
+        "at": "2026-10-25T20:23:56.437Z",
+        "lambda": [
+          0.772,
+          1.52
+        ],
+        "probs": [
+          0.1829,
+          0.2736,
+          0.5435
+        ],
+        "pick": "away",
+        "score": [
+          0,
+          1,
+          0.1465
+        ],
+        "over25": 0.4018,
+        "btts": 0.4274,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          8,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401876422",
+      "kickoff": "2026-10-26T19:30:00.000Z",
+      "league": "fra.1",
+      "home": {
+        "id": "160",
+        "name": "Paris Saint-Germain"
+      },
+      "away": {
+        "id": "167",
+        "name": "Lyon"
+      },
+      "predicted": {
+        "at": "2026-10-25T20:23:56.437Z",
+        "lambda": [
+          1.562,
+          1.011
+        ],
+        "probs": [
+          0.494,
+          0.268,
+          0.238
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1277
+        ],
+        "over25": 0.4749,
+        "btts": 0.51,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          7,
+          7
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401882828",
+      "kickoff": "2026-10-26T20:00:00.000Z",
+      "league": "esp.1",
+      "home": {
+        "id": "243",
+        "name": "Sevilla"
+      },
+      "away": {
+        "id": "97",
+        "name": "Osasuna"
+      },
+      "predicted": {
+        "at": "2026-10-25T20:23:56.437Z",
+        "lambda": [
+          2.069,
+          1.21
+        ],
+        "probs": [
+          0.5657,
+          0.2216,
+          0.2127
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1
+        ],
+        "over25": 0.6363,
+        "btts": 0.6188,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          9,
+          9
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
