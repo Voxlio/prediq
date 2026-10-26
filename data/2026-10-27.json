@@ -1,0 +1,150 @@
+{
+  "day": "2026-10-27",
+  "updatedAt": "2026-10-26T20:18:21.883Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401874980",
+      "kickoff": "2026-10-27T17:30:00.000Z",
+      "league": "ita.1",
+      "home": {
+        "id": "3997",
+        "name": "Sassuolo"
+      },
+      "away": {
+        "id": "112",
+        "name": "Lazio"
+      },
+      "predicted": {
+        "at": "2026-10-26T20:18:21.883Z",
+        "lambda": [
+          1.072,
+          1.712
+        ],
+        "probs": [
+          0.2305,
+          0.2528,
+          0.5167
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1202
+        ],
+        "over25": 0.5266,
+        "btts": 0.5457,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          8,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401874780",
+      "kickoff": "2026-10-27T19:45:00.000Z",
+      "league": "ita.1",
+      "home": {
+        "id": "104",
+        "name": "AS Roma"
+      },
+      "away": {
+        "id": "2925",
+        "name": "Cagliari"
+      },
+      "predicted": {
+        "at": "2026-10-26T20:18:21.883Z",
+        "lambda": [
+          2.199,
+          0.487
+        ],
+        "probs": [
+          0.7646,
+          0.1719,
+          0.0634
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          0,
+          0.1647
+        ],
+        "over25": 0.5031,
+        "btts": 0.3474,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          8,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401874786",
+      "kickoff": "2026-10-27T19:45:00.000Z",
+      "league": "ita.1",
+      "home": {
+        "id": "239",
+        "name": "Torino"
+      },
+      "away": {
+        "id": "2572",
+        "name": "Como"
+      },
+      "predicted": {
+        "at": "2026-10-26T20:18:21.883Z",
+        "lambda": [
+          0.955,
+          1.872
+        ],
+        "probs": [
+          0.182,
+          0.2355,
+          0.5825
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1122
+        ],
+        "over25": 0.5369,
+        "btts": 0.5269,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          8,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
