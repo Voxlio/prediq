@@ -1,0 +1,534 @@
+{
+  "day": "2026-10-28",
+  "updatedAt": "2026-10-27T21:49:52.805Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401874773",
+      "kickoff": "2026-10-28T17:30:00.000Z",
+      "league": "ita.1",
+      "home": {
+        "id": "17530",
+        "name": "Venezia"
+      },
+      "away": {
+        "id": "110",
+        "name": "Internazionale"
+      },
+      "predicted": {
+        "at": "2026-10-27T21:49:52.805Z",
+        "lambda": [
+          0.858,
+          2.988
+        ],
+        "probs": [
+          0.0733,
+          0.1298,
+          0.7969
+        ],
+        "pick": "away",
+        "score": [
+          0,
+          2,
+          0.0955
+        ],
+        "over25": 0.7381,
+        "btts": 0.5502,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          8,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401874965",
+      "kickoff": "2026-10-28T17:30:00.000Z",
+      "league": "ita.1",
+      "home": {
+        "id": "115",
+        "name": "Parma"
+      },
+      "away": {
+        "id": "118",
+        "name": "Udinese"
+      },
+      "predicted": {
+        "at": "2026-10-27T21:49:52.805Z",
+        "lambda": [
+          1.007,
+          1.141
+        ],
+        "probs": [
+          0.3104,
+          0.3107,
+          0.3789
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1421
+        ],
+        "over25": 0.3633,
+        "btts": 0.4399,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          8,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401874993",
+      "kickoff": "2026-10-28T17:30:00.000Z",
+      "league": "ita.1",
+      "home": {
+        "id": "103",
+        "name": "AC Milan"
+      },
+      "away": {
+        "id": "107",
+        "name": "Bologna"
+      },
+      "predicted": {
+        "at": "2026-10-27T21:49:52.805Z",
+        "lambda": [
+          1.615,
+          0.757
+        ],
+        "probs": [
+          0.5718,
+          0.261,
+          0.1671
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          0,
+          0.1438
+        ],
+        "over25": 0.423,
+        "btts": 0.4323,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          8,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401874799",
+      "kickoff": "2026-10-28T19:45:00.000Z",
+      "league": "ita.1",
+      "home": {
+        "id": "4007",
+        "name": "Monza"
+      },
+      "away": {
+        "id": "114",
+        "name": "Napoli"
+      },
+      "predicted": {
+        "at": "2026-10-27T21:49:52.805Z",
+        "lambda": [
+          1.291,
+          2.049
+        ],
+        "probs": [
+          0.2325,
+          0.224,
+          0.5435
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.0994
+        ],
+        "over25": 0.6485,
+        "btts": 0.6372,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          8,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401874988",
+      "kickoff": "2026-10-28T19:45:00.000Z",
+      "league": "ita.1",
+      "home": {
+        "id": "3263",
+        "name": "Genoa"
+      },
+      "away": {
+        "id": "111",
+        "name": "Juventus"
+      },
+      "predicted": {
+        "at": "2026-10-27T21:49:52.805Z",
+        "lambda": [
+          0.793,
+          1.486
+        ],
+        "probs": [
+          0.1928,
+          0.2781,
+          0.5291
+        ],
+        "pick": "away",
+        "score": [
+          0,
+          1,
+          0.1449
+        ],
+        "over25": 0.3983,
+        "btts": 0.4308,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          8,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401878351",
+      "kickoff": "2026-10-28T19:45:00.000Z",
+      "league": "sco.1",
+      "home": {
+        "id": "250",
+        "name": "St Mirren"
+      },
+      "away": {
+        "id": "258",
+        "name": "Hibernian"
+      },
+      "predicted": {
+        "at": "2026-10-27T21:49:52.805Z",
+        "lambda": [
+          1.005,
+          1.349
+        ],
+        "probs": [
+          0.2714,
+          0.29,
+          0.4385
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1365
+        ],
+        "over25": 0.4182,
+        "btts": 0.4772,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          10,
+          10
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401878352",
+      "kickoff": "2026-10-28T19:45:00.000Z",
+      "league": "sco.1",
+      "home": {
+        "id": "267",
+        "name": "St Johnstone"
+      },
+      "away": {
+        "id": "266",
+        "name": "Motherwell"
+      },
+      "predicted": {
+        "at": "2026-10-27T21:49:52.805Z",
+        "lambda": [
+          1.236,
+          1.267
+        ],
+        "probs": [
+          0.35,
+          0.2852,
+          0.3648
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1359
+        ],
+        "over25": 0.4568,
+        "btts": 0.5172,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          10,
+          10
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401878354",
+      "kickoff": "2026-10-28T19:45:00.000Z",
+      "league": "sco.1",
+      "home": {
+        "id": "261",
+        "name": "Dundee"
+      },
+      "away": {
+        "id": "260",
+        "name": "Kilmarnock"
+      },
+      "predicted": {
+        "at": "2026-10-27T21:49:52.805Z",
+        "lambda": [
+          2.03,
+          1.119
+        ],
+        "probs": [
+          0.5783,
+          0.2235,
+          0.1982
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1033
+        ],
+        "over25": 0.6095,
+        "btts": 0.5909,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          10,
+          10
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401878355",
+      "kickoff": "2026-10-28T19:45:00.000Z",
+      "league": "sco.1",
+      "home": {
+        "id": "256",
+        "name": "Celtic"
+      },
+      "away": {
+        "id": "264",
+        "name": "Dundee United"
+      },
+      "predicted": {
+        "at": "2026-10-27T21:49:52.805Z",
+        "lambda": [
+          2.478,
+          0.724
+        ],
+        "probs": [
+          0.7534,
+          0.1625,
+          0.0841
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          0,
+          0.1249
+        ],
+        "over25": 0.6205,
+        "btts": 0.4764,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          10,
+          10
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401878356",
+      "kickoff": "2026-10-28T19:45:00.000Z",
+      "league": "sco.1",
+      "home": {
+        "id": "263",
+        "name": "Aberdeen"
+      },
+      "away": {
+        "id": "254",
+        "name": "Falkirk"
+      },
+      "predicted": {
+        "at": "2026-10-27T21:49:52.805Z",
+        "lambda": [
+          1.263,
+          1.229
+        ],
+        "probs": [
+          0.3652,
+          0.286,
+          0.3488
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1362
+        ],
+        "over25": 0.454,
+        "btts": 0.5149,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          10,
+          10
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401878353",
+      "kickoff": "2026-10-28T20:00:00.000Z",
+      "league": "sco.1",
+      "home": {
+        "id": "262",
+        "name": "Heart of Midlothian"
+      },
+      "away": {
+        "id": "257",
+        "name": "Rangers"
+      },
+      "predicted": {
+        "at": "2026-10-27T21:49:52.805Z",
+        "lambda": [
+          1.296,
+          1.475
+        ],
+        "probs": [
+          0.3255,
+          0.2675,
+          0.407
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1268
+        ],
+        "over25": 0.5237,
+        "btts": 0.5674,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          11,
+          9
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
