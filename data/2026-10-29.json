@@ -1,0 +1,102 @@
+{
+  "day": "2026-10-29",
+  "updatedAt": "2026-10-28T20:04:05.006Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401874976",
+      "kickoff": "2026-10-29T17:30:00.000Z",
+      "league": "ita.1",
+      "home": {
+        "id": "4057",
+        "name": "Frosinone"
+      },
+      "away": {
+        "id": "113",
+        "name": "Lecce"
+      },
+      "predicted": {
+        "at": "2026-10-28T20:04:05.006Z",
+        "lambda": [
+          2.119,
+          1.069
+        ],
+        "probs": [
+          0.6084,
+          0.2143,
+          0.1773
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.0991
+        ],
+        "over25": 0.6175,
+        "btts": 0.5834,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          8,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401874969",
+      "kickoff": "2026-10-29T19:45:00.000Z",
+      "league": "ita.1",
+      "home": {
+        "id": "109",
+        "name": "Fiorentina"
+      },
+      "away": {
+        "id": "105",
+        "name": "Atalanta"
+      },
+      "predicted": {
+        "at": "2026-10-28T20:04:05.006Z",
+        "lambda": [
+          1.449,
+          1.873
+        ],
+        "probs": [
+          0.2936,
+          0.2361,
+          0.4704
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1038
+        ],
+        "over25": 0.6449,
+        "btts": 0.6534,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          8,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
