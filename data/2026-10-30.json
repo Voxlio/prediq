@@ -1,0 +1,150 @@
+{
+  "day": "2026-10-30",
+  "updatedAt": "2026-10-29T18:02:11.568Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401888259",
+      "kickoff": "2026-10-30T17:00:00.000Z",
+      "league": "tur.1",
+      "home": {
+        "id": "7648",
+        "name": "Konyaspor"
+      },
+      "away": {
+        "id": "432",
+        "name": "Galatasaray"
+      },
+      "predicted": {
+        "at": "2026-10-29T18:02:11.568Z",
+        "lambda": [
+          0.823,
+          1.681
+        ],
+        "probs": [
+          0.175,
+          0.2541,
+          0.5709
+        ],
+        "pick": "away",
+        "score": [
+          0,
+          1,
+          0.1307
+        ],
+        "over25": 0.4572,
+        "btts": 0.4632,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          9,
+          9
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401876416",
+      "kickoff": "2026-10-30T18:00:00.000Z",
+      "league": "fra.1",
+      "home": {
+        "id": "2502",
+        "name": "Nice"
+      },
+      "away": {
+        "id": "169",
+        "name": "Stade Rennais"
+      },
+      "predicted": {
+        "at": "2026-10-29T18:02:11.568Z",
+        "lambda": [
+          1.347,
+          1.943
+        ],
+        "probs": [
+          0.2598,
+          0.2322,
+          0.508
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1034
+        ],
+        "over25": 0.6385,
+        "btts": 0.6397,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          8,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401876421",
+      "kickoff": "2026-10-30T18:00:00.000Z",
+      "league": "fra.1",
+      "home": {
+        "id": "3236",
+        "name": "Le Havre AC"
+      },
+      "away": {
+        "id": "160",
+        "name": "Paris Saint-Germain"
+      },
+      "predicted": {
+        "at": "2026-10-29T18:02:11.568Z",
+        "lambda": [
+          0.681,
+          2.257
+        ],
+        "probs": [
+          0.0917,
+          0.1814,
+          0.727
+        ],
+        "pick": "away",
+        "score": [
+          0,
+          2,
+          0.135
+        ],
+        "over25": 0.5627,
+        "btts": 0.447,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          8,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
