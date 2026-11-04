@@ -1,0 +1,150 @@
+{
+  "day": "2026-11-05",
+  "updatedAt": "2026-11-04T19:23:09.426Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401915526",
+      "kickoff": "2026-11-05T17:45:00.000Z",
+      "league": "uefa.europa",
+      "home": {
+        "id": "384",
+        "name": "Crystal Palace"
+      },
+      "away": {
+        "id": "7911",
+        "name": "TSG Hoffenheim"
+      },
+      "predicted": {
+        "at": "2026-11-04T19:23:09.426Z",
+        "lambda": [
+          1.38,
+          1.961
+        ],
+        "probs": [
+          0.2645,
+          0.2307,
+          0.5048
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1016
+        ],
+        "over25": 0.6487,
+        "btts": 0.6488,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          9,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915537",
+      "kickoff": "2026-11-05T17:45:00.000Z",
+      "league": "uefa.europa",
+      "home": {
+        "id": "89",
+        "name": "Real Sociedad"
+      },
+      "away": {
+        "id": "167",
+        "name": "Lyon"
+      },
+      "predicted": {
+        "at": "2026-11-04T19:23:09.426Z",
+        "lambda": [
+          1.463,
+          1.667
+        ],
+        "probs": [
+          0.3318,
+          0.2487,
+          0.4195
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.113
+        ],
+        "over25": 0.6054,
+        "btts": 0.6299,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          11,
+          9
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915825",
+      "kickoff": "2026-11-05T17:45:00.000Z",
+      "league": "uefa.europa.conf",
+      "home": {
+        "id": "997",
+        "name": "Trabzonspor"
+      },
+      "away": {
+        "id": "126",
+        "name": "SC Freiburg"
+      },
+      "predicted": {
+        "at": "2026-11-04T19:23:09.426Z",
+        "lambda": [
+          1.881,
+          1.243
+        ],
+        "probs": [
+          0.5169,
+          0.2374,
+          0.2457
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.109
+        ],
+        "over25": 0.6039,
+        "btts": 0.6091,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          10,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
