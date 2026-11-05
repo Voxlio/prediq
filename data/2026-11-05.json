@@ -1,6 +1,6 @@
 {
   "day": "2026-11-05",
-  "updatedAt": "2026-11-04T19:23:09.426Z",
+  "updatedAt": "2026-11-05T01:17:49.945Z",
   "records": [
     {
       "v": 1,
@@ -137,6 +137,246 @@
         "seen": [
           10,
           8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915522",
+      "kickoff": "2026-11-05T20:00:00.000Z",
+      "league": "uefa.europa",
+      "home": {
+        "id": "256",
+        "name": "Celtic"
+      },
+      "away": {
+        "id": "1895",
+        "name": "Besiktas"
+      },
+      "predicted": {
+        "at": "2026-11-05T01:17:49.945Z",
+        "lambda": [
+          1.866,
+          1.366
+        ],
+        "probs": [
+          0.4865,
+          0.2377,
+          0.2758
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1067
+        ],
+        "over25": 0.6268,
+        "btts": 0.6357,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          12,
+          10
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915529",
+      "kickoff": "2026-11-05T20:00:00.000Z",
+      "league": "uefa.europa",
+      "home": {
+        "id": "140",
+        "name": "AZ Alkmaar"
+      },
+      "away": {
+        "id": "111",
+        "name": "Juventus"
+      },
+      "predicted": {
+        "at": "2026-11-05T01:17:49.945Z",
+        "lambda": [
+          1.065,
+          1.317
+        ],
+        "probs": [
+          0.2935,
+          0.2906,
+          0.4159
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1373
+        ],
+        "over25": 0.4255,
+        "btts": 0.4874,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          11,
+          10
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915531",
+      "kickoff": "2026-11-05T20:00:00.000Z",
+      "league": "uefa.europa",
+      "home": {
+        "id": "85",
+        "name": "Celta Vigo"
+      },
+      "away": {
+        "id": "5807",
+        "name": "Union St.-Gilloise"
+      },
+      "predicted": {
+        "at": "2026-11-05T01:17:49.945Z",
+        "lambda": [
+          0.761,
+          1.375
+        ],
+        "probs": [
+          0.1998,
+          0.293,
+          0.5072
+        ],
+        "pick": "away",
+        "score": [
+          0,
+          1,
+          0.155
+        ],
+        "over25": 0.3599,
+        "btts": 0.4054,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          11,
+          10
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915533",
+      "kickoff": "2026-11-05T20:00:00.000Z",
+      "league": "uefa.europa",
+      "home": {
+        "id": "131",
+        "name": "Bayer Leverkusen"
+      },
+      "away": {
+        "id": "176",
+        "name": "Marseille"
+      },
+      "predicted": {
+        "at": "2026-11-05T01:17:49.945Z",
+        "lambda": [
+          2.124,
+          1.976
+        ],
+        "probs": [
+          0.4221,
+          0.2121,
+          0.3658
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          1,
+          0.0739
+        ],
+        "over25": 0.7762,
+        "btts": 0.7626,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          8,
+          9
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915821",
+      "kickoff": "2026-11-05T20:00:00.000Z",
+      "league": "uefa.europa.conf",
+      "home": {
+        "id": "2922",
+        "name": "Getafe"
+      },
+      "away": {
+        "id": "331",
+        "name": "Brighton & Hove Albion"
+      },
+      "predicted": {
+        "at": "2026-11-05T01:17:49.945Z",
+        "lambda": [
+          0.567,
+          1.721
+        ],
+        "probs": [
+          0.1115,
+          0.2393,
+          0.6491
+        ],
+        "pick": "away",
+        "score": [
+          0,
+          1,
+          0.1686
+        ],
+        "over25": 0.4009,
+        "btts": 0.3615,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          11,
+          9
         ]
       },
       "market": null,
