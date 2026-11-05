@@ -1,0 +1,150 @@
+{
+  "day": "2026-11-06",
+  "updatedAt": "2026-11-05T19:30:19.031Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401888256",
+      "kickoff": "2026-11-06T17:00:00.000Z",
+      "league": "tur.1",
+      "home": {
+        "id": "20070",
+        "name": "Gaziantep FK"
+      },
+      "away": {
+        "id": "6870",
+        "name": "Kasimpasa"
+      },
+      "predicted": {
+        "at": "2026-11-05T19:30:19.031Z",
+        "lambda": [
+          1.03,
+          1.457
+        ],
+        "probs": [
+          0.2597,
+          0.2784,
+          0.4619
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1323
+        ],
+        "over25": 0.4529,
+        "btts": 0.5007,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          10,
+          10
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401875556",
+      "kickoff": "2026-11-06T19:00:00.000Z",
+      "league": "ned.1",
+      "home": {
+        "id": "156",
+        "name": "Willem II"
+      },
+      "away": {
+        "id": "2565",
+        "name": "PEC Zwolle"
+      },
+      "predicted": {
+        "at": "2026-11-05T19:30:19.031Z",
+        "lambda": [
+          1.446,
+          1.8
+        ],
+        "probs": [
+          0.3048,
+          0.2409,
+          0.4543
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1074
+        ],
+        "over25": 0.6295,
+        "btts": 0.6441,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          11,
+          11
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401884739",
+      "kickoff": "2026-11-06T19:30:00.000Z",
+      "league": "ger.1",
+      "home": {
+        "id": "127",
+        "name": "Hamburg SV"
+      },
+      "away": {
+        "id": "268",
+        "name": "Borussia Mönchengladbach"
+      },
+      "predicted": {
+        "at": "2026-11-05T19:30:19.031Z",
+        "lambda": [
+          1.452,
+          1.346
+        ],
+        "probs": [
+          0.3907,
+          0.2668,
+          0.3425
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1262
+        ],
+        "over25": 0.53,
+        "btts": 0.5736,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          8,
+          8
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
