@@ -1,0 +1,150 @@
+{
+  "day": "2026-11-20",
+  "updatedAt": "2026-11-19T19:57:42.535Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401884736",
+      "kickoff": "2026-11-20T19:30:00.000Z",
+      "league": "ger.1",
+      "home": {
+        "id": "132",
+        "name": "Bayern Munich"
+      },
+      "away": {
+        "id": "122",
+        "name": "FC Cologne"
+      },
+      "predicted": {
+        "at": "2026-11-19T19:57:42.535Z",
+        "lambda": [
+          4.108,
+          0.687
+        ],
+        "probs": [
+          0.9195,
+          0.0576,
+          0.0229
+        ],
+        "pick": "home",
+        "score": [
+          4,
+          0,
+          0.0991
+        ],
+        "over25": 0.8556,
+        "btts": 0.49,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          9,
+          9
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401876395",
+      "kickoff": "2026-11-20T19:45:00.000Z",
+      "league": "fra.1",
+      "home": {
+        "id": "170",
+        "name": "Troyes"
+      },
+      "away": {
+        "id": "3236",
+        "name": "Le Havre AC"
+      },
+      "predicted": {
+        "at": "2026-11-19T19:57:42.535Z",
+        "lambda": [
+          1.37,
+          0.961
+        ],
+        "probs": [
+          0.4549,
+          0.2893,
+          0.2558
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1357
+        ],
+        "over25": 0.4122,
+        "btts": 0.4683,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          10,
+          10
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401878937",
+      "kickoff": "2026-11-20T19:45:00.000Z",
+      "league": "bel.1",
+      "home": {
+        "id": "3610",
+        "name": "Cercle Brugge KSV"
+      },
+      "away": {
+        "id": "606",
+        "name": "KVC Westerlo"
+      },
+      "predicted": {
+        "at": "2026-11-19T19:57:42.535Z",
+        "lambda": [
+          2.461,
+          2.117
+        ],
+        "probs": [
+          0.4636,
+          0.1967,
+          0.3396
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          2,
+          0.0698
+        ],
+        "over25": 0.8349,
+        "btts": 0.8077,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          11,
+          11
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
