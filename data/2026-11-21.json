@@ -1,0 +1,54 @@
+{
+  "day": "2026-11-21",
+  "updatedAt": "2026-11-20T10:55:18.750Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401888247",
+      "kickoff": "2026-11-21T10:30:00.000Z",
+      "league": "tur.1",
+      "home": {
+        "id": "996",
+        "name": "Genclerbirligi"
+      },
+      "away": {
+        "id": "20070",
+        "name": "Gaziantep FK"
+      },
+      "predicted": {
+        "at": "2026-11-20T10:55:18.750Z",
+        "lambda": [
+          1.644,
+          1.006
+        ],
+        "probs": [
+          0.5159,
+          0.2597,
+          0.2244
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1239
+        ],
+        "over25": 0.494,
+        "btts": 0.5187,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          11,
+          11
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
