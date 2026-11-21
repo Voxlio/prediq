@@ -1,0 +1,54 @@
+{
+  "day": "2026-11-22",
+  "updatedAt": "2026-11-21T10:39:20.804Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401888243",
+      "kickoff": "2026-11-22T10:30:00.000Z",
+      "league": "tur.1",
+      "home": {
+        "id": "19267",
+        "name": "Erzurum BB"
+      },
+      "away": {
+        "id": "789",
+        "name": "Goztepe"
+      },
+      "predicted": {
+        "at": "2026-11-21T10:39:20.804Z",
+        "lambda": [
+          1.007,
+          1.68
+        ],
+        "probs": [
+          0.2194,
+          0.256,
+          0.5247
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1221
+        ],
+        "over25": 0.5033,
+        "btts": 0.5233,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          11,
+          11
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
