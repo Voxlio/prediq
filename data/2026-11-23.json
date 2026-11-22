@@ -1,0 +1,54 @@
+{
+  "day": "2026-11-23",
+  "updatedAt": "2026-11-22T19:03:08.922Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401888370",
+      "kickoff": "2026-11-23T17:00:00.000Z",
+      "league": "tur.1",
+      "home": {
+        "id": "7914",
+        "name": "Istanbul Basaksehir"
+      },
+      "away": {
+        "id": "132334",
+        "name": "Çorum FK"
+      },
+      "predicted": {
+        "at": "2026-11-22T19:03:08.922Z",
+        "lambda": [
+          2.494,
+          1.27
+        ],
+        "probs": [
+          0.6367,
+          0.1887,
+          0.1746
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          1,
+          0.0916
+        ],
+        "over25": 0.7252,
+        "btts": 0.6641,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          11,
+          11
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
