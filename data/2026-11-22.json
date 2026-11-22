@@ -1,6 +1,6 @@
 {
   "day": "2026-11-22",
-  "updatedAt": "2026-11-21T18:42:53.141Z",
+  "updatedAt": "2026-11-22T00:57:33.044Z",
   "records": [
     {
       "v": 1,
@@ -1241,6 +1241,150 @@
         "seen": [
           11,
           11
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401875001",
+      "kickoff": "2026-11-22T19:45:00.000Z",
+      "league": "ita.1",
+      "home": {
+        "id": "105",
+        "name": "Atalanta"
+      },
+      "away": {
+        "id": "110",
+        "name": "Internazionale"
+      },
+      "predicted": {
+        "at": "2026-11-22T00:57:33.044Z",
+        "lambda": [
+          1.205,
+          2.496
+        ],
+        "probs": [
+          0.1628,
+          0.1865,
+          0.6508
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          2,
+          0.0927
+        ],
+        "over25": 0.7146,
+        "btts": 0.647,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          11,
+          11
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401876400",
+      "kickoff": "2026-11-22T19:45:00.000Z",
+      "league": "fra.1",
+      "home": {
+        "id": "176",
+        "name": "Marseille"
+      },
+      "away": {
+        "id": "2697",
+        "name": "Le Mans"
+      },
+      "predicted": {
+        "at": "2026-11-22T00:57:33.044Z",
+        "lambda": [
+          2.675,
+          0.987
+        ],
+        "probs": [
+          0.7273,
+          0.162,
+          0.1108
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          0,
+          0.0919
+        ],
+        "over25": 0.708,
+        "btts": 0.5882,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          10,
+          10
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401882803",
+      "kickoff": "2026-11-22T20:00:00.000Z",
+      "league": "esp.1",
+      "home": {
+        "id": "2922",
+        "name": "Getafe"
+      },
+      "away": {
+        "id": "1068",
+        "name": "Atlético Madrid"
+      },
+      "predicted": {
+        "at": "2026-11-22T00:57:33.044Z",
+        "lambda": [
+          0.534,
+          1.51
+        ],
+        "probs": [
+          0.1234,
+          0.2695,
+          0.6071
+        ],
+        "pick": "away",
+        "score": [
+          0,
+          1,
+          0.1893
+        ],
+        "over25": 0.3353,
+        "btts": 0.3287,
+        "conf": {
+          "level": 4,
+          "word": "high"
+        },
+        "seen": [
+          12,
+          12
         ]
       },
       "market": null,
