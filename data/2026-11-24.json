@@ -1,0 +1,774 @@
+{
+  "day": "2026-11-24",
+  "updatedAt": "2026-11-23T23:24:14.262Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401915300",
+      "kickoff": "2026-11-24T17:45:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "432",
+        "name": "Galatasaray"
+      },
+      "away": {
+        "id": "362",
+        "name": "Aston Villa"
+      },
+      "predicted": {
+        "at": "2026-11-23T23:24:14.262Z",
+        "lambda": [
+          2.137,
+          1.375
+        ],
+        "probs": [
+          0.544,
+          0.2178,
+          0.2381
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          1,
+          0.0937
+        ],
+        "over25": 0.6813,
+        "btts": 0.6642,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          12,
+          11
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401878348",
+      "kickoff": "2026-11-24T19:45:00.000Z",
+      "league": "sco.1",
+      "home": {
+        "id": "258",
+        "name": "Hibernian"
+      },
+      "away": {
+        "id": "261",
+        "name": "Dundee"
+      },
+      "predicted": {
+        "at": "2026-11-23T23:24:14.262Z",
+        "lambda": [
+          1.872,
+          1.16
+        ],
+        "probs": [
+          0.5336,
+          0.2381,
+          0.2283
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.111
+        ],
+        "over25": 0.584,
+        "btts": 0.5873,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          13,
+          13
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401880142",
+      "kickoff": "2026-11-24T19:45:00.000Z",
+      "league": "eng.2",
+      "home": {
+        "id": "398",
+        "name": "Sheffield United"
+      },
+      "away": {
+        "id": "376",
+        "name": "Southampton"
+      },
+      "predicted": {
+        "at": "2026-11-23T23:24:14.262Z",
+        "lambda": [
+          1.303,
+          1.651
+        ],
+        "probs": [
+          0.296,
+          0.2546,
+          0.4494
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1189
+        ],
+        "over25": 0.5664,
+        "btts": 0.5953,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          16,
+          16
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401880143",
+      "kickoff": "2026-11-24T19:45:00.000Z",
+      "league": "eng.2",
+      "home": {
+        "id": "385",
+        "name": "Portsmouth"
+      },
+      "away": {
+        "id": "371",
+        "name": "West Ham United"
+      },
+      "predicted": {
+        "at": "2026-11-23T23:24:14.262Z",
+        "lambda": [
+          1.532,
+          1.431
+        ],
+        "probs": [
+          0.3932,
+          0.258,
+          0.3488
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1201
+        ],
+        "over25": 0.5684,
+        "btts": 0.6032,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          16,
+          16
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401880144",
+      "kickoff": "2026-11-24T19:45:00.000Z",
+      "league": "eng.2",
+      "home": {
+        "id": "381",
+        "name": "Norwich City"
+      },
+      "away": {
+        "id": "334",
+        "name": "Queens Park Rangers"
+      },
+      "predicted": {
+        "at": "2026-11-23T23:24:14.262Z",
+        "lambda": [
+          2.106,
+          1.321
+        ],
+        "probs": [
+          0.5491,
+          0.2198,
+          0.2311
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.0958
+        ],
+        "over25": 0.6654,
+        "btts": 0.6493,
+        "conf": {
+          "level": 4,
+          "word": "high"
+        },
+        "seen": [
+          16,
+          16
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401880145",
+      "kickoff": "2026-11-24T19:45:00.000Z",
+      "league": "eng.2",
+      "home": {
+        "id": "369",
+        "name": "Middlesbrough"
+      },
+      "away": {
+        "id": "318",
+        "name": "Swansea City"
+      },
+      "predicted": {
+        "at": "2026-11-23T23:24:14.262Z",
+        "lambda": [
+          1.978,
+          1.055
+        ],
+        "probs": [
+          0.5821,
+          0.227,
+          0.1908
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1065
+        ],
+        "over25": 0.5842,
+        "btts": 0.5676,
+        "conf": {
+          "level": 4,
+          "word": "high"
+        },
+        "seen": [
+          16,
+          16
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401880146",
+      "kickoff": "2026-11-24T19:45:00.000Z",
+      "league": "eng.2",
+      "home": {
+        "id": "372",
+        "name": "Charlton Athletic"
+      },
+      "away": {
+        "id": "314",
+        "name": "Lincoln City"
+      },
+      "predicted": {
+        "at": "2026-11-23T23:24:14.262Z",
+        "lambda": [
+          1.178,
+          1.007
+        ],
+        "probs": [
+          0.3894,
+          0.3071,
+          0.3035
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1414
+        ],
+        "over25": 0.3732,
+        "btts": 0.4473,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          16,
+          16
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401880147",
+      "kickoff": "2026-11-24T19:45:00.000Z",
+      "league": "eng.2",
+      "home": {
+        "id": "347",
+        "name": "Cardiff City"
+      },
+      "away": {
+        "id": "394",
+        "name": "Preston North End"
+      },
+      "predicted": {
+        "at": "2026-11-23T23:24:14.262Z",
+        "lambda": [
+          2.079,
+          1.229
+        ],
+        "probs": [
+          0.5636,
+          0.221,
+          0.2154
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.0991
+        ],
+        "over25": 0.6422,
+        "btts": 0.6246,
+        "conf": {
+          "level": 4,
+          "word": "high"
+        },
+        "seen": [
+          16,
+          16
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401880148",
+      "kickoff": "2026-11-24T19:45:00.000Z",
+      "league": "eng.2",
+      "home": {
+        "id": "333",
+        "name": "Bristol City"
+      },
+      "away": {
+        "id": "352",
+        "name": "Wrexham"
+      },
+      "predicted": {
+        "at": "2026-11-23T23:24:14.262Z",
+        "lambda": [
+          1.048,
+          1.374
+        ],
+        "probs": [
+          0.2786,
+          0.286,
+          0.4354
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1355
+        ],
+        "over25": 0.4359,
+        "btts": 0.4926,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          16,
+          16
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401878345",
+      "kickoff": "2026-11-24T20:00:00.000Z",
+      "league": "sco.1",
+      "home": {
+        "id": "257",
+        "name": "Rangers"
+      },
+      "away": {
+        "id": "263",
+        "name": "Aberdeen"
+      },
+      "predicted": {
+        "at": "2026-11-23T23:24:14.262Z",
+        "lambda": [
+          2.398,
+          0.723
+        ],
+        "probs": [
+          0.7407,
+          0.1701,
+          0.0891
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          0,
+          0.1268
+        ],
+        "over25": 0.6034,
+        "btts": 0.4727,
+        "conf": {
+          "level": 4,
+          "word": "high"
+        },
+        "seen": [
+          12,
+          13
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401880141",
+      "kickoff": "2026-11-24T20:00:00.000Z",
+      "league": "eng.2",
+      "home": {
+        "id": "380",
+        "name": "Wolverhampton Wanderers"
+      },
+      "away": {
+        "id": "374",
+        "name": "Derby County"
+      },
+      "predicted": {
+        "at": "2026-11-23T23:24:14.262Z",
+        "lambda": [
+          1.903,
+          0.982
+        ],
+        "probs": [
+          0.5829,
+          0.2329,
+          0.1842
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1106
+        ],
+        "over25": 0.5506,
+        "btts": 0.5384,
+        "conf": {
+          "level": 4,
+          "word": "high"
+        },
+        "seen": [
+          16,
+          16
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915294",
+      "kickoff": "2026-11-24T20:00:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "142",
+        "name": "Feyenoord Rotterdam"
+      },
+      "away": {
+        "id": "437",
+        "name": "FC Porto"
+      },
+      "predicted": {
+        "at": "2026-11-23T23:24:14.262Z",
+        "lambda": [
+          0.96,
+          2.093
+        ],
+        "probs": [
+          0.1579,
+          0.2132,
+          0.6289
+        ],
+        "pick": "away",
+        "score": [
+          0,
+          2,
+          0.1035
+        ],
+        "over25": 0.5885,
+        "btts": 0.5466,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          13,
+          11
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915295",
+      "kickoff": "2026-11-24T20:00:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "359",
+        "name": "Arsenal"
+      },
+      "away": {
+        "id": "124",
+        "name": "Borussia Dortmund"
+      },
+      "predicted": {
+        "at": "2026-11-23T23:24:14.262Z",
+        "lambda": [
+          1.077,
+          0.713
+        ],
+        "probs": [
+          0.4304,
+          0.3374,
+          0.2322
+        ],
+        "pick": "home",
+        "score": [
+          0,
+          0,
+          0.1748
+        ],
+        "over25": 0.2665,
+        "btts": 0.3437,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          11,
+          10
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915298",
+      "kickoff": "2026-11-24T20:00:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "86",
+        "name": "Real Madrid"
+      },
+      "away": {
+        "id": "148",
+        "name": "PSV Eindhoven"
+      },
+      "predicted": {
+        "at": "2026-11-23T23:24:14.262Z",
+        "lambda": [
+          2.37,
+          1.368
+        ],
+        "probs": [
+          0.5926,
+          0.2006,
+          0.2069
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          1,
+          0.0915
+        ],
+        "over25": 0.7208,
+        "btts": 0.6803,
+        "conf": {
+          "level": 4,
+          "word": "high"
+        },
+        "seen": [
+          13,
+          13
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915299",
+      "kickoff": "2026-11-24T20:00:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "11420",
+        "name": "RB Leipzig"
+      },
+      "away": {
+        "id": "175",
+        "name": "Lens"
+      },
+      "predicted": {
+        "at": "2026-11-23T23:24:14.262Z",
+        "lambda": [
+          2.414,
+          1.412
+        ],
+        "probs": [
+          0.5916,
+          0.1982,
+          0.2102
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          1,
+          0.0897
+        ],
+        "over25": 0.7352,
+        "btts": 0.6932,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          10,
+          11
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915379",
+      "kickoff": "2026-11-24T20:00:00.000Z",
+      "league": "uefa.champions",
+      "home": {
+        "id": "382",
+        "name": "Manchester City"
+      },
+      "away": {
+        "id": "114",
+        "name": "Napoli"
+      },
+      "predicted": {
+        "at": "2026-11-23T23:24:14.262Z",
+        "lambda": [
+          1.592,
+          1.247
+        ],
+        "probs": [
+          0.4471,
+          0.2606,
+          0.2923
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.1231
+        ],
+        "over25": 0.5397,
+        "btts": 0.5745,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          11,
+          12
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
