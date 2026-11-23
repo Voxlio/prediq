@@ -1,6 +1,6 @@
 {
   "day": "2026-11-23",
-  "updatedAt": "2026-11-22T19:03:08.922Z",
+  "updatedAt": "2026-11-23T01:24:11.279Z",
   "records": [
     {
       "v": 1,
@@ -41,6 +41,150 @@
         "seen": [
           11,
           11
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401875009",
+      "kickoff": "2026-11-23T19:45:00.000Z",
+      "league": "ita.1",
+      "home": {
+        "id": "4007",
+        "name": "Monza"
+      },
+      "away": {
+        "id": "109",
+        "name": "Fiorentina"
+      },
+      "predicted": {
+        "at": "2026-11-23T01:24:11.279Z",
+        "lambda": [
+          1.751,
+          1.898
+        ],
+        "probs": [
+          0.3566,
+          0.2275,
+          0.4159
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.0916
+        ],
+        "over25": 0.7059,
+        "btts": 0.7078,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          11,
+          11
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401879237",
+      "kickoff": "2026-11-23T20:00:00.000Z",
+      "league": "eng.1",
+      "home": {
+        "id": "337",
+        "name": "Brentford"
+      },
+      "away": {
+        "id": "368",
+        "name": "Everton"
+      },
+      "predicted": {
+        "at": "2026-11-23T01:24:11.279Z",
+        "lambda": [
+          1.411,
+          0.947
+        ],
+        "probs": [
+          0.4696,
+          0.2853,
+          0.2451
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.134
+        ],
+        "over25": 0.4192,
+        "btts": 0.4703,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          10,
+          10
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401882802",
+      "kickoff": "2026-11-23T20:00:00.000Z",
+      "league": "esp.1",
+      "home": {
+        "id": "1538",
+        "name": "Levante"
+      },
+      "away": {
+        "id": "3751",
+        "name": "Elche"
+      },
+      "predicted": {
+        "at": "2026-11-23T01:24:11.279Z",
+        "lambda": [
+          1.476,
+          1.288
+        ],
+        "probs": [
+          0.409,
+          0.2678,
+          0.3232
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.127
+        ],
+        "over25": 0.522,
+        "btts": 0.5659,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          12,
+          12
         ]
       },
       "market": null,
