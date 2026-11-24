@@ -1,0 +1,150 @@
+{
+  "day": "2026-11-25",
+  "updatedAt": "2026-11-24T19:56:14.262Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401880137",
+      "kickoff": "2026-11-25T19:45:00.000Z",
+      "league": "eng.2",
+      "home": {
+        "id": "395",
+        "name": "Watford"
+      },
+      "away": {
+        "id": "365",
+        "name": "Blackburn Rovers"
+      },
+      "predicted": {
+        "at": "2026-11-24T19:56:14.262Z",
+        "lambda": [
+          1.068,
+          1.348
+        ],
+        "probs": [
+          0.2886,
+          0.2876,
+          0.4239
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1362
+        ],
+        "over25": 0.4344,
+        "btts": 0.4935,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          16,
+          16
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401880139",
+      "kickoff": "2026-11-25T19:45:00.000Z",
+      "league": "eng.2",
+      "home": {
+        "id": "379",
+        "name": "Burnley"
+      },
+      "away": {
+        "id": "392",
+        "name": "Birmingham City"
+      },
+      "predicted": {
+        "at": "2026-11-24T19:56:14.262Z",
+        "lambda": [
+          1.11,
+          2.043
+        ],
+        "probs": [
+          0.1948,
+          0.2222,
+          0.5831
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1027
+        ],
+        "over25": 0.6101,
+        "btts": 0.5893,
+        "conf": {
+          "level": 4,
+          "word": "high"
+        },
+        "seen": [
+          16,
+          16
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401880140",
+      "kickoff": "2026-11-25T19:45:00.000Z",
+      "league": "eng.2",
+      "home": {
+        "id": "358",
+        "name": "Bolton Wanderers"
+      },
+      "away": {
+        "id": "383",
+        "name": "West Bromwich Albion"
+      },
+      "predicted": {
+        "at": "2026-11-24T19:56:14.262Z",
+        "lambda": [
+          1.129,
+          1.694
+        ],
+        "probs": [
+          0.2469,
+          0.2541,
+          0.4991
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1205
+        ],
+        "over25": 0.5361,
+        "btts": 0.5592,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          16,
+          16
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
