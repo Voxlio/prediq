@@ -1,0 +1,246 @@
+{
+  "day": "2026-11-26",
+  "updatedAt": "2026-11-26T01:35:14.571Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401915519",
+      "kickoff": "2026-11-26T17:45:00.000Z",
+      "league": "uefa.europa",
+      "home": {
+        "id": "85",
+        "name": "Celta Vigo"
+      },
+      "away": {
+        "id": "349",
+        "name": "AFC Bournemouth"
+      },
+      "predicted": {
+        "at": "2026-11-26T01:35:14.571Z",
+        "lambda": [
+          1.011,
+          1.229
+        ],
+        "probs": [
+          0.2948,
+          0.3018,
+          0.4034
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1402
+        ],
+        "over25": 0.3882,
+        "btts": 0.4581,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          13,
+          11
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915811",
+      "kickoff": "2026-11-26T17:45:00.000Z",
+      "league": "uefa.europa.conf",
+      "home": {
+        "id": "262",
+        "name": "Heart of Midlothian"
+      },
+      "away": {
+        "id": "174",
+        "name": "AS Monaco"
+      },
+      "predicted": {
+        "at": "2026-11-26T01:35:14.571Z",
+        "lambda": [
+          2.047,
+          1.669
+        ],
+        "probs": [
+          0.4641,
+          0.222,
+          0.3139
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.0881
+        ],
+        "over25": 0.7172,
+        "btts": 0.7117,
+        "conf": {
+          "level": 2,
+          "word": "medium"
+        },
+        "seen": [
+          13,
+          11
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915504",
+      "kickoff": "2026-11-26T20:00:00.000Z",
+      "league": "uefa.europa",
+      "home": {
+        "id": "384",
+        "name": "Crystal Palace"
+      },
+      "away": {
+        "id": "89",
+        "name": "Real Sociedad"
+      },
+      "predicted": {
+        "at": "2026-11-26T01:35:14.571Z",
+        "lambda": [
+          1.578,
+          2.216
+        ],
+        "probs": [
+          0.2692,
+          0.213,
+          0.5179
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          2,
+          0.0872
+        ],
+        "over25": 0.73,
+        "btts": 0.7117,
+        "conf": {
+          "level": 3,
+          "word": "moderate"
+        },
+        "seen": [
+          11,
+          13
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915505",
+      "kickoff": "2026-11-26T20:00:00.000Z",
+      "league": "uefa.europa",
+      "home": {
+        "id": "147",
+        "name": "NEC Nijmegen"
+      },
+      "away": {
+        "id": "169",
+        "name": "Stade Rennais"
+      },
+      "predicted": {
+        "at": "2026-11-26T01:35:14.571Z",
+        "lambda": [
+          2.187,
+          2.116
+        ],
+        "probs": [
+          0.4101,
+          0.2064,
+          0.3835
+        ],
+        "pick": "home",
+        "score": [
+          2,
+          2,
+          0.0724
+        ],
+        "over25": 0.803,
+        "btts": 0.7845,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          13,
+          11
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401915801",
+      "kickoff": "2026-11-26T20:00:00.000Z",
+      "league": "uefa.europa.conf",
+      "home": {
+        "id": "126",
+        "name": "SC Freiburg"
+      },
+      "away": {
+        "id": "152",
+        "name": "FC Twente"
+      },
+      "predicted": {
+        "at": "2026-11-26T01:35:14.571Z",
+        "lambda": [
+          1.38,
+          1.391
+        ],
+        "probs": [
+          0.3631,
+          0.2687,
+          0.3682
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1274
+        ],
+        "over25": 0.5236,
+        "btts": 0.5694,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          10,
+          13
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
