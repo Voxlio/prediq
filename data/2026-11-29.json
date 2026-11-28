@@ -1,0 +1,102 @@
+{
+  "day": "2026-11-29",
+  "updatedAt": "2026-11-28T11:22:11.515Z",
+  "records": [
+    {
+      "v": 1,
+      "id": "401888367",
+      "kickoff": "2026-11-29T10:30:00.000Z",
+      "league": "tur.1",
+      "home": {
+        "id": "132334",
+        "name": "Çorum FK"
+      },
+      "away": {
+        "id": "995",
+        "name": "Kocaelispor"
+      },
+      "predicted": {
+        "at": "2026-11-28T11:22:11.515Z",
+        "lambda": [
+          1.195,
+          1.282
+        ],
+        "probs": [
+          0.3358,
+          0.2867,
+          0.3775
+        ],
+        "pick": "away",
+        "score": [
+          1,
+          1,
+          0.1364
+        ],
+        "over25": 0.4502,
+        "btts": 0.5114,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          12,
+          12
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    },
+    {
+      "v": 1,
+      "id": "401875538",
+      "kickoff": "2026-11-29T11:15:00.000Z",
+      "league": "ned.1",
+      "home": {
+        "id": "2726",
+        "name": "ADO Den Haag"
+      },
+      "away": {
+        "id": "153",
+        "name": "FC Utrecht"
+      },
+      "predicted": {
+        "at": "2026-11-28T11:22:11.515Z",
+        "lambda": [
+          1.822,
+          1.681
+        ],
+        "probs": [
+          0.4123,
+          0.2332,
+          0.3544
+        ],
+        "pick": "home",
+        "score": [
+          1,
+          1,
+          0.0977
+        ],
+        "over25": 0.6797,
+        "btts": 0.6878,
+        "conf": {
+          "level": 1,
+          "word": "low"
+        },
+        "seen": [
+          13,
+          13
+        ]
+      },
+      "market": null,
+      "model": {
+        "rev": "1.0",
+        "hash": "24054664"
+      },
+      "result": null
+    }
+  ]
+}
